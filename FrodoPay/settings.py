@@ -66,7 +66,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
 ]
 
-ROOT_URLCONF = 'VTES.urls'
+ROOT_URLCONF = 'FrodoPay.urls'
 
 TEMPLATES = [
     {
@@ -85,7 +85,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'VTES.wsgi.application'
+WSGI_APPLICATION = 'FrodoPay.wsgi.application'
 
 
 
@@ -128,33 +128,6 @@ DATABASES = {
     }
 }
 
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ddql0vvehcrtcn',
-        'USER': 'awbasueredkqxx',
-        'PASSWORD': '5f27871660620a7385dc113fd9abb0cc63f0f55025c45739fadd99b7d5c26540',
-        'HOST': 'ec2-3-216-221-31.compute-1.amazonaws.com',
-        'PORT': '5432',
-    }
-}
-
-
-
-
-DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
-    }
-}
-
-'''
 
 
 # Password validation

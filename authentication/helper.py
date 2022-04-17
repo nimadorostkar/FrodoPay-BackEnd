@@ -1,5 +1,5 @@
 from kavenegar import *
-from VTES.settings import Kavenegar_API
+from FrodoPay.settings import Kavenegar_API
 from random import randint
 from zeep import Client
 from . import models
