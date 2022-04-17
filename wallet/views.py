@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, ShopProductsSerializer
+#from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, ShopProductsSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
-from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts
+#from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -13,7 +13,7 @@ from django.db.models import Q
 
 
 
-
+'''
 
 # ------------------------------------------------------- Attributes ------------
 
@@ -384,7 +384,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
 
 
 
-
+'''
 
 
 

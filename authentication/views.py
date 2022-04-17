@@ -3,10 +3,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
 from .models import User
-from . import forms
-from . import helper
+
 from django.contrib import messages
-from .serializers import RequestOTPSerializer, verifyOTPSerializer, UsersSerializer, registerSerializer
+#from .serializers import RequestOTPSerializer, verifyOTPSerializer, UsersSerializer, registerSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views import generic
@@ -15,7 +14,7 @@ from django.contrib.auth.signals import user_logged_in
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from . import serializers
+# from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -24,7 +23,7 @@ from rest_framework.decorators import api_view, permission_classes
 
 
 
-
+'''
 
 
 # ------------------------------------------------------- Login ---------------
@@ -258,7 +257,7 @@ class Register(APIView):
 
 
 
-
+'''
 
 
 

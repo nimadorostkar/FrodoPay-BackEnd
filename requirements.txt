@@ -1,12 +1,4 @@
 Django
-django-jalali
-django-mptt
-psycopg2-binary
 djangorestframework
 django-cors-headers
 django-filter==21.1
-django-background-tasks
-zeep
-kavenegar
-gunicorn
-django-colorfield

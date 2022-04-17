@@ -42,14 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authentication.apps.AuthenticationConfig',
-    'background_task',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
-    'wallet',
-    'mptt',
-    'colorfield'
+    'wallet'
 ]
 
 
@@ -179,7 +176,7 @@ MEDIA_URL = '/media/' # Public URL at the browser
 
 
 
-AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = 'authentication.Profile'
 
 Kavenegar_API = '*****************************************************'
 

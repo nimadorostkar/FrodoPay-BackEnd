@@ -1,13 +1,12 @@
 from django.contrib import admin
-from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin, TreeRelatedFieldListFilter
 from django.contrib.admin.models import LogEntry
 from . import models
-from .models import Category, Shop, Product, ShopProducts, Attributes, ProductAttr, ProductImgs, ProductColor
+#from .models import Category, Shop, Product, ShopProducts, Attributes, ProductAttr, ProductImgs, ProductColor
 
 
 
 
-
+'''
 
 
 
@@ -109,7 +108,7 @@ admin.site.register(models.ShopProducts, ShopProductsAdmin)
 
 
 
-
+'''
 
 
 

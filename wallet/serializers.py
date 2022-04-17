@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import Shop, Product, Category, Attributes, ProductAttr, ProductImgs, ShopProducts
+#from .models import Shop, Product, Category, Attributes, ProductAttr, ProductImgs, ShopProducts
 
 
-
+'''
 
 
 #------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ class ShopProductsSerializer(serializers.ModelSerializer):
         fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'retail_price', 'medium_volume_price', 'min_medium_num', 'wholesale_price', 'min_wholesale_num')
 
 
-
+'''
 
 
 
