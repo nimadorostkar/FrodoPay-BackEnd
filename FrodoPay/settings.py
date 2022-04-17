@@ -25,11 +25,6 @@ ALLOWED_HOSTS = ['*']
 
 
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'authentication.mybackend.ModelBackend',
-]
-
 
 
 # Application definition
@@ -41,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'authentication.apps.AuthenticationConfig',
+    'authentication',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -175,10 +170,6 @@ MEDIA_URL = '/media/' # Public URL at the browser
 
 
 
-
-AUTH_USER_MODEL = 'authentication.Profile'
-
-Kavenegar_API = '*****************************************************'
 
 
 
