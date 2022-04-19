@@ -73,6 +73,10 @@ DATABASES = {
 }
 
 
+
+
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -103,7 +107,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
+
 
 
 

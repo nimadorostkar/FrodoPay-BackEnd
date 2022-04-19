@@ -14,7 +14,7 @@ class Profile(models.Model):
   shop = models.CharField(max_length=50,null=True, blank=True,verbose_name = "نام فروشگاه")
   photo = models.ImageField(upload_to='user/photo',default='user/photo/default.png',null=True, blank=True,verbose_name = "تصویر کاربر")
   referral = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کد معرف")
-  birthday = models.DateField(null=True, blank=True)
+  birthday = models.CharField(max_length=20, null=True, blank=True, verbose_name = "تاریخ تولد")
 
 
   @receiver(post_save, sender=User)

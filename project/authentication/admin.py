@@ -4,8 +4,6 @@ from .models import Profile
 
 
 
-
-
 #------------------------------------------------------------------------------
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('image_tag', 'user_name')
