@@ -29,7 +29,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/nima/github/FrodoPay-BackEnd/environments"
+set -gx VIRTUAL_ENV "/Users/nima/github/luxexpo/environments"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

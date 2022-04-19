@@ -1,4 +1,4 @@
-#!/Users/nima/github/FrodoPay-BackEnd/environments/bin/python3.9
+#!/Users/nima/github/luxexpo/environments/bin/python3.9
 # -*- coding: utf-8 -*-
 import re
 import sys
