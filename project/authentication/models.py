@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from authentication.myusermanager import UserManager
-
+from django.utils.html import format_html
 
 
 
@@ -19,8 +19,8 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     backend = 'authentication.mybackend.ModelBackend'
 
-    def image_tag(self):
-        return format_html("<img width=50 src='{}'>".format(self.photo.url))
+    def img(self):
+        return format_html("<img width=30 src='{}'>".format(self.photo.url))
 
     def __str__(self):
         return "کاربر : " + str(self.email)
