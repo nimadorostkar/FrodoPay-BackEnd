@@ -6,20 +6,37 @@ from authentication.myusermanager import UserManager
 
 
 
+#------------------------------------------------------------------------------
 class User(AbstractUser):
-    #username = None
-    email = models.EmailField(max_length=254, unique=True)
-    mobile = models.CharField(max_length=11, unique=True, verbose_name = "شماره موبایل")
-    otp = models.PositiveIntegerField(blank=True, null=True, verbose_name = "کد ورود")
-    otp_create_time = models.DateTimeField(auto_now=True, verbose_name = "تاریخ ایجاد کد")
-    is_legal = models.BooleanField(default=False, verbose_name = "شخصیت حقوقی")
-    company = models.CharField(max_length=80, null=True, blank=True, verbose_name = "نام شرکت")
-    address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
-    email_verification = models.BooleanField(default=False, verbose_name = "تایید ایمیل")
-    referral_code = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کد معرف")
+    email = models.EmailField(max_length=254, unique=True, verbose_name = "ایمیل")
+    shop = models.CharField(max_length=254, null=True, blank=True, verbose_name = "فروشگاه")
+    birthday = models.CharField(max_length=254, null=True, blank=True, verbose_name = "تاریخ تولد")
+    photo = models.ImageField(upload_to='user/photo',default='user/photo/default.png', null=True, blank=True, verbose_name = "تصویر کاربر")
+    referral = models.CharField(max_length=254, null=True, blank=True, verbose_name = "کد معرف")
 
     objects = UserManager()
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     backend = 'authentication.mybackend.ModelBackend'
+
+    def image_tag(self):
+        return format_html("<img width=50 src='{}'>".format(self.photo.url))
+
+    def __str__(self):
+        return "کاربر : " + str(self.email)
+
+    class Meta:
+        verbose_name = "کاربر"
+        verbose_name_plural = "کاربران"
+
+
+
+
+
+
+
+
+
+
+
+#End
