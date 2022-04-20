@@ -1,5 +1,5 @@
-from django.contrib.auth.models import User
-from .models import Profile
+#from django.contrib.auth.models import User
+from .models import User
 from django.http import JsonResponse
 
 from .serializers import UsersSerializer
@@ -14,15 +14,6 @@ from rest_framework.response import Response
 
 
 
-'''
-def index(request):
-    profile = Profile.objects.get(user=request.user)
-    return JsonResponse({ 'user':request.user.username, 'birthday':profile.birthday, 'img':profile.photo.url })
-'''
-
-
-
-
 
 
 # ------------------------------------------------------- Users ---------------
@@ -30,7 +21,7 @@ def index(request):
 class Users(GenericAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = UsersSerializer
-    queryset = Profile.objects.all()
+    queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     #filterset_fields = ['is_legal', 'is_active', 'is_superuser', 'is_staff']
     #search_fields = ['first_name', 'last_name', 'email', 'mobile', 'company', 'address']
@@ -38,8 +29,8 @@ class Users(GenericAPIView):
     #ordering_fields = ['date_joined', 'otp_create_time', 'last_login', 'id']
 
     def get(self, request, format=None):
-        queryset = Profile.objects.all()
-        query = self.filter_queryset(Profile.objects.all())
+        queryset = User.objects.all()
+        query = self.filter_queryset(User.objects.all())
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

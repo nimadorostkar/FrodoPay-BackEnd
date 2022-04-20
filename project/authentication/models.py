@@ -1,60 +1,25 @@
 from django.db import models
-from django.contrib.auth.models import User
-from django.utils.html import format_html
-from django.urls import reverse
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-
-
-
-
-#------------------------------------------------------------------------------
-class Profile(models.Model):
-  user = models.OneToOneField(User, on_delete=models.CASCADE,unique=True,related_name='profile',verbose_name = "کاربر")
-  shop = models.CharField(max_length=50,null=True, blank=True,verbose_name = "نام فروشگاه")
-  photo = models.ImageField(upload_to='user/photo',default='user/photo/default.png',null=True, blank=True,verbose_name = "تصویر کاربر")
-  referral = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کد معرف")
-  birthday = models.CharField(max_length=20, null=True, blank=True, verbose_name = "تاریخ تولد")
-
-
-  @receiver(post_save, sender=User)
-  def create_user_profile(sender, instance, created, **kwargs):
-      if created:
-          Profile.objects.create(user=instance)
-
-  @receiver(post_save, sender=User)
-  def save_user_profile(sender, instance, **kwargs):
-      instance.profile.save()
-
-  def image_tag(self):
-        return format_html("<img width=50 src='{}'>".format(self.photo.url))
-
-  def user_name(self):
-        return str(self.user)
-
-  class Meta:
-      verbose_name = "پروفایل"
-      verbose_name_plural = " پروفایل ها "
-
-  def __str__(self):
-    return "پروفایل : " + str(self.user)
+from django.contrib.auth.models import AbstractUser
+from authentication.myusermanager import UserManager
 
 
 
 
 
+class User(AbstractUser):
+    #username = None
+    email = models.EmailField(max_length=254, unique=True)
+    mobile = models.CharField(max_length=11, unique=True, verbose_name = "شماره موبایل")
+    otp = models.PositiveIntegerField(blank=True, null=True, verbose_name = "کد ورود")
+    otp_create_time = models.DateTimeField(auto_now=True, verbose_name = "تاریخ ایجاد کد")
+    is_legal = models.BooleanField(default=False, verbose_name = "شخصیت حقوقی")
+    company = models.CharField(max_length=80, null=True, blank=True, verbose_name = "نام شرکت")
+    address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
+    email_verification = models.BooleanField(default=False, verbose_name = "تایید ایمیل")
+    referral_code = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کد معرف")
 
+    objects = UserManager()
 
-
-
-
-
-
-
-
-
-
-
-
-
-#End
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    backend = 'authentication.mybackend.ModelBackend'

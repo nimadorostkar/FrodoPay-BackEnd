@@ -19,6 +19,25 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+
+
+
+
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'authentication.mybackend.ModelBackend',
+]
+
+
+
+
+AUTH_USER_MODEL = 'authentication.User'
+
+
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -73,10 +92,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
-
-
 
 
 

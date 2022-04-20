@@ -1,12 +1,7 @@
 from django.contrib import admin
-from . import models
-from .models import Profile
+from .models import User
 
 
 
-#------------------------------------------------------------------------------
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('image_tag', 'user_name')
-    search_fields = ['user_name']
 
-admin.site.register(models.Profile, ProfileAdmin)
+admin.site.register(User)
