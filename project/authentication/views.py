@@ -1,7 +1,6 @@
-#from django.contrib.auth.models import User
+
 from .models import User
 from django.http import JsonResponse
-
 from .serializers import UsersSerializer
 from . import serializers
 from rest_framework.generics import GenericAPIView

@@ -5,7 +5,7 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile.prod
-    command: gunicorn VTES.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/web/staticfiles
       - media_volume:/home/web/mediafiles
