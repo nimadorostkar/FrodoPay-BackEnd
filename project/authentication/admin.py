@@ -4,6 +4,7 @@ from .models import User
 
 
 
+
 #------------------------------------------------------------------------------
 class UserAdmin(admin.ModelAdmin):
     list_display = ('img', 'email', 'last_login', 'date_joined', 'is_superuser')
