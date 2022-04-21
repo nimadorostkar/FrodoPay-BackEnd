@@ -6,6 +6,7 @@ from django.utils.html import format_html
 
 
 
+
 #------------------------------------------------------------------------------
 class User(AbstractUser):
     email = models.EmailField(max_length=254, unique=True)
@@ -24,8 +25,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return "user : " + str(self.email)
-
-
 
 
 
