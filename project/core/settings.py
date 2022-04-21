@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'authentication',
-    'wallet'
+    'wallet',
+    'transactions'
 ]
 
 MIDDLEWARE = [
