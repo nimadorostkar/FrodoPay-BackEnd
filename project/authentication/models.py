@@ -25,7 +25,7 @@ class User(AbstractUser):
         return format_html("<img width=30 src='{}'>".format(self.photo.url))
 
     def __str__(self):
-        return "user : " + str(self.email)
+        return str(self.email)
 
 
 
