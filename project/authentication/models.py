@@ -16,10 +16,10 @@ class User(AbstractUser):
     photo = models.ImageField(upload_to='user/photo',default='user/photo/default.png', null=True, blank=True)
     referral = models.CharField(max_length=254, null=True, blank=True)
 
-    objects = UserManager()
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
-    backend = 'authentication.mybackend.ModelBackend'
+    #objects = UserManager()
+    #USERNAME_FIELD = 'email'
+    #REQUIRED_FIELDS = []
+    #backend = 'authentication.mybackend.ModelBackend'
 
     def img(self):
         return format_html("<img width=30 src='{}'>".format(self.photo.url))

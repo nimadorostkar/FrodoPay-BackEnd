@@ -23,12 +23,12 @@ ALLOWED_HOSTS = ['*']
 
 
 
-
+'''
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'authentication.mybackend.ModelBackend',
 ]
-
+'''
 
 
 
