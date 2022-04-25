@@ -8,14 +8,16 @@ from wallet.models import Wallet
 
 #------------------------------------------------------------------------------
 class Transaction(models.Model):
-    wallet = models.OneToOneField(Wallet, on_delete=models.CASCADE)
+    source = models.CharField(max_length=254, null=True, blank=True)
+    destination = models.CharField(max_length=254, null=True, blank=True)
     amount = models.DecimalField(max_digits=30, decimal_places=5)
-    CHOICES1 = ( ('increase','increase'), ('decrease','decrease'), ('withdrawal','withdrawal') )
+    CHOICES1 = (('deposit','deposit'),('transfer','transfer'),('withdrawal','withdrawal'))
     type = models.CharField(max_length=254, choices=CHOICES1)
-    description = models.CharField(max_length=254, null=True, blank=True)
-    CHOICES2 = ( ('increase','increase'), ('decrease','decrease'), ('withdrawal','withdrawal') )
+    CHOICES2 = (('success','success'),('fail','fail'))
     status = models.CharField(max_length=254, choices=CHOICES2)
+    description = models.CharField(max_length=254, null=True, blank=True)
+    fee = models.DecimalField(max_digits=30, decimal_places=5, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.status +"|"+ str(self.wallet.wallet_id)
+        return self.type +"|"+ self.status +"|"+ self.source

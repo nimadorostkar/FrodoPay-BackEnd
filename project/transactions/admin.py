@@ -7,8 +7,7 @@ from .models import Transaction
 
 #------------------------------------------------------------------------------
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('wallet', 'amount', 'status', 'created_at')
-    list_filter = ('status', 'created_at')
-    search_fields = ['wallet__wallet_id']
-    raw_id_fields = ('wallet'),
+    list_display = ('source', 'destination', 'amount', 'type', 'status', 'created_at')
+    list_filter = ('status', 'type', 'created_at')
+    search_fields = ['source', 'destination']
 admin.site.register(Transaction, TransactionAdmin)
