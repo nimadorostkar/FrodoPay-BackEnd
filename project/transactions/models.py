@@ -10,9 +10,11 @@ from wallet.models import Wallet
 class Transaction(models.Model):
     wallet = models.OneToOneField(Wallet, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=30, decimal_places=5)
-    CHOICES = ( ('increase','increase'), ('decrease','decrease'), ('withdrawal','withdrawal') )
-    status = models.CharField(max_length=254, choices=CHOICES)
+    CHOICES1 = ( ('increase','increase'), ('decrease','decrease'), ('withdrawal','withdrawal') )
+    type = models.CharField(max_length=254, choices=CHOICES1)
     description = models.CharField(max_length=254, null=True, blank=True)
+    CHOICES2 = ( ('increase','increase'), ('decrease','decrease'), ('withdrawal','withdrawal') )
+    status = models.CharField(max_length=254, choices=CHOICES2)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
