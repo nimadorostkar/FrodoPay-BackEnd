@@ -6,6 +6,7 @@ from shortuuid.django_fields import ShortUUIDField
 
 
 
+
 #------------------------------------------------------------------------------
 class Wallet(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
