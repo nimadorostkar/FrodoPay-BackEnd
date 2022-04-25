@@ -14,6 +14,8 @@ class User(AbstractUser):
     shop = models.CharField(max_length=254, null=True, blank=True)
     birthday = models.DateField(max_length=254, null=True, blank=True)
     photo = models.ImageField(upload_to='user/photo',default='user/photo/default.png', null=True, blank=True)
+    CHOICES = ( ('male','male'), ('female','female'), ('unspecified','unspecified') )
+    gender = models.CharField(max_length=254, default='unspecified', choices=CHOICES, null=True, blank=True)
     referral = models.CharField(max_length=254, null=True, blank=True)
     wallet_address = models.CharField(max_length=254, null=True, blank=True)
 
