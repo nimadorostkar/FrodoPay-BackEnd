@@ -2,7 +2,12 @@ from django.urls import path
 from authentication import views
 
 
+
 urlpatterns = [
-    #path('', views.index, name="index"),
-    #path('users', views.Users.as_view(), name='users'),
+    path('login', views.Login.as_view(), name='login'),
+    #path('verify', Verify.as_view(), name='verify'),
+    #path('logout', Logout, name='logout'),
+    #path('register', Register.as_view(), name='register'),
+    #path('users', Users.as_view(), name='users'),
+    #path('profile', Profile.as_view(), name='profile'),
 ]
