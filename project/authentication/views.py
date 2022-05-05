@@ -11,8 +11,7 @@ from rest_framework.response import Response
 
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 
-
-
+from rest_framework.authtoken.models import Token
 
 
 
@@ -31,15 +30,16 @@ class Login(GenericAPIView):
             data = serializer.validated_data
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
+        username = data['username']
+        password = data['password']
+        user = authenticate(request, username=username, password=password)
         try:
-            username = data['username']
-            password = data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                form.add_error('username', 'نام کاربری یا رمز عبور اشتباه می‌باشد!!')
+            login(request, user)
+            token, created = Token.objects.get_or_create(user=user)
+            print('API Auth Token: ', token.key)
+            print('Created New Token:', created)
+            user_data={"id":user.id, "first_name":user.first_name, "last_name":user.last_name, "image":user.photo.url, "token": token.key}
+            return Response(user_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response('کاربری با شماره {} یافت نشد، لطفا ثبت نام کنید'.format(data['username']) , status=status.HTTP_400_BAD_REQUEST)
 
