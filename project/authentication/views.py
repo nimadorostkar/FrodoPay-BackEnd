@@ -1,6 +1,6 @@
 from .models import User
 from django.http import JsonResponse
-from .serializers import UsersSerializer
+from .serializers import LoginSerializer
 from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.decorators import api_view, permission_classes
@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticate
 from rest_framework import viewsets, filters, status, pagination, mixins
 from rest_framework.response import Response
 
-
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 
 
 
@@ -18,40 +18,30 @@ from rest_framework.response import Response
 
 
 #------------------------------------------------------- Login ---------------
-class Login(APIView):
+class Login(GenericAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+
     def post(self, request):
-        serializer = serializers.RequestOTPSerializer(data=request.data)
+        serializer = serializers.LoginSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
-
         try:
-            mobile = data['mobile']
-            user = User.objects.get(mobile=mobile)
-
-            if helper.check_send_otp(user.mobile):
-                # send otp
-                #otp = helper.get_random_otp()
-                otp = '12345'
-                print(otp)
-                helper.send_otp(mobile, otp)
-                #helper.send_otp_soap(mobile, otp)
-
-                # save otp
-                user.otp = otp
-                user.save()
-                return Response('کد تایید {1} به شماره {0} ارسال شد'.format(data['mobile'],otp) , status=status.HTTP_200_OK)
+            username = data['username']
+            password = data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                return Response('کد ارسال شده، لطفا ۲ دقیقه دیگر اقدام نمایید' , status=status.HTTP_408_REQUEST_TIMEOUT)
-
+                form.add_error('username', 'نام کاربری یا رمز عبور اشتباه می‌باشد!!')
         except User.DoesNotExist:
-            return Response('کاربری با شماره {} یافت نشد، لطفا ثبت نام کنید'.format(data['mobile']) , status=status.HTTP_400_BAD_REQUEST)
+            return Response('کاربری با شماره {} یافت نشد، لطفا ثبت نام کنید'.format(data['username']) , status=status.HTTP_400_BAD_REQUEST)
 
 
 
