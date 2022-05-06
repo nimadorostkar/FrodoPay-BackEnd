@@ -13,7 +13,8 @@ class LoginSerializer(serializers.Serializer):
 
 
 
-class UsersSerializer(serializers.ModelSerializer):
+
+class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('email' ,'username', 'password')
