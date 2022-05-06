@@ -11,6 +11,11 @@ from rest_framework.response import Response
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
+
+
+
+
 
 
 
@@ -39,6 +44,31 @@ class Login(APIView):
             return Response(user_data, status=status.HTTP_200_OK)
         except:
             return Response('username or password is incorrect', status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+
+
+
+
+
+
+
+# --------------------------------------------------------- logout ------------
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def Logout(request):
+    request.user.auth_token.delete()
+    logout(request)
+    return Response('User Logged out successfully', status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+
+
+
 
 
 
