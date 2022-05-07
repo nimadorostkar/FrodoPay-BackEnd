@@ -94,12 +94,12 @@ class Register(APIView):
             data = serializer.validated_data
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
-        user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
+        user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'], referral=data['referral'])
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
         print('API Auth Token: ', token.key)
         print('Created New Token:', created)
-        user_data={"id":user.id, "first_name":user.first_name, "last_name":user.last_name, "image":user.photo.url, "token": token.key}
+        user_data={"id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name, "last_name":user.last_name, "image":user.photo.url, "token": token.key}
         return Response(user_data, status=status.HTTP_200_OK)
 
 

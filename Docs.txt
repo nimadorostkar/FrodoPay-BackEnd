@@ -1,0 +1,71 @@
+
+ FrodoPay BackEnd API Documentation
+
+
+
+
+
+ #----------------------------------------------------- Register --------------
+
+ request
+     url: {{BASE_URL}}/api/register   method:POST    body.raw:
+                                                              { 
+                                                               "username": "example",
+                                                               "email": "example@gmail.com",
+ 				                                                       "password": "12345678",
+                                                               "referral": "example"
+ 			                                                         }
+response
+    code:406  status: HTTP_406_NOT_ACCEPTABLE
+    code:200  status: HTTP_200_OK        body.raw:
+                                                 {
+                                                   "id": 11,
+                                                   "username": "example",
+                                                   "email": "example@gmail.com",
+                                                   "first_name": "nima",
+                                                   "last_name": "dorostkar",
+                                                   "image": "/media/user/photo/default.png",
+                                                   "token": "d662d71b719447142b4953f3bc0084fd80591ece"
+                                                  }
+
+
+
+
+
+
+
+#------------------------------------------------------- Login ----------------
+
+request
+    url: {{BASE_URL}}/api/login    method:POST
+    body.raw:
+             { 
+              "mobile": "09123456789"
+				     }
+
+response
+    code:401  status: HTTP_401_UNAUTHORIZED   body.raw: "username or password is incorrect"
+    code:406  status: HTTP_406_NOT_ACCEPTABLE
+    code:200  status: HTTP_200_OK
+    body.raw:
+              { 
+                "id": 1,
+                "first_name": "nima",
+                "last_name": "dorostkar",
+                "image": "/media/user/photo/default.png",
+                "token": "a4767adc522f26bce4557ce36e77702c8a70db20"
+				      }
+
+
+
+
+
+
+#------------------------------------------------------- Logout ---------------
+
+request
+    url: {{BASE_URL}}/api/logout    method:GET    Headers.Authorization: Token <token>
+
+
+response
+    code:401  status: HTTP_401_UNAUTHORIZED
