@@ -61,6 +61,7 @@ response
 
 
 
+
 #------------------------------------------------------- Logout ---------------
 
 request
@@ -69,3 +70,35 @@ request
 
 response
     code:401  status: HTTP_401_UNAUTHORIZED
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------ Profile ---------------
+
+request
+  url: {{BASE_URL}}/api/profile    method:GET
+  body.raw:
+           { 
+            "mobile": "09123456789"
+			     }
+
+response
+  code:401  status: HTTP_401_UNAUTHORIZED   body.raw: "username or password is incorrect"
+  code:406  status: HTTP_406_NOT_ACCEPTABLE
+  code:200  status: HTTP_200_OK
+  body.raw:
+            { 
+              "id": 1,
+              "first_name": "nima",
+              "last_name": "dorostkar",
+              "image": "/media/user/photo/default.png",
+              "token": "a4767adc522f26bce4557ce36e77702c8a70db20"
+			      }

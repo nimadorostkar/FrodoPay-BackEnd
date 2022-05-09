@@ -1,6 +1,6 @@
 from .models import User
 from django.http import JsonResponse
-from .serializers import LoginSerializer, RegisterSerializer
+from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
 from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.decorators import api_view, permission_classes
@@ -102,6 +102,54 @@ class Register(APIView):
         user_data={"id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name, "last_name":user.last_name, "image":user.photo.url, "token": token.key}
         return Response(user_data, status=status.HTTP_200_OK)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#-------------------------------------------------------- Profile -------------
+
+class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        profile = get_object_or_404(User, id=self.request.user.id)
+        serializer = UserSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        profile = get_object_or_404(User, id=self.request.user.id)
+        serializer = UserSerializer(profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    def delete(self, request, *args, **kwargs):
+        profile = get_object_or_404(User, id=self.request.user.id)
+        profile.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+    def post(self, request, *args, **kwargs):
+        try:
+            file = request.data['file']
+        except KeyError:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        profile = get_object_or_404(User, id=self.request.user.id)
+        profile.image = file
+        profile.save()
+        return Response(status=status.HTTP_200_OK)
 
 
 
