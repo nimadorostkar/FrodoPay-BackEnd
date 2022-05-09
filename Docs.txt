@@ -109,7 +109,6 @@ response
 
 
 
-
 request
     url: {{BASE_URL}}/api/profile   method:PUT    Headers.Authorization: Token <token>
     body.raw:
@@ -126,11 +125,8 @@ request
             }
 
 
-
 request
     url: {{BASE_URL}}/api/profile  method:DELETE  Headers.Authorization: Token <token>
-
-
 
 
 
@@ -143,6 +139,9 @@ request   (for upload profile image)
 response
     code:200  status: HTTP_200_OK
     code:406  status: HTTP_406_NOT_ACCEPTABLE
+
+
+
 
 
 
