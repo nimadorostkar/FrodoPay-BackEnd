@@ -78,9 +78,6 @@ def Logout(request):
 
 
 
-
-
-
 #------------------------------------------------------- Register -------------
 
 class Register(APIView):
@@ -100,7 +97,13 @@ class Register(APIView):
         token, created = Token.objects.get_or_create(user=user)
         print('API Auth Token: ', token.key)
         print('Created New Token:', created)
-        user_data={"id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name, "last_name":user.last_name, "image":user.photo.url, "token": token.key}
+        wallet = Wallet()
+        wallet.user = user
+        wallet.inventory = 0
+        wallet.save()
+        user_data = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
+                      "last_name":user.last_name, "image":user.photo.url, "token": token.key, "wallet_id":wallet.wallet_id,
+                      "inventory":wallet.inventory }
         return Response(user_data, status=status.HTTP_200_OK)
 
 
