@@ -94,23 +94,23 @@ class Mytransactions(GenericAPIView):
 
 
 
+#----------------------------------------------------------- Transfer ----------
+class Transfer(GenericAPIView):
+    pass
+
+
+
+
+
+
+
+
 
 
 #----------------------------------------------------------- Deposit -----------
 class Deposit(GenericAPIView):
     pass
 
-
-
-
-
-
-
-
-
-#----------------------------------------------------------- Transfer ----------
-class Transfer(GenericAPIView):
-    pass
 
 
 
