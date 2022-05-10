@@ -40,7 +40,8 @@ request
     url: {{BASE_URL}}/api/login    method:POST
     body.raw:
              { 
-              "mobile": "09123456789"
+              "username": "example",
+              "password": "passssss"
 				     }
 
 response
