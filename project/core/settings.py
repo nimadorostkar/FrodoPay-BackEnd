@@ -46,7 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'authentication',
     'wallet',
@@ -100,6 +102,17 @@ DATABASES = {
 
 
 
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:3000",
+]
+
+
+
+
+
 
 
 REST_FRAMEWORK = {
@@ -107,9 +120,9 @@ REST_FRAMEWORK = {
        'django_filters.rest_framework.DjangoFilterBackend'
        ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        #'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        #'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
        ],
        'DEFAULT_PERMISSION_CLASSES': [
        'rest_framework.permissions.AllowAny',
@@ -117,6 +130,10 @@ REST_FRAMEWORK = {
         #'rest_framework.permissions.IsAuthenticated',
        ]
 }
+
+
+
+
 
 
 
