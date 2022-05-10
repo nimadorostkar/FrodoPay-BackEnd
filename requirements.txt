@@ -3,3 +3,4 @@ Pillow==9.1.0
 djangorestframework==3.13.1
 django-filter==21.1
 shortuuid==1.0.8
+django-cors-headers==3.11.0
