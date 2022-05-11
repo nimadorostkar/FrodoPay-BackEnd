@@ -41,7 +41,12 @@ class Login(APIView):
             token, created = Token.objects.get_or_create(user=user)
             print('API Auth Token: ', token.key)
             print('Created New Token:', created)
-            user_data={"id":user.id, "first_name":user.first_name, "last_name":user.last_name, "image":user.photo.url, "token": token.key}
+
+            wallet = Wallet.objects.get(user=user)
+            user_data = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
+                          "last_name":user.last_name, "image":user.photo.url, "token": token.key, "wallet_id":wallet.wallet_id,
+                          "inventory":wallet.inventory }
+
             return Response(user_data, status=status.HTTP_200_OK)
         except:
             return Response('username or password is incorrect', status=status.HTTP_401_UNAUTHORIZED)

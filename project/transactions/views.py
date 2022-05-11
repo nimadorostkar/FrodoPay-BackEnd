@@ -68,18 +68,22 @@ class Mytransactions(GenericAPIView):
     ordering_fields = ['created_at', 'fee', 'amount']
 
     def get(self, request, format=None):
-        mywallet = Wallet.objects.get(user=request.user)
+        try:
+            mywallet = Wallet.objects.get(user=request.user)
 
-        inputs = Transaction.objects.filter(destination=mywallet.wallet_id)
-        input_query = self.filter_queryset(inputs)
-        input_serializer = TransactionSerializer(input_query, many=True)
+            inputs = Transaction.objects.filter(destination=mywallet.wallet_id)
+            input_query = self.filter_queryset(inputs)
+            input_serializer = TransactionSerializer(input_query, many=True)
 
-        outputs = Transaction.objects.filter(source=mywallet.wallet_id)
-        output_query = self.filter_queryset(outputs)
-        output_serializer = TransactionSerializer(output_query, many=True)
+            outputs = Transaction.objects.filter(source=mywallet.wallet_id)
+            output_query = self.filter_queryset(outputs)
+            output_serializer = TransactionSerializer(output_query, many=True)
 
-        data = { 'inputs': input_serializer.data, 'outputs': output_serializer.data  }
-        return Response(data, status=status.HTTP_200_OK)
+            data = { 'inputs': input_serializer.data, 'outputs': output_serializer.data  }
+            return Response(data, status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+
 
     def post(self, request, format=None):
         query = self.filter_queryset(Transaction.objects.all())
