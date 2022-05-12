@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/nima/github/luxexpo/environments"
+VIRTUAL_ENV="/Users/nima/github/FrodoPay-BackEnd/environments"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

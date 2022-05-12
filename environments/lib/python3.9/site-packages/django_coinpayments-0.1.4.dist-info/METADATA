@@ -1,0 +1,29 @@
+Metadata-Version: 2.0
+Name: django-coinpayments
+Version: 0.1.4
+Summary: Package for payment handling via https://www.coinpayments.net
+Home-page: https://github.com/delneg/django-coinpayments
+Author: Denis Bobrov
+Author-email: tech@bearle.ru
+License: MIT
+Keywords: django-coinpayments
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Framework :: Django
+Classifier: Framework :: Django :: 1.9
+Classifier: Framework :: Django :: 1.10
+Classifier: Framework :: Django :: 1.11
+Classifier: Framework :: Django :: 2.0
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+License-File: LICENSE
+License-File: AUTHORS.rst
+Requires-Dist: django-model-utils (>=2.0)
+
+Package for payment handling via https://www.coinpayments.net
+
