@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'django_filters',
     'authentication',
     'wallet',
-    'transactions'
+    'transactions',
+    'django_coinpayments'
 ]
 
 MIDDLEWARE = [
@@ -101,15 +102,18 @@ DATABASES = {
 
 
 
-
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",
-]
-CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:3000",
-]
+CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:8000',]
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000',]
+CORS_ORIGIN_ALLOW_ALL = True
 
 
+
+
+
+
+
+COINPAYMENTS_API_KEY = 'aaaaa'
+COINPAYMENTS_API_SECRET = 'aaa'
 
 
 
