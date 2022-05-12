@@ -1,7 +1,7 @@
 from .models import User
 from wallet.models import Wallet
 from django.http import JsonResponse
-from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
+from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, ConfirmationSerializer
 from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.decorators import api_view, permission_classes
@@ -14,7 +14,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import render, get_object_or_404
-
+from django.core.mail import send_mail
 
 
 
@@ -43,7 +43,7 @@ class Login(APIView):
             print('Created New Token:', created)
 
             wallet = Wallet.objects.get(user=user)
-            user_data = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
+            user_data = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, "first_name":user.first_name,
                           "last_name":user.last_name, "image":user.photo.url, "token": token.key, "wallet_id":wallet.wallet_id,
                           "inventory":wallet.inventory }
 
@@ -137,7 +137,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         wallet = Wallet.objects.get(user=profile)
         data = {
                 'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
-                'last_name':profile.last_name, 'email':profile.email, 'referral':profile.referral,
+                'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral,
                 'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
                 'birthday':profile.birthday, 'wallet_address':profile.wallet_address,
                 'last_login':profile.last_login, 'wallet_id':wallet.wallet_id, 'inventory':wallet.inventory
@@ -168,6 +168,61 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         profile.save()
         data = {"image":profile.image.url}
         return Response(data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------ Activation -------------
+
+class Activation(APIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        profile = User.objects.get(id=self.request.user.id)
+        # send activation email
+        code="12345"
+        print("-----------------")
+        print("Email activation code is: {}".format(code))
+        return Response("Activation code send to {}".format(profile.email) , status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+#------------------------------------------------------ Confirmation -----------
+
+class Confirmation(APIView):
+    serializer_class = ConfirmationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.ConfirmationSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+        else:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
+
+        profile = User.objects.get(id=self.request.user.id)
+        if data['code'] == '12345':
+            profile.is_confirmed = True
+            profile.save()
+            return Response("User verified", status=status.HTTP_200_OK)
+        else:
+            return Response("User not verified", status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
 
 
 

@@ -18,6 +18,7 @@ class User(AbstractUser):
     gender = models.CharField(max_length=254, default='unspecified', choices=CHOICES, null=True, blank=True)
     referral = models.CharField(max_length=254, null=True, blank=True)
     wallet_address = models.CharField(max_length=254, null=True, blank=True)
+    is_confirmed = models.BooleanField(default=False)
 
     #objects = UserManager()
     #USERNAME_FIELD = 'email'
