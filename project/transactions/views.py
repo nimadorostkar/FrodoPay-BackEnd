@@ -216,22 +216,72 @@ class ConfirmTransfer(APIView):
 
 
 
+
+#--------------------------------------------------------- Withdrawal ----------
+class Withdrawal(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        mywallet = Wallet.objects.get(user=request.user)
+        amount = request.data['amount']
+        fee = 0.02
+        fee_amount = amount*fee
+        total_amount = amount+fee_amount
+
+        withdrawal = Transaction()
+        withdrawal.type = 'withdrawal'
+        withdrawal.source = mywallet.wallet_id
+
+        if request.user.wallet_address == None:
+            return Response("Wallet address is empty. Please complete your profile information", status=status.HTTP_400_BAD_REQUEST)
+        else:
+            withdrawal.destination = request.user.wallet_address
+
+        if total_amount <= mywallet.inventory:
+            withdrawal.amount = amount
+        else:
+            return Response("Your inventory is not enough", status=status.HTTP_400_BAD_REQUEST)
+
+        withdrawal.description = request.data['description']
+        withdrawal.fee = fee_amount
+        withdrawal.status = 'pending'
+        withdrawal.save()
+
+        withdrawal_data = { 'amount':withdrawal.amount, 'wallet_address':withdrawal.destination, 'fee':withdrawal.fee,
+                            'total_amount':total_amount, 'description':withdrawal.description, 'status':withdrawal.status,
+                            'withdrawal_id':withdrawal.id }
+
+        return Response(withdrawal_data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #----------------------------------------------------------- Deposit -----------
 class Deposit(GenericAPIView):
     pass
 
 
-
-
-
-
-
-
-
-
-#--------------------------------------------------------- Withdrawal ----------
-class Withdrawal(GenericAPIView):
-    pass
 
 
 
