@@ -14,7 +14,7 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=30, decimal_places=5)
     CHOICES1 = (('deposit','deposit'),('transfer','transfer'),('withdrawal','withdrawal'))
     type = models.CharField(max_length=254, choices=CHOICES1)
-    CHOICES2 = (('success','success'),('fail','fail'))
+    CHOICES2 = (('success','uccess'),('fail','fail'),('pending','pending'))
     status = models.CharField(max_length=254, choices=CHOICES2)
     description = models.CharField(max_length=254, null=True, blank=True)
     fee = models.DecimalField(max_digits=30, decimal_places=5, default=0)

@@ -10,7 +10,7 @@ from shortuuid.django_fields import ShortUUIDField
 #------------------------------------------------------------------------------
 class Wallet(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    wallet_id = ShortUUIDField(unique=True, length=32, max_length=40, primary_key=False, editable=False)
+    wallet_id = ShortUUIDField(unique=True, length=16, max_length=40, primary_key=False, editable=False)
     inventory = models.DecimalField(max_digits=30, decimal_places=5)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

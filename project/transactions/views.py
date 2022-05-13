@@ -124,8 +124,76 @@ class PaymentList(APIView):
 
 
 #----------------------------------------------------------- Transfer ----------
-class Transfer(GenericAPIView):
-    pass
+class Transfer(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        mywallet = Wallet.objects.get(user=request.user)
+        amount = request.data['amount']
+        fee = 0.02
+        fee_amount = amount*fee
+        total_amount = amount+fee_amount
+
+        transfer = Transaction()
+        transfer.type = 'transfer'
+        transfer.source = mywallet.wallet_id
+
+        try:
+            destination = Wallet.objects.get(wallet_id=request.data['destination'])
+            transfer.destination = destination.wallet_id
+        except:
+            return Response("Destination wallet address isn't valid", status=status.HTTP_400_BAD_REQUEST)
+
+        if total_amount <= mywallet.inventory:
+            transfer.amount = amount
+        else:
+            return Response("Your inventory is not enough", status=status.HTTP_400_BAD_REQUEST)
+
+        transfer.description = request.data['description']
+        transfer.fee = fee_amount
+        transfer.status = 'pending'
+        transfer.save()
+
+        transfer_data = { 'amount':transfer.amount, 'destination_wallet_id':transfer.destination, 'destination_username':destination.user.username,
+                          'destination_photo':destination.user.photo.url, 'fee':transfer.fee, 'total_amount':total_amount,
+                          'description':transfer.description, 'status':transfer.status, 'transfer_id':transfer.id }
+
+        return Response(transfer_data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+#--------------------------------------------------- Confirm Transfer ----------
+class ConfirmTransfer(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        transfer = Transaction.objects.get(id=self.kwargs["id"])
+        try:
+            total_amount = transfer.amount+transfer.fee
+
+            source_wallet = Wallet.objects.get(user=request.user)
+            destination_wallet = Wallet.objects.get(wallet_id=transfer.destination)
+
+            source_wallet.inventory = source_wallet.inventory - total_amount
+            destination_wallet.inventory = destination_wallet.inventory + total_amount
+
+            transfer.status = 'success'
+            transfer.save()
+            return Response('The transfer was successful', status=status.HTTP_200_OK)
+        except:
+            transfer.status = 'fail'
+            transfer.save()
+            return Response("Transfer failed", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
 
 
 
