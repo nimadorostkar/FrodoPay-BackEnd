@@ -18,7 +18,8 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import Transaction
 from wallet.models import Wallet
 
-
+from django_coinpayments.models import Payment
+from django_coinpayments.exceptions import CoinPaymentsProviderError
 
 
 
@@ -89,6 +90,30 @@ class Mytransactions(GenericAPIView):
         query = self.filter_queryset(Transaction.objects.all())
         serializer = TransactionSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+#----------------------------------------------------- PaymentList -------------
+class PaymentList(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        payments = Payment.objects.all().values()
+        return Response(payments, status=status.HTTP_200_OK)
+
+
+
+
+
+
 
 
 
