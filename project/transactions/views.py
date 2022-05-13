@@ -170,23 +170,35 @@ class ConfirmTransfer(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        transfer = Transaction.objects.get(id=self.kwargs["id"])
         try:
-            total_amount = transfer.amount+transfer.fee
+            transfer = Transaction.objects.get(id=self.kwargs["id"])
+            if transfer.status == 'pending':
+                try:
+                    total_amount = transfer.amount+transfer.fee
 
-            source_wallet = Wallet.objects.get(user=request.user)
-            destination_wallet = Wallet.objects.get(wallet_id=transfer.destination)
+                    source_wallet = Wallet.objects.get(user=request.user)
+                    destination_wallet = Wallet.objects.get(wallet_id=transfer.destination)
 
-            source_wallet.inventory = source_wallet.inventory - total_amount
-            destination_wallet.inventory = destination_wallet.inventory + total_amount
+                    source_wallet.inventory = source_wallet.inventory - total_amount
+                    source_wallet.save()
+                    destination_wallet.inventory = destination_wallet.inventory + total_amount
+                    destination_wallet.save()
 
-            transfer.status = 'success'
-            transfer.save()
-            return Response('The transfer was successful', status=status.HTTP_200_OK)
+                    transfer.status = 'success'
+                    transfer.save()
+                    return Response('The transfer was successful', status=status.HTTP_200_OK)
+                except:
+                    transfer.status = 'fail'
+                    transfer.save()
+                    return Response("Transfer failed", status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                return Response("This request is invalid", status=status.HTTP_400_BAD_REQUEST)
+
         except:
-            transfer.status = 'fail'
-            transfer.save()
-            return Response("Transfer failed", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Transfer request not found", status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
