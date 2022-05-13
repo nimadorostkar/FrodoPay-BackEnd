@@ -55,9 +55,6 @@ class Transactions(GenericAPIView):
 
 
 
-
-
-
 #----------------------------------------------------- Mytransactions ----------
 class Mytransactions(GenericAPIView):
     permission_classes = [AllowAny]
@@ -90,29 +87,6 @@ class Mytransactions(GenericAPIView):
         query = self.filter_queryset(Transaction.objects.all())
         serializer = TransactionSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
-
-
-
-
-
-
-
-
-#----------------------------------------------------- PaymentList -------------
-class PaymentList(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, format=None):
-        payments = Payment.objects.all().values()
-        return Response(payments, status=status.HTTP_200_OK)
-
-
-
-
-
 
 
 
@@ -208,15 +182,6 @@ class ConfirmTransfer(APIView):
 
 
 
-
-
-
-
-
-
-
-
-
 #--------------------------------------------------------- Withdrawal ----------
 class Withdrawal(APIView):
     permission_classes = [IsAuthenticated]
@@ -267,22 +232,66 @@ class Withdrawal(APIView):
 
 
 
-
-
-
-
-
-
-
-
-
-
 #----------------------------------------------------------- Deposit -----------
-class Deposit(GenericAPIView):
-    pass
+class Deposit(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        mywallet = Wallet.objects.get(user=request.user)
+        amount = request.data['amount']
+        fee = 0.02
+        fee_amount = amount*fee
+        total_amount = amount+fee_amount
+
+        deposit = Transaction()
+        deposit.type = 'deposit'
+        deposit.source = 'coinpayment address'
+        deposit.destination = mywallet.wallet_id
+        deposit.amount = amount
+        deposit.description = request.data['description']
+        deposit.fee = fee_amount
+        deposit.status = 'pending'
+        deposit.save()
+
+        deposit_data = { 'amount':deposit.amount, 'fee':deposit.fee, 'total_amount':total_amount,
+                         'description':deposit.description, 'status':deposit.status, 'withdrawal_id':deposit.id }
+
+        return Response(deposit_data, status=status.HTTP_200_OK)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#----------------------------------------------------- PaymentList -------------
+class PaymentList(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        payments = Payment.objects.all().values()
+        return Response(payments, status=status.HTTP_200_OK)
 
 
 
