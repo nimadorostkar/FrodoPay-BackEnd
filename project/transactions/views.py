@@ -155,7 +155,7 @@ class ConfirmTransfer(APIView):
 
                     source_wallet.inventory = source_wallet.inventory - total_amount
                     source_wallet.save()
-                    destination_wallet.inventory = destination_wallet.inventory + total_amount
+                    destination_wallet.inventory = destination_wallet.inventory + transfer.amount
                     destination_wallet.save()
 
                     transfer.status = 'success'
