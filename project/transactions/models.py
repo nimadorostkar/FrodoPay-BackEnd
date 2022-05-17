@@ -29,23 +29,6 @@ class Transaction(models.Model):
 
 
 
-'''
-#------------------------------------------------------------------------------
-class Fee(models.Model):
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='transaction')
-    amount = models.DecimalField(max_digits=30, decimal_places=5)
-
-    def __str__(self):
-        return str(self.id) +"|"+ str(self.amount)
-
-    class Meta:
-        verbose_name = "Transaction fee"
-        verbose_name_plural = "Transactions fee"
-
-'''
-
-
-
 
 
 
