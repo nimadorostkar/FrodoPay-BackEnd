@@ -9,6 +9,19 @@ from django.utils.html import format_html
 
 
 #------------------------------------------------------------------------------
+class Countries(models.Model):
+    available = models.BooleanField(default=True)
+    name = models.CharField(max_length=254)
+    flag = models.ImageField(upload_to='countries/flag')
+
+    def flagImg(self):
+        return format_html("<img width=30 src='{}'>".format(self.flag.url))
+
+
+
+
+
+#------------------------------------------------------------------------------
 class User(AbstractUser):
     email = models.EmailField(max_length=254, unique=True)
     shop = models.CharField(max_length=254, null=True, blank=True)

@@ -1,6 +1,20 @@
 from django.contrib import admin
-from .models import User
+from .models import User, Countries
 
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class CountriesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'flagImg', 'available')
+    list_filter = ('available',)
+    search_fields = ['name',]
+admin.site.register(Countries, CountriesAdmin)
 
 
 
