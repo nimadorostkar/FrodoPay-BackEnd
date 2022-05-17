@@ -33,7 +33,7 @@ class InputHistory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.type +"|"+ self.status +"|"+ str(self.source)
+        return str(self.amount) +"|"+ str(self.created_at)
 
 
 
