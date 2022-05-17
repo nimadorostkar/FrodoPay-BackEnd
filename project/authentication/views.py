@@ -1,7 +1,8 @@
-from .models import User
+from .models import User, Countries
+from . import models
 from wallet.models import Wallet
 from django.http import JsonResponse
-from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, ConfirmationSerializer
+from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, ConfirmationSerializer, CountriesSerializer
 from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.decorators import api_view, permission_classes
@@ -92,7 +93,9 @@ class Register(APIView):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def post(self, request):
-        serializer = serializers.RegisterSerializer(data=request.data)
+        data=request.data
+        data['country'] = 5#models.Countries.objects.get(id=data['country'])
+        serializer = serializers.RegisterSerializer(data=data)
         if serializer.is_valid():
             data = serializer.validated_data
         else:
@@ -102,12 +105,16 @@ class Register(APIView):
         token, created = Token.objects.get_or_create(user=user)
         print('API Auth Token: ', token.key)
         print('Created New Token:', created)
+        #print('-----------------------------')
+        #print(data['country'])
+        #user.country = models.Countries.objects.get(id=data['country'])
+        #user.save()
         wallet = Wallet()
         wallet.user = user
         wallet.inventory = 0
         wallet.save()
         user_data = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
-                      "last_name":user.last_name, "image":user.photo.url, "token": token.key, "wallet_id":wallet.wallet_id,
+                      "last_name":user.last_name, "image":user.photo.url, 'country':user.country.name, "token": token.key, "wallet_id":wallet.wallet_id,
                       "inventory":wallet.inventory }
         return Response(user_data, status=status.HTTP_200_OK)
 
@@ -139,7 +146,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
                 'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
                 'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral,
                 'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
-                'birthday':profile.birthday, 'wallet_address':profile.wallet_address,
+                'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
                 'last_login':profile.last_login, 'wallet_id':wallet.wallet_id, 'inventory':wallet.inventory
                 }
         return Response(data, status=status.HTTP_200_OK)
@@ -230,6 +237,21 @@ class Confirmation(APIView):
 
 
 
+
+
+
+
+
+#------------------------------------------------------ Activation -------------
+
+class Countries(APIView):
+    serializer_class = CountriesSerializer
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        countries = models.Countries.objects.filter(available=True)
+        serializer = CountriesSerializer(countries, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
