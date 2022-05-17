@@ -25,7 +25,7 @@ admin.site.register(Countries, CountriesAdmin)
 
 #------------------------------------------------------------------------------
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('img', 'username', 'email', 'country', 'date_joined', 'is_superuser')
+    list_display = ('img', 'username', 'email', 'country', 'flag', 'date_joined', 'is_superuser')
     list_filter = ('date_joined', 'is_active', 'country')
     raw_id_fields = ('country'),
     search_fields = ['email', 'firs_name', 'last_name', 'shop']
