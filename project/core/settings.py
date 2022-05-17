@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'authentication',
     'wallet',
     'transactions',
+    'import_export',
     'django_coinpayments'
 ]
 

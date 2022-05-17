@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import User, Countries
+from import_export.admin import ImportExportModelAdmin, ImportExportMixin
+
 
 
 
@@ -10,7 +12,7 @@ from .models import User, Countries
 
 
 #------------------------------------------------------------------------------
-class CountriesAdmin(admin.ModelAdmin):
+class CountriesAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('id', 'name', 'flagImg', 'available')
     list_filter = ('available',)
     search_fields = ['name',]
