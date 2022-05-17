@@ -14,14 +14,6 @@ class LoginSerializer(serializers.Serializer):
 
 
 
-class RegisterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('email' ,'username', 'password', 'referral')
-
-
-
-
 
 
 class CountriesSerializer(serializers.ModelSerializer):
@@ -35,9 +27,22 @@ class CountriesSerializer(serializers.ModelSerializer):
 
 
 
+class RegisterSerializer(serializers.ModelSerializer):
+    #country = serializers.RelatedField(read_only=True)
+    #country = CountriesSerializer(read_only=True)
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'password', 'country', 'referral')
+
+
+
+
+
+
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        country = CountriesSerializer(read_only=True)
         model = User
         fields = ('id' ,'username', 'first_name', 'last_name', 'email', 'is_confirmed', 'referral', 'shop', 'birthday', 'country', 'photo', 'gender', 'wallet_address' )
 

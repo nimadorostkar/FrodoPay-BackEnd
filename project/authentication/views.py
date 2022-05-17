@@ -93,28 +93,22 @@ class Register(APIView):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def post(self, request):
-        data=request.data
-        data['country'] = 5#models.Countries.objects.get(id=data['country'])
-        serializer = serializers.RegisterSerializer(data=data)
+        serializer = serializers.RegisterSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
-        user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'], referral=data['referral'])
+        user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'], country=data['country'], referral=data['referral'])
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
         print('API Auth Token: ', token.key)
         print('Created New Token:', created)
-        #print('-----------------------------')
-        #print(data['country'])
-        #user.country = models.Countries.objects.get(id=data['country'])
-        #user.save()
         wallet = Wallet()
         wallet.user = user
         wallet.inventory = 0
         wallet.save()
         user_data = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
-                      "last_name":user.last_name, "image":user.photo.url, 'country':user.country.name, "token": token.key, "wallet_id":wallet.wallet_id,
+                      "last_name":user.last_name, "image":user.photo.url, "token": token.key, "wallet_id":wallet.wallet_id,
                       "inventory":wallet.inventory }
         return Response(user_data, status=status.HTTP_200_OK)
 
