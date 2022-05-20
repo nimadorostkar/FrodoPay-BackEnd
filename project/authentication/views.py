@@ -16,9 +16,9 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import render, get_object_or_404
 from django.core.mail import send_mail
-
 import coinaddrvalidator
-
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 
 
@@ -98,6 +98,10 @@ class Register(APIView):
             data = serializer.validated_data
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
+        try:
+            validate_password(serializer.data['password'])
+        except ValidationError as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'], country=data['country'], referral=data['referral'])
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
