@@ -17,7 +17,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import render, get_object_or_404
 from django.core.mail import send_mail
 
-
+import coinaddrvalidator
 
 
 
@@ -147,11 +147,18 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
     def put(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
-        serializer = UserSerializer(profile, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+        data=request.data
+        data['email'] = profile.email
+        addr = coinaddrvalidator.validate('eth', data['wallet_address'])
+        if addr.valid:
+            serializer = UserSerializer(profile, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            return Response('Wallet address is not valid',status=status.HTTP_406_NOT_ACCEPTABLE)
+
 
     def delete(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
@@ -169,8 +176,6 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         profile.save()
         data = {"image":profile.image.url}
         return Response(data, status=status.HTTP_200_OK)
-
-
 
 
 

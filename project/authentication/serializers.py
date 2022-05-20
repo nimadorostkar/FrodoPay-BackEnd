@@ -19,7 +19,7 @@ class LoginSerializer(serializers.Serializer):
 class CountriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Countries
-        fields = ('id' ,'name', 'available', 'flag')
+        fields = ('id' ,'name', 'abbreviation', 'available', 'flag')
 
 
 

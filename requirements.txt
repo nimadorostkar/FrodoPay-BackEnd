@@ -6,3 +6,4 @@ shortuuid
 django-cors-headers
 django-coinpayments
 django-import-export
+coinaddrvalidator
