@@ -102,6 +102,7 @@ class Register(APIView):
             validate_password(serializer.data['password'])
         except ValidationError as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'], country=data['country'], referral=data['referral'])
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
