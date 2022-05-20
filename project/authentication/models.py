@@ -12,7 +12,7 @@ from django.utils.html import format_html
 class Countries(models.Model):
     available = models.BooleanField(default=True)
     name = models.CharField(max_length=256, unique=True)
-    abbreviation = models.CharField(max_length=256, unique=True)
+    abbreviation = models.CharField(max_length=256, null=True, blank=True, unique=True)
     flag = models.ImageField(upload_to='countries/flag', default='countries/flag/unknown.png')
 
     def flagImg(self):
