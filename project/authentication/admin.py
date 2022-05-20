@@ -13,7 +13,7 @@ from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 #------------------------------------------------------------------------------
 class CountriesAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('name', 'flagImg', 'available')
+    list_display = ('name', 'abbreviation', 'flagImg', 'available')
     list_filter = ('available',)
     search_fields = ['name',]
 admin.site.register(Countries, CountriesAdmin)
