@@ -133,30 +133,39 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
     def get(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
-        #serializer = UserSerializer(profile)
-        wallet = Wallet.objects.get(user=profile)
         data = {
                 'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
                 'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral,
                 'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
                 'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
-                'last_login':profile.last_login, 'wallet_id':wallet.wallet_id, 'inventory':wallet.inventory
-                }
+                'last_login':profile.last_login, 'inventory':profile.inventory }
         return Response(data, status=status.HTTP_200_OK)
+
 
     def put(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
         data=request.data
-        data['email'] = profile.email
+        #data['email'] = profile.email
+        #data['username'] = profile.username
+
+        if data['wallet_address']:
+            print('yeeeeeeeeeeeeeeees')
+        else:
+            print('nnnnnnooooooooooo')
+
         addr = coinaddrvalidator.validate('eth', data['wallet_address'])
         if addr.valid:
+            data['wallet_address']=
+        else:
+            return Response('Wallet address is not valid',status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+
             serializer = UserSerializer(profile, data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
-        else:
-            return Response('Wallet address is not valid',status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
     def delete(self, request, *args, **kwargs):
