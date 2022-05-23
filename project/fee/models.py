@@ -43,5 +43,28 @@ class InputHistory(models.Model):
 
 
 
+#------------------------------------------------------------------------------
+class FeeRates(models.Model):
+    #transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    #amount = models.DecimalField(max_digits=30, decimal_places=5)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.created_at
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #End
