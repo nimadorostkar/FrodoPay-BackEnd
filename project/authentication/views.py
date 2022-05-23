@@ -190,7 +190,6 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
 
 
-
 #------------------------------------------------------ Activation -------------
 
 class Activation(APIView):
