@@ -16,8 +16,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from .models import Transaction
-from wallet.models import Wallet
-
 from django_coinpayments.models import Payment
 from django_coinpayments.exceptions import CoinPaymentsProviderError
 

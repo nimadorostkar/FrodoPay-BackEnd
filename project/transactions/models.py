@@ -1,7 +1,6 @@
 from django.db import models
 from django.urls import reverse
 from django.dispatch import receiver
-from wallet.models import Wallet
 
 
 
