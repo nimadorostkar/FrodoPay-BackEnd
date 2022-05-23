@@ -42,10 +42,8 @@ class Login(APIView):
             print('API Auth Token: ', token.key)
             print('Created New Token:', created)
 
-            wallet = Wallet.objects.get(user=user)
             user_data = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, "first_name":user.first_name,
-                          "last_name":user.last_name, "image":user.photo.url, "token": token.key, "wallet_id":wallet.wallet_id,
-                          "inventory":wallet.inventory }
+                          "last_name":user.last_name, "image":user.photo.url, "token": token.key, "inventory":user.inventory }
 
             return Response(user_data, status=status.HTTP_200_OK)
         except:
