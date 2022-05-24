@@ -18,8 +18,10 @@ from django.core.mail import send_mail
 import coinaddrvalidator
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+
+
+
 
 
 
@@ -65,7 +67,7 @@ class Login(APIView):
 
 
 
-
+'''
 #--------------------------------------------------------- logout -------------
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -73,7 +75,7 @@ def Logout(request):
     request.user.auth_token.delete()
     logout(request)
     return Response('User Logged out successfully', status=status.HTTP_401_UNAUTHORIZED)
-
+'''
 
 
 
@@ -194,6 +196,9 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         profile.save()
         data = {"image":profile.photo.url}
         return Response(data, status=status.HTTP_200_OK)
+
+
+
 
 
 
