@@ -19,6 +19,7 @@ import coinaddrvalidator
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from django.conf import settings
 
 
 
@@ -216,8 +217,15 @@ class Activation(APIView):
 
     def get(self, request, *args, **kwargs):
         profile = User.objects.get(id=self.request.user.id)
-        # send activation email
         code="12345"
+
+        subject = 'FrodoPay activation code'
+        message = f'Hi {profile.username}, thank you for registering in Frodopay. your activation code is: {code}'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [profile.email, ]
+        send_mail( subject, message, email_from, recipient_list )
+        
+        # send activation email
         print("-----------------")
         print("Email activation code is: {}".format(code))
         return Response("Activation code send to {}".format(profile.email) , status=status.HTTP_200_OK)
