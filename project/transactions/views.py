@@ -153,13 +153,13 @@ class ConfirmTransfer(APIView):
                 try:
                     total_amount = transfer.amount+transfer.fee
 
-                    source_wallet = Wallet.objects.get(user=request.user)
-                    destination_wallet = Wallet.objects.get(wallet_id=transfer.destination)
+                    source = request.user
+                    destination = User.objects.get(username=transfer.destination)
 
-                    source_wallet.inventory = source_wallet.inventory - total_amount
-                    source_wallet.save()
-                    destination_wallet.inventory = destination_wallet.inventory + transfer.amount
-                    destination_wallet.save()
+                    source.inventory = source.inventory - total_amount
+                    source.save()
+                    destination.inventory = destination.inventory + transfer.amount
+                    destination.save()
 
                     transfer.status = 'success'
                     transfer.save()
