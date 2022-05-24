@@ -107,12 +107,12 @@ class Register(APIView):
 
         user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'], country=data['country'], referral=data['referral'])
         login(request, user)
-        token, created = Token.objects.get_or_create(user=user)
-        print('API Auth Token: ', token.key)
-        print('Created New Token:', created)
+        #token, created = Token.objects.get_or_create(user=user)
+        #print('API Auth Token: ', token.key)
+        #print('Created New Token:', created)
 
         user_data = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
-                      "last_name":user.last_name, "image":user.photo.url, "token": token.key, "inventory":user.inventory }
+                      "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory }
 
         return Response(user_data, status=status.HTTP_200_OK)
 
