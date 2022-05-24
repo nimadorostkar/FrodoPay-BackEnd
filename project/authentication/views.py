@@ -22,6 +22,11 @@ from django.core.exceptions import ValidationError
 
 
 
+
+
+
+
+
 #------------------------------------------------------- Login ----------------
 class Login(APIView):
     permission_classes = [AllowAny]
@@ -145,27 +150,28 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
     def put(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
         data=request.data
-        #data['email'] = profile.email
-        #data['username'] = profile.username
+        data['email'] = profile.email
+        data['username'] = profile.username
 
         if data['wallet_address']:
-            print('yeeeeeeeeeeeeeeees')
+            addr = coinaddrvalidator.validate('eth', data['wallet_address'])
+            if addr.valid:
+                serializer = UserSerializer(profile, data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+            else:
+                return Response('Wallet address is not valid',status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
-            print('nnnnnnooooooooooo')
-
-        addr = coinaddrvalidator.validate('eth', data['wallet_address'])
-        if addr.valid:
-            data['wallet_address']=
-        else:
-            return Response('Wallet address is not valid',status=status.HTTP_406_NOT_ACCEPTABLE)
-
-
-
+            data['wallet_address']=''
             serializer = UserSerializer(profile, data=data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
 
 
     def delete(self, request, *args, **kwargs):
@@ -182,7 +188,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         profile = get_object_or_404(User, id=self.request.user.id)
         profile.photo = file
         profile.save()
-        data = {"image":profile.image.url}
+        data = {"image":profile.photo.url}
         return Response(data, status=status.HTTP_200_OK)
 
 
