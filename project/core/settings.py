@@ -54,7 +54,12 @@ INSTALLED_APPS = [
     'transactions',
     'fee',
     'import_export',
-    'django_coinpayments'
+    'django_coinpayments',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth',
 ]
 
 MIDDLEWARE = [
@@ -125,9 +130,11 @@ REST_FRAMEWORK = {
        'django_filters.rest_framework.DjangoFilterBackend'
        ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
         #'rest_framework.authentication.BasicAuthentication',
         #'rest_framework.authentication.SessionAuthentication',
+        #'rest_framework.authentication.TokenAuthentication',
+        #'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
        ],
        'DEFAULT_PERMISSION_CLASSES': [
        'rest_framework.permissions.AllowAny',
@@ -137,6 +144,20 @@ REST_FRAMEWORK = {
 }
 
 
+
+SITE_ID = 1
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'access'
+JWT_AUTH_REFRESH_COOKIE = 'refresh'
+
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'nimadorostkar97@gmail.com' #sender's email-id
+EMAIL_HOST_PASSWORD = '2620376513nima!!' #password associated with above email-id
 
 
 

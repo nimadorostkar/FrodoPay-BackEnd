@@ -18,6 +18,9 @@ from django.core.mail import send_mail
 import coinaddrvalidator
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from django.conf import settings
+
 
 
 
@@ -43,14 +46,16 @@ class Login(APIView):
         try:
             user = authenticate(request, username=data['username'], password=data['password'])
             login(request, user)
-            token, created = Token.objects.get_or_create(user=user)
-            print('API Auth Token: ', token.key)
-            print('Created New Token:', created)
+            token = RefreshToken.for_user(user)
 
-            user_data = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, "first_name":user.first_name,
-                          "last_name":user.last_name, "image":user.photo.url, "token": token.key, "inventory":user.inventory }
+            token_response = { "refresh": str(token), "access": str(token.access_token) }
 
-            return Response(user_data, status=status.HTTP_200_OK)
+            user_response = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, "first_name":user.first_name,
+                          "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory }
+
+            response = { 'token':token_response , 'user':user_response }
+
+            return Response(response, status=status.HTTP_200_OK)
         except:
             return Response('username or password is incorrect', status=status.HTTP_401_UNAUTHORIZED)
 
@@ -63,7 +68,7 @@ class Login(APIView):
 
 
 
-
+'''
 #--------------------------------------------------------- logout -------------
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -71,7 +76,7 @@ def Logout(request):
     request.user.auth_token.delete()
     logout(request)
     return Response('User Logged out successfully', status=status.HTTP_401_UNAUTHORIZED)
-
+'''
 
 
 
@@ -107,14 +112,16 @@ class Register(APIView):
 
         user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'], country=data['country'], referral=data['referral'])
         login(request, user)
-        token, created = Token.objects.get_or_create(user=user)
-        print('API Auth Token: ', token.key)
-        print('Created New Token:', created)
+        token = RefreshToken.for_user(user)
 
-        user_data = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
-                      "last_name":user.last_name, "image":user.photo.url, "token": token.key, "inventory":user.inventory }
+        token_response = { "refresh": str(token), "access": str(token.access_token) }
 
-        return Response(user_data, status=status.HTTP_200_OK)
+        user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
+                      "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory }
+
+
+        response = { 'token':token_response , 'user':user_response }
+        return Response(response, status=status.HTTP_200_OK)
 
 
 
@@ -199,6 +206,9 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
 
 
+
+
+
 #------------------------------------------------------ Activation -------------
 
 class Activation(APIView):
@@ -207,8 +217,15 @@ class Activation(APIView):
 
     def get(self, request, *args, **kwargs):
         profile = User.objects.get(id=self.request.user.id)
-        # send activation email
         code="12345"
+
+        subject = 'FrodoPay activation code'
+        message = f'Hi {profile.username}, thank you for registering in Frodopay. your activation code is: {code}'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [profile.email, ]
+        send_mail( subject, message, email_from, recipient_list )
+        
+        # send activation email
         print("-----------------")
         print("Email activation code is: {}".format(code))
         return Response("Activation code send to {}".format(profile.email) , status=status.HTTP_200_OK)

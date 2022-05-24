@@ -7,3 +7,6 @@ django-cors-headers
 django-coinpayments
 django-import-export
 coinaddrvalidator
+djangorestframework-simplejwt
+dj-rest-auth
+django-allauth
