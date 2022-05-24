@@ -70,13 +70,11 @@ class Mytransactions(GenericAPIView):
 
     def get(self, request, format=None):
         try:
-            mywallet = Wallet.objects.get(user=request.user)
-
-            inputs = Transaction.objects.filter(destination=mywallet.wallet_id)
+            inputs = Transaction.objects.filter(destination=request.user.username)
             input_query = self.filter_queryset(inputs)
             input_serializer = TransactionSerializer(input_query, many=True)
 
-            outputs = Transaction.objects.filter(source=mywallet.wallet_id)
+            outputs = Transaction.objects.filter(source=request.user.username)
             output_query = self.filter_queryset(outputs)
             output_serializer = TransactionSerializer(output_query, many=True)
 
@@ -86,10 +84,7 @@ class Mytransactions(GenericAPIView):
             return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
 
-    def post(self, request, format=None):
-        query = self.filter_queryset(Transaction.objects.all())
-        serializer = TransactionSerializer(query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 
@@ -238,7 +233,6 @@ class Deposit(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        mywallet = Wallet.objects.get(user=request.user)
         amount = request.data['amount']
         fee = 0.02
         fee_amount = amount*fee
@@ -247,7 +241,7 @@ class Deposit(APIView):
         deposit = Transaction()
         deposit.type = 'deposit'
         deposit.source = 'coinpayment address'
-        deposit.destination = mywallet.wallet_id
+        deposit.destination = request.user.username
         deposit.amount = amount
         deposit.description = request.data['description']
         deposit.fee = fee_amount
