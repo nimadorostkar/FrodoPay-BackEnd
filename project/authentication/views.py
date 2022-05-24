@@ -1,6 +1,5 @@
 from .models import User, Countries
 from . import models
-from wallet.models import Wallet
 from django.http import JsonResponse
 from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, ConfirmationSerializer, CountriesSerializer
 from . import serializers
@@ -19,6 +18,11 @@ from django.core.mail import send_mail
 import coinaddrvalidator
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+
+
+
+
+
 
 
 
@@ -43,10 +47,8 @@ class Login(APIView):
             print('API Auth Token: ', token.key)
             print('Created New Token:', created)
 
-            wallet = Wallet.objects.get(user=user)
             user_data = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, "first_name":user.first_name,
-                          "last_name":user.last_name, "image":user.photo.url, "token": token.key, "wallet_id":wallet.wallet_id,
-                          "inventory":wallet.inventory }
+                          "last_name":user.last_name, "image":user.photo.url, "token": token.key, "inventory":user.inventory }
 
             return Response(user_data, status=status.HTTP_200_OK)
         except:
@@ -108,13 +110,10 @@ class Register(APIView):
         token, created = Token.objects.get_or_create(user=user)
         print('API Auth Token: ', token.key)
         print('Created New Token:', created)
-        wallet = Wallet()
-        wallet.user = user
-        wallet.inventory = 0
-        wallet.save()
+
         user_data = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
-                      "last_name":user.last_name, "image":user.photo.url, "token": token.key, "wallet_id":wallet.wallet_id,
-                      "inventory":wallet.inventory }
+                      "last_name":user.last_name, "image":user.photo.url, "token": token.key, "inventory":user.inventory }
+
         return Response(user_data, status=status.HTTP_200_OK)
 
 
@@ -139,30 +138,40 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
     def get(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
-        #serializer = UserSerializer(profile)
-        wallet = Wallet.objects.get(user=profile)
         data = {
                 'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
                 'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral,
                 'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
                 'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
-                'last_login':profile.last_login, 'wallet_id':wallet.wallet_id, 'inventory':wallet.inventory
-                }
+                'last_login':profile.last_login, 'inventory':profile.inventory }
         return Response(data, status=status.HTTP_200_OK)
+
 
     def put(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
         data=request.data
         data['email'] = profile.email
-        addr = coinaddrvalidator.validate('eth', data['wallet_address'])
-        if addr.valid:
+        data['username'] = profile.username
+
+        if data['wallet_address']:
+            addr = coinaddrvalidator.validate('eth', data['wallet_address'])
+            if addr.valid:
+                serializer = UserSerializer(profile, data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+            else:
+                return Response('Wallet address is not valid',status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            data['wallet_address']=''
             serializer = UserSerializer(profile, data=data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
-        else:
-            return Response('Wallet address is not valid',status=status.HTTP_406_NOT_ACCEPTABLE)
+
 
 
     def delete(self, request, *args, **kwargs):
@@ -179,9 +188,8 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         profile = get_object_or_404(User, id=self.request.user.id)
         profile.photo = file
         profile.save()
-        data = {"image":profile.image.url}
+        data = {"image":profile.photo.url}
         return Response(data, status=status.HTTP_200_OK)
-
 
 
 

@@ -16,8 +16,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from .models import Transaction
-from wallet.models import Wallet
-
 from django_coinpayments.models import Payment
 from django_coinpayments.exceptions import CoinPaymentsProviderError
 
@@ -30,7 +28,7 @@ from django_coinpayments.exceptions import CoinPaymentsProviderError
 
 #----------------------------------------------------- Transaction -------------
 class Transactions(GenericAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
     serializer_class = TransactionSerializer
     queryset = Transaction.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -44,9 +42,14 @@ class Transactions(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        query = self.filter_queryset(Transaction.objects.all())
-        serializer = TransactionSerializer(query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = TransactionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+
 
 
 
@@ -67,13 +70,11 @@ class Mytransactions(GenericAPIView):
 
     def get(self, request, format=None):
         try:
-            mywallet = Wallet.objects.get(user=request.user)
-
-            inputs = Transaction.objects.filter(destination=mywallet.wallet_id)
+            inputs = Transaction.objects.filter(destination=request.user.username)
             input_query = self.filter_queryset(inputs)
             input_serializer = TransactionSerializer(input_query, many=True)
 
-            outputs = Transaction.objects.filter(source=mywallet.wallet_id)
+            outputs = Transaction.objects.filter(source=request.user.username)
             output_query = self.filter_queryset(outputs)
             output_serializer = TransactionSerializer(output_query, many=True)
 
@@ -83,10 +84,9 @@ class Mytransactions(GenericAPIView):
             return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
 
-    def post(self, request, format=None):
-        query = self.filter_queryset(Transaction.objects.all())
-        serializer = TransactionSerializer(query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 
 
@@ -102,7 +102,6 @@ class Transfer(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        mywallet = Wallet.objects.get(user=request.user)
         amount = request.data['amount']
         fee = 0.02
         fee_amount = amount*fee
@@ -110,15 +109,15 @@ class Transfer(APIView):
 
         transfer = Transaction()
         transfer.type = 'transfer'
-        transfer.source = mywallet.wallet_id
+        transfer.source = request.user.username
 
         try:
-            destination = Wallet.objects.get(wallet_id=request.data['destination'])
-            transfer.destination = destination.wallet_id
+            destination = User.objects.get(username=request.data['destination'])
+            transfer.destination = destination.username
         except:
             return Response("Destination wallet address isn't valid", status=status.HTTP_400_BAD_REQUEST)
 
-        if total_amount <= mywallet.inventory:
+        if total_amount <= request.user.inventory:
             transfer.amount = amount
         else:
             return Response("Your inventory is not enough", status=status.HTTP_400_BAD_REQUEST)
@@ -128,9 +127,8 @@ class Transfer(APIView):
         transfer.status = 'pending'
         transfer.save()
 
-        transfer_data = { 'amount':transfer.amount, 'destination_wallet_id':transfer.destination, 'destination_username':destination.user.username,
-                          'destination_photo':destination.user.photo.url, 'fee':transfer.fee, 'total_amount':total_amount,
-                          'description':transfer.description, 'status':transfer.status, 'transfer_id':transfer.id }
+        transfer_data = { 'transfer_id':transfer.id, 'amount':transfer.amount, 'destination':transfer.destination, 'destination_photo':destination.photo.url,
+                          'fee':transfer.fee, 'total_amount':total_amount, 'description':transfer.description, 'status':transfer.status }
 
         return Response(transfer_data, status=status.HTTP_200_OK)
 
@@ -150,13 +148,13 @@ class ConfirmTransfer(APIView):
                 try:
                     total_amount = transfer.amount+transfer.fee
 
-                    source_wallet = Wallet.objects.get(user=request.user)
-                    destination_wallet = Wallet.objects.get(wallet_id=transfer.destination)
+                    source = request.user
+                    destination = User.objects.get(username=transfer.destination)
 
-                    source_wallet.inventory = source_wallet.inventory - total_amount
-                    source_wallet.save()
-                    destination_wallet.inventory = destination_wallet.inventory + transfer.amount
-                    destination_wallet.save()
+                    source.inventory = source.inventory - total_amount
+                    source.save()
+                    destination.inventory = destination.inventory + transfer.amount
+                    destination.save()
 
                     transfer.status = 'success'
                     transfer.save()
@@ -187,7 +185,6 @@ class Withdrawal(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        mywallet = Wallet.objects.get(user=request.user)
         amount = request.data['amount']
         fee = 0.02
         fee_amount = amount*fee
@@ -195,14 +192,14 @@ class Withdrawal(APIView):
 
         withdrawal = Transaction()
         withdrawal.type = 'withdrawal'
-        withdrawal.source = mywallet.wallet_id
+        withdrawal.source = request.user.username
 
         if request.user.wallet_address == None:
             return Response("Wallet address is empty. Please complete your profile information", status=status.HTTP_400_BAD_REQUEST)
         else:
             withdrawal.destination = request.user.wallet_address
 
-        if total_amount <= mywallet.inventory:
+        if total_amount <= request.user.inventory:
             withdrawal.amount = amount
         else:
             return Response("Your inventory is not enough", status=status.HTTP_400_BAD_REQUEST)
@@ -212,9 +209,8 @@ class Withdrawal(APIView):
         withdrawal.status = 'pending'
         withdrawal.save()
 
-        withdrawal_data = { 'amount':withdrawal.amount, 'wallet_address':withdrawal.destination, 'fee':withdrawal.fee,
-                            'total_amount':total_amount, 'description':withdrawal.description, 'status':withdrawal.status,
-                            'withdrawal_id':withdrawal.id }
+        withdrawal_data = { 'withdrawal_id':withdrawal.id, 'amount':withdrawal.amount, 'wallet_address':withdrawal.destination, 'fee':withdrawal.fee,
+                            'description':withdrawal.description, 'status':withdrawal.status, 'total_amount':total_amount }
 
         return Response(withdrawal_data, status=status.HTTP_200_OK)
 
@@ -237,7 +233,6 @@ class Deposit(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        mywallet = Wallet.objects.get(user=request.user)
         amount = request.data['amount']
         fee = 0.02
         fee_amount = amount*fee
@@ -246,7 +241,7 @@ class Deposit(APIView):
         deposit = Transaction()
         deposit.type = 'deposit'
         deposit.source = 'coinpayment address'
-        deposit.destination = mywallet.wallet_id
+        deposit.destination = request.user.username
         deposit.amount = amount
         deposit.description = request.data['description']
         deposit.fee = fee_amount

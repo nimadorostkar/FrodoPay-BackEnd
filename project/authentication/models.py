@@ -40,6 +40,7 @@ class User(AbstractUser):
     referral = models.CharField(max_length=256, null=True, blank=True)
     wallet_address = models.CharField(max_length=256, null=True, blank=True)
     is_confirmed = models.BooleanField(default=False)
+    inventory = models.DecimalField(max_digits=30, decimal_places=5, default=0)
 
     #objects = UserManager()
     #USERNAME_FIELD = 'email'

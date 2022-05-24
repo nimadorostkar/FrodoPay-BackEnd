@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'authentication',
-    'wallet',
     'transactions',
     'fee',
     'import_export',
