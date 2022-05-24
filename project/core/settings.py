@@ -57,8 +57,8 @@ INSTALLED_APPS = [
     'django_coinpayments',
 
     'allauth',
-    #'allauth.account',
-    #'allauth.socialaccount',
+    'allauth.account',
+    'allauth.socialaccount',
     'dj_rest_auth',
 ]
 
