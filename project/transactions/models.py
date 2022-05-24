@@ -8,14 +8,14 @@ from django.dispatch import receiver
 
 #------------------------------------------------------------------------------
 class Transaction(models.Model):
-    source = models.CharField(max_length=254, null=True, blank=True)
-    destination = models.CharField(max_length=254, null=True, blank=True)
+    source = models.CharField(max_length=256, null=True, blank=True)
+    destination = models.CharField(max_length=256, null=True, blank=True)
     amount = models.DecimalField(max_digits=30, decimal_places=5)
     CHOICES1 = (('deposit','deposit'),('transfer','transfer'),('withdrawal','withdrawal'))
-    type = models.CharField(max_length=254, choices=CHOICES1)
+    type = models.CharField(max_length=256, choices=CHOICES1)
     CHOICES2 = (('success','success'),('fail','fail'),('pending','pending'))
-    status = models.CharField(max_length=254, choices=CHOICES2)
-    description = models.TextField(max_length=254, null=True, blank=True)
+    status = models.CharField(max_length=256, choices=CHOICES2)
+    description = models.TextField(max_length=256, null=True, blank=True)
     fee = models.DecimalField(max_digits=30, decimal_places=5, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 

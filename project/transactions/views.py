@@ -28,7 +28,7 @@ from django_coinpayments.exceptions import CoinPaymentsProviderError
 
 #----------------------------------------------------- Transaction -------------
 class Transactions(GenericAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
     serializer_class = TransactionSerializer
     queryset = Transaction.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -42,9 +42,14 @@ class Transactions(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        query = self.filter_queryset(Transaction.objects.all())
-        serializer = TransactionSerializer(query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = TransactionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+
 
 
 
@@ -95,12 +100,13 @@ class Mytransactions(GenericAPIView):
 
 
 
+
+
 #----------------------------------------------------------- Transfer ----------
 class Transfer(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        mywallet = Wallet.objects.get(user=request.user)
         amount = request.data['amount']
         fee = 0.02
         fee_amount = amount*fee
@@ -108,15 +114,15 @@ class Transfer(APIView):
 
         transfer = Transaction()
         transfer.type = 'transfer'
-        transfer.source = mywallet.wallet_id
+        transfer.source = request.user.username
 
         try:
-            destination = Wallet.objects.get(wallet_id=request.data['destination'])
-            transfer.destination = destination.wallet_id
+            destination = User.objects.get(username=request.data['destination'])
+            transfer.destination = destination.username
         except:
             return Response("Destination wallet address isn't valid", status=status.HTTP_400_BAD_REQUEST)
 
-        if total_amount <= mywallet.inventory:
+        if total_amount <= request.user.inventory:
             transfer.amount = amount
         else:
             return Response("Your inventory is not enough", status=status.HTTP_400_BAD_REQUEST)
@@ -126,9 +132,8 @@ class Transfer(APIView):
         transfer.status = 'pending'
         transfer.save()
 
-        transfer_data = { 'amount':transfer.amount, 'destination_wallet_id':transfer.destination, 'destination_username':destination.user.username,
-                          'destination_photo':destination.user.photo.url, 'fee':transfer.fee, 'total_amount':total_amount,
-                          'description':transfer.description, 'status':transfer.status, 'transfer_id':transfer.id }
+        transfer_data = { 'transfer_id':transfer.id, 'amount':transfer.amount, 'destination':transfer.destination, 'destination_photo':destination.photo.url,
+                          'fee':transfer.fee, 'total_amount':total_amount, 'description':transfer.description, 'status':transfer.status }
 
         return Response(transfer_data, status=status.HTTP_200_OK)
 
