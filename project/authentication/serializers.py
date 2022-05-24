@@ -28,8 +28,6 @@ class CountriesSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    #country = serializers.RelatedField(read_only=True)
-    #country = CountriesSerializer(read_only=True)
     class Meta:
         model = User
         fields = ('email', 'username', 'password', 'country', 'referral')
