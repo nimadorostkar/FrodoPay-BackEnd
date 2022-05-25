@@ -270,7 +270,6 @@ class Confirmation(APIView):
 
 
 
-
 #------------------------------------------------------ Countries -------------
 
 class Countries(APIView):
@@ -292,8 +291,6 @@ class Countries(APIView):
 
 
 
-
-
 #---------------------------------------------------------- Users -------------
 
 class Users(APIView):
@@ -304,8 +301,6 @@ class Users(APIView):
         users = models.User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 
 
