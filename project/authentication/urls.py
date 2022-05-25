@@ -11,4 +11,6 @@ urlpatterns = [
     path('activation/', views.Activation.as_view(), name='activation'),
     path('confirmation/', views.Confirmation.as_view(), name='confirmation'),
     path('countries/', views.Countries.as_view(), name='Countries'),
+    path('users/', views.Users.as_view(), name='users'),
+    path('usernames/', views.Usernames.as_view(), name='usernames'),
 ]

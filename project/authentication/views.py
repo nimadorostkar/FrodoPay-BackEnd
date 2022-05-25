@@ -224,7 +224,7 @@ class Activation(APIView):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [profile.email, ]
         send_mail( subject, message, email_from, recipient_list )
-        
+
         # send activation email
         print("-----------------")
         print("Email activation code is: {}".format(code))
@@ -271,7 +271,7 @@ class Confirmation(APIView):
 
 
 
-#------------------------------------------------------ Activation -------------
+#------------------------------------------------------ Countries -------------
 
 class Countries(APIView):
     serializer_class = CountriesSerializer
@@ -284,6 +284,51 @@ class Countries(APIView):
 
 
 
+
+
+
+
+
+
+
+
+
+
+#---------------------------------------------------------- Users -------------
+
+class Users(APIView):
+    serializer_class = CountriesSerializer
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        users = models.User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------- Usernames ------------
+
+class Usernames(APIView):
+    serializer_class = CountriesSerializer
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        users = models.User.objects.all().values_list('username', flat=True)
+        return Response(users, status=status.HTTP_200_OK)
 
 
 
