@@ -218,12 +218,11 @@ class Activation(APIView):
     def get(self, request, *args, **kwargs):
         profile = User.objects.get(id=self.request.user.id)
         code="12345"
-
-        subject = 'FrodoPay activation code'
-        message = f'Hi {profile.username}, thank you for registering in Frodopay. your activation code is: {code}'
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = [profile.email, ]
-        send_mail( subject, message, email_from, recipient_list )
+        #subject = 'FrodoPay activation code'
+        #message = f'Hi {profile.username}, thank you for registering in Frodopay. your activation code is: {code}'
+        #email_from = settings.EMAIL_HOST_USER
+        #recipient_list = [profile.email, ]
+        #send_mail( subject, message, email_from, recipient_list )
 
         # send activation email
         print("-----------------")
