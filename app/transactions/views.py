@@ -28,7 +28,7 @@ from django_coinpayments.exceptions import CoinPaymentsProviderError
 
 #----------------------------------------------------- Transaction -------------
 class Transactions(GenericAPIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
     serializer_class = TransactionSerializer
     queryset = Transaction.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -41,12 +41,14 @@ class Transactions(GenericAPIView):
         serializer = TransactionSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    '''
     def post(self, request, format=None):
         serializer = TransactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+    '''
 
 
 
@@ -59,8 +61,8 @@ class Transactions(GenericAPIView):
 
 
 #----------------------------------------------------- Mytransactions ----------
-class Mytransactions(GenericAPIView):
-    permission_classes = [AllowAny]
+class UsertransHistory(GenericAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = TransactionSerializer
     queryset = Transaction.objects.filter()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
