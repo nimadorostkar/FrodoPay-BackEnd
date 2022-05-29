@@ -10,3 +10,4 @@ coinaddrvalidator
 djangorestframework-simplejwt
 dj-rest-auth
 django-allauth
+psycopg2-binary

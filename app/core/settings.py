@@ -61,6 +61,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth',
+
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -119,6 +121,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 COINPAYMENTS_API_KEY = 'aaaaa'
 COINPAYMENTS_API_SECRET = 'aaa'
+
+
+
+
 
 
 

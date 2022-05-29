@@ -262,6 +262,23 @@ class Confirmation(APIView):
 
 
 
+#---------------------------------------------------------- Users -------------
+
+class User(APIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            user = models.User.objects.get(username=self.kwargs["username"])
+            serializer = UserSerializer(user)
+        except:
+            return Response('User not found', status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
 
 
 
@@ -293,7 +310,7 @@ class Countries(APIView):
 #---------------------------------------------------------- Users -------------
 
 class Users(APIView):
-    serializer_class = CountriesSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
 
     def get(self, request, *args, **kwargs):
@@ -317,7 +334,7 @@ class Users(APIView):
 #------------------------------------------------------- Usernames ------------
 
 class Usernames(APIView):
-    serializer_class = CountriesSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
 
     def get(self, request, *args, **kwargs):
