@@ -105,12 +105,8 @@ class Register(APIView):
             data = serializer.validated_data
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
-        try:
-            validate_password(serializer.data['password'])
-        except ValidationError as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'], country=data['country'], referral=data['referral'])
+        user = models.User.objects.create_user(username=data['username'], email=data['email'], password=data['password'], country=data['country'], referral=data['referral'])
         login(request, user)
         token = RefreshToken.for_user(user)
 
