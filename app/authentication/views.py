@@ -232,7 +232,6 @@ class Activation(APIView):
 
 
 #------------------------------------------------------ Confirmation -----------
-
 class Confirmation(APIView):
     serializer_class = ConfirmationSerializer
     permission_classes = [IsAuthenticated]
@@ -265,7 +264,6 @@ class Confirmation(APIView):
 
 
 #------------------------------------------------------ Countries -------------
-
 class Countries(APIView):
     serializer_class = CountriesSerializer
     permission_classes = [AllowAny]
