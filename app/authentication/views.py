@@ -92,12 +92,8 @@ def Logout(request):
 
 
 #------------------------------------------------------- Register -------------
-
 class Register(APIView):
     permission_classes = [AllowAny]
-
-    def get(self, request, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def post(self, request):
         serializer = serializers.RegisterSerializer(data=request.data)
@@ -111,10 +107,8 @@ class Register(APIView):
         token = RefreshToken.for_user(user)
 
         token_response = { "refresh": str(token), "access": str(token.access_token) }
-
         user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
                       "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory }
-
 
         response = { 'token':token_response , 'user':user_response }
         return Response(response, status=status.HTTP_200_OK)
