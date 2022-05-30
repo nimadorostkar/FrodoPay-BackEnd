@@ -34,9 +34,6 @@ from django.conf import settings
 class Login(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
     def post(self, request):
         serializer = serializers.LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -47,17 +44,14 @@ class Login(APIView):
             user = authenticate(request, username=data['username'], password=data['password'])
             login(request, user)
             token = RefreshToken.for_user(user)
-
             token_response = { "refresh": str(token), "access": str(token.access_token) }
-
             user_response = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, "first_name":user.first_name,
                           "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory }
-
             response = { 'token':token_response , 'user':user_response }
-
             return Response(response, status=status.HTTP_200_OK)
+
         except:
-            return Response('username or password is incorrect', status=status.HTTP_401_UNAUTHORIZED)
+            return Response('username or password is incorrect', status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 
@@ -128,13 +122,12 @@ class Register(APIView):
 
 
 #-------------------------------------------------------- Profile -------------
-
 class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        profile = get_object_or_404(User, id=self.request.user.id)
+        profile = models.User.objects.get(id=self.request.user.id)
         data = {
                 'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
                 'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral,
@@ -145,7 +138,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
 
     def put(self, request, *args, **kwargs):
-        profile = get_object_or_404(User, id=self.request.user.id)
+        profile = models.User.objects.get(id=self.request.user.id)
         data=request.data
         data['email'] = profile.email
         data['username'] = profile.username
@@ -170,19 +163,12 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
-
-    def delete(self, request, *args, **kwargs):
-        profile = get_object_or_404(User, id=self.request.user.id)
-        profile.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
     def post(self, request, *args, **kwargs):
         try:
             file = request.data['file']
         except KeyError:
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-        profile = get_object_or_404(User, id=self.request.user.id)
+            return Response('Upload the file',status=status.HTTP_406_NOT_ACCEPTABLE)
+        profile = models.User.objects.get(id=self.request.user.id)
         profile.photo = file
         profile.save()
         data = {"image":profile.photo.url}
