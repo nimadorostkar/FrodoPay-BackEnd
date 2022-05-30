@@ -206,13 +206,12 @@ class User(APIView):
 
 
 #------------------------------------------------------ Activation -------------
-
 class Activation(APIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        profile = User.objects.get(id=self.request.user.id)
+        profile = models.User.objects.get(id=self.request.user.id)
         code="12345"
         #subject = 'FrodoPay activation code'
         #message = f'Hi {profile.username}, thank you for registering in Frodopay. your activation code is: {code}'
@@ -245,7 +244,7 @@ class Confirmation(APIView):
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
 
-        profile = User.objects.get(id=self.request.user.id)
+        profile = models.User.objects.get(id=self.request.user.id)
         if data['code'] == '12345':
             profile.is_confirmed = True
             profile.save()
