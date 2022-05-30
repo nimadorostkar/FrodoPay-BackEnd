@@ -184,6 +184,26 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
 
 
+#---------------------------------------------------------- Users -------------
+class User(APIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            user = models.User.objects.get(username=self.kwargs["username"])
+            serializer = UserSerializer(user)
+        except:
+            return Response('User not found', status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
 
 #------------------------------------------------------ Activation -------------
 
@@ -234,23 +254,6 @@ class Confirmation(APIView):
             return Response("User not verified", status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
-
-
-
-
-#---------------------------------------------------------- Users -------------
-
-class User(APIView):
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny]
-
-    def get(self, request, *args, **kwargs):
-        try:
-            user = models.User.objects.get(username=self.kwargs["username"])
-            serializer = UserSerializer(user)
-        except:
-            return Response('User not found', status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
