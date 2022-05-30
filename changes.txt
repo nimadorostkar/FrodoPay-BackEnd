@@ -4,3 +4,4 @@ login
 pass Validation
 profile done
 user data for qr code
+status done
