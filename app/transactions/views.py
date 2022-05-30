@@ -26,6 +26,7 @@ from django_coinpayments.exceptions import CoinPaymentsProviderError
 
 
 
+
 #----------------------------------------------------- Transaction -------------
 class Transactions(GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -41,14 +42,6 @@ class Transactions(GenericAPIView):
         serializer = TransactionSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    '''
-    def post(self, request, format=None):
-        serializer = TransactionSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
-    '''
 
 
 
@@ -60,7 +53,7 @@ class Transactions(GenericAPIView):
 
 
 
-#----------------------------------------------------- Mytransactions ----------
+#-----------------------------------------------------user transactions --------
 class UsertransHistory(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TransactionSerializer
@@ -71,19 +64,17 @@ class UsertransHistory(GenericAPIView):
     ordering_fields = ['created_at', 'fee', 'amount']
 
     def get(self, request, format=None):
-        try:
-            inputs = Transaction.objects.filter(destination=request.user.username)
-            input_query = self.filter_queryset(inputs)
-            input_serializer = TransactionSerializer(input_query, many=True)
+        inputs = Transaction.objects.filter(destination=request.user.username)
+        input_query = self.filter_queryset(inputs)
+        input_serializer = TransactionSerializer(input_query, many=True)
 
-            outputs = Transaction.objects.filter(source=request.user.username)
-            output_query = self.filter_queryset(outputs)
-            output_serializer = TransactionSerializer(output_query, many=True)
+        outputs = Transaction.objects.filter(source=request.user.username)
+        output_query = self.filter_queryset(outputs)
+        output_serializer = TransactionSerializer(output_query, many=True)
 
-            data = { 'inputs': input_serializer.data, 'outputs': output_serializer.data  }
-            return Response(data, status=status.HTTP_200_OK)
-        except:
-            return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        data = { 'inputs': input_serializer.data, 'outputs': output_serializer.data  }
+        return Response(data, status=status.HTTP_200_OK)
+
 
 
 
