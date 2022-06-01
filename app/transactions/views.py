@@ -104,6 +104,9 @@ class Transfer(APIView):
         transfer.type = 'transfer'
         transfer.source = request.user.username
 
+        if request.data['destination'] == request.user.username:
+            return Response("Transfer to your account is not possible", status=status.HTTP_400_BAD_REQUEST)
+
         try:
             destination = User.objects.get(username=request.data['destination'])
             transfer.destination = destination.username
@@ -143,7 +146,7 @@ class ConfirmTransfer(APIView):
                 try:
                     total_amount = transfer.amount+transfer.fee
 
-                    source = request.user
+                    source = User.objects.get(username=transfer.source)
                     destination = User.objects.get(username=transfer.destination)
 
                     source.inventory = source.inventory - total_amount
