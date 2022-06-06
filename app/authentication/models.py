@@ -39,6 +39,7 @@ class User(AbstractUser):
     gender = models.CharField(max_length=256, default='unspecified', choices=CHOICES, null=True, blank=True)
     referral = models.CharField(max_length=256, null=True, blank=True)
     wallet_address = models.CharField(max_length=256, null=True, blank=True)
+    conf_code = models.IntegerField(null=True, blank=True)
     is_confirmed = models.BooleanField(default=False)
     inventory = models.DecimalField(max_digits=30, decimal_places=5, default=0)
 

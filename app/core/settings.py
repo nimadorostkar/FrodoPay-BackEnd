@@ -161,11 +161,11 @@ JWT_AUTH_REFRESH_COOKIE = 'refresh'
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.office365.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'nimadorostkar97@gmail.com' #sender's email-id
-EMAIL_HOST_PASSWORD = '2620376513nima!!' #password associated with above email-id
+EMAIL_HOST_USER = 'noreply@frodotech.com' #sender's email-id
+EMAIL_HOST_PASSWORD = 'Quw54284' #password associated with above email-id
 
 
 

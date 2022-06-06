@@ -20,7 +20,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.conf import settings
-
+from . import helper
 
 
 
@@ -211,21 +211,14 @@ class Activation(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
+        code = helper.random_code()
         profile = models.User.objects.get(id=self.request.user.id)
-        code="12345"
-        #subject = 'FrodoPay activation code'
-        #message = f'Hi {profile.username}, thank you for registering in Frodopay. your activation code is: {code}'
-        #email_from = settings.EMAIL_HOST_USER
-        #recipient_list = [profile.email, ]
-        #send_mail( subject, message, email_from, recipient_list )
-
-        # send activation email
-        print("-----------------")
-        print("Email activation code is: {}".format(code))
-        return Response("Activation code send to {}".format(profile.email) , status=status.HTTP_200_OK)
-
-
-
+        profile.conf_code = code
+        profile.save()
+        if helper.send_code(profile, code):
+            return Response("Activation code send to {}".format(profile.email) , status=status.HTTP_200_OK)
+        else:
+            return Response("Error sending email - Please try again!" , status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -244,7 +237,7 @@ class Confirmation(APIView):
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
 
         profile = models.User.objects.get(id=self.request.user.id)
-        if data['code'] == '12345':
+        if data['code'] == str(profile.conf_code):
             profile.is_confirmed = True
             profile.save()
             return Response("User verified", status=status.HTTP_200_OK)
