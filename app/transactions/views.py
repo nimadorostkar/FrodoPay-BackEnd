@@ -18,6 +18,24 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import Transaction
 from django_coinpayments.models import Payment
 from django_coinpayments.exceptions import CoinPaymentsProviderError
+from django.db.models import Q
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework import pagination
+import json
+
+
+
+
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+
+
 
 
 
@@ -50,13 +68,14 @@ class Transactions(GenericAPIView):
 
 
 
- 
+
 
 
 #-----------------------------------------------------user transactions --------
 class UsertransHistory(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TransactionSerializer
+    pagination_class = CustomPagination
     queryset = Transaction.objects.filter()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'type']
@@ -64,16 +83,13 @@ class UsertransHistory(GenericAPIView):
     ordering_fields = ['created_at', 'fee', 'amount']
 
     def get(self, request, format=None):
-        inputs = Transaction.objects.filter(destination=request.user.username)
-        input_query = self.filter_queryset(inputs)
-        input_serializer = TransactionSerializer(input_query, many=True)
-
-        outputs = Transaction.objects.filter(source=request.user.username)
-        output_query = self.filter_queryset(outputs)
-        output_serializer = TransactionSerializer(output_query, many=True)
-
-        data = { 'inputs': input_serializer.data, 'outputs': output_serializer.data  }
-        return Response(data, status=status.HTTP_200_OK)
+        query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), status='success') )
+        page = self.paginate_queryset(query)
+        if page is not None:
+            serializer = TransactionSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = TransactionSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
