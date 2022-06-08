@@ -22,7 +22,7 @@ from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework import pagination
 import json
-
+from datetime import datetime, timedelta
 
 
 
@@ -78,12 +78,24 @@ class UsertransHistory(GenericAPIView):
     pagination_class = CustomPagination
     queryset = Transaction.objects.filter()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['status', 'type']
+    filterset_fields = ['status', 'type', 'created_at']
     search_fields = ['source', 'destination', 'description']
     ordering_fields = ['created_at', 'fee', 'amount']
 
     def get(self, request, format=None):
-        query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ))
+
+        if request.GET.get('date'):
+            if request.GET.get('date') == 'past_7_days':
+                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=7) ).order_by('-created_at') )
+            elif request.GET.get('date') == 'this_month':
+                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=30) ).order_by('-created_at') )
+            elif request.GET.get('date') == 'today':
+                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=1) ).order_by('-created_at') )
+            else:
+                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at') )
+        else:
+            query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at') )
+
         page = self.paginate_queryset(query)
         if page is not None:
             serializer = TransactionSerializer(page, many=True)
