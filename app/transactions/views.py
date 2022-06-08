@@ -83,13 +83,42 @@ class UsertransHistory(GenericAPIView):
     ordering_fields = ['created_at', 'fee', 'amount']
 
     def get(self, request, format=None):
-        query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), status='success') )
+        query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ))
         page = self.paginate_queryset(query)
         if page is not None:
             serializer = TransactionSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            transactions = []
+            for obj in serializer.data:
+                trans_status = 'unknown'
+                if obj['type'] == 'transfer' and obj['source'] == request.user.username:
+                    trans_status = 'transfer_withdrawal'
+                elif obj['type'] == 'transfer' and obj['destination'] == request.user.username:
+                    trans_status = 'transfer_deposit'
+                elif obj['type'] == 'withdrawal':
+                    trans_status = 'withdrawal'
+                elif obj['type'] == 'deposit':
+                    trans_status = 'deposit'
+                trans = { 'trans_status':trans_status, 'id':obj['id'], 'source':obj['source'], 'destination':obj['destination'], 'amount':obj['amount'],
+                          'type':obj['type'], 'status':obj['status'], 'description':obj['description'], 'fee':obj['fee'], 'created_at':obj['created_at'] }
+                transactions.append(trans)
+            return self.get_paginated_response(transactions)
+
         serializer = TransactionSerializer(query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        transactions = []
+        for obj in serializer.data:
+            trans_status = 'unknown'
+            if obj['type'] == 'transfer' and obj['source'] == request.user.username:
+                trans_status = 'transfer_withdrawal'
+            elif obj['type'] == 'transfer' and obj['destination'] == request.user.username:
+                trans_status = 'transfer_deposit'
+            elif obj['type'] == 'withdrawal':
+                trans_status = 'withdrawal'
+            elif obj['type'] == 'deposit':
+                trans_status = 'deposit'
+            trans = { 'trans_status':trans_status, 'id':obj['id'], 'source':obj['source'], 'destination':obj['destination'], 'amount':obj['amount'],
+                      'type':obj['type'], 'status':obj['status'], 'description':obj['description'], 'fee':obj['fee'], 'created_at':obj['created_at'] }
+            transactions.append(trans)
+        return Response(transactions, status=status.HTTP_200_OK)
 
 
 
