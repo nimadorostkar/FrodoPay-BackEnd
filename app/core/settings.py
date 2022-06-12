@@ -122,11 +122,18 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 
 
+
+
+
+COINPAYMENTS_ADMIN_ENABLED = True
+# Insert your API keys here
 COINPAYMENTS_API_KEY = 'b5ab7e069860af7711a209cf1aa3343d330b155643f231189477a1731aaa87ad'
 COINPAYMENTS_API_SECRET = 'fcF29cad06dd9900980d3b4221ab7d7afdDF26c9B521337295a43cBDcdd7535B'
 
-
-
+COINPAYMENTS_IPN_SECRET = '12345678qwertyui'
+COINPAYMENTS_MERCHANT_ID = '4eb1ce03dad6446d68460928de1e7171'
+# has EOS - overrides choices for 'currency_original' and 'currency_paid' in Payment model
+COINPAYMENTS_ACCEPTED_COINS = ( ('BTC', 'Bitcoin'), ('ETC', 'Ether Classic'), ('ETH', 'Ether') )
 
 
 

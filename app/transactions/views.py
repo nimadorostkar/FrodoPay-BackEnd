@@ -23,7 +23,16 @@ from rest_framework.pagination import LimitOffsetPagination, PageNumberPaginatio
 from rest_framework import pagination
 import json
 from datetime import datetime, timedelta
-from coinpayments import CoinPaymentsAPI
+
+#from coinpayments import CoinPaymentsAPI
+
+
+
+from django_coinpayments.models import Payment
+from django_coinpayments.exceptions import CoinPaymentsProviderError
+
+from django.shortcuts import render, get_object_or_404
+from decimal import Decimal
 
 
 
@@ -368,6 +377,29 @@ class PaymentList(APIView):
 
 
 
+
+#----------------------------------------------------- PaymentList -------------
+class NewDeposit(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, format=None):
+        data = request.data
+
+
+        def create_tx(request, payment):
+            context = {}
+            try:
+                tx = payment.create_tx()
+                payment.status = Payment.PAYMENT_STATUS_PENDING
+                payment.save()
+                context['object'] = payment
+            except CoinPaymentsProviderError as e:
+                context['error'] = e
+
+        payment = Payment(currency_original=data['currency_original'], currency_paid=data['currency_paid'], amount=data['amount'], amount_paid=Decimal(0), status=Payment.PAYMENT_STATUS_PROVIDER_PENDING)
+        create_tx(self.request, payment)
+
+
+        return Response(status=status.HTTP_200_OK)
 
 
 
