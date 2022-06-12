@@ -133,7 +133,7 @@ COINPAYMENTS_API_SECRET = 'fcF29cad06dd9900980d3b4221ab7d7afdDF26c9B521337295a43
 COINPAYMENTS_IPN_SECRET = '12345678qwertyui'
 COINPAYMENTS_MERCHANT_ID = '4eb1ce03dad6446d68460928de1e7171'
 # has EOS - overrides choices for 'currency_original' and 'currency_paid' in Payment model
-COINPAYMENTS_ACCEPTED_COINS = ( ('BTC', 'Bitcoin'), ('ETC', 'Ether Classic'), ('ETH', 'Ether') )
+#COINPAYMENTS_ACCEPTED_COINS = ( ('BTC', 'Bitcoin'), ('ETC', 'Ether Classic'), ('ETH', 'Ether') )
 
 
 

@@ -25,10 +25,10 @@ import json
 from datetime import datetime, timedelta
 
 #from coinpayments import CoinPaymentsAPI
+from random import randint
 
 
-
-from django_coinpayments.models import Payment
+from django_coinpayments.models import Payment, CoinPaymentsTransaction
 from django_coinpayments.exceptions import CoinPaymentsProviderError
 
 from django.shortcuts import render, get_object_or_404
@@ -378,13 +378,29 @@ class PaymentList(APIView):
 
 
 
-#----------------------------------------------------- PaymentList -------------
+#----------------------------------------------------- NewDeposit -------------
 class NewDeposit(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request, format=None):
         data = request.data
 
+        trans = CoinPaymentsTransaction()
+        #trans.id = randint(100, 999)
+        trans.address = '0x45A6fFdE061B24E02073F506c69D55d62B97F5E6'
+        trans.amount = data['amount']
+        trans.confirms_needed = 1
+        trans.qrcode_url = 'https://github.com/'
+        trans.status_url = 'https://github.com/'
+        trans.timeout = datetime.now()
+        trans.save()
 
+        payment = Payment( currency_original='ETH', currency_paid=data['currency_paid'], provider_tx=trans,
+                           amount=trans.amount, amount_paid=Decimal(0), status=Payment.PAYMENT_STATUS_PROVIDER_PENDING  )
+
+        print('-------------')
+        print(payment)
+
+        '''
         def create_tx(request, payment):
             context = {}
             try:
@@ -397,13 +413,20 @@ class NewDeposit(APIView):
 
         payment = Payment(currency_original=data['currency_original'], currency_paid=data['currency_paid'], amount=data['amount'], amount_paid=Decimal(0), status=Payment.PAYMENT_STATUS_PROVIDER_PENDING)
         create_tx(self.request, payment)
-
+        '''
 
         return Response(status=status.HTTP_200_OK)
 
 
 
 
+
+#--------------------------------------------------- ConfirmDeposit -----------
+class ConfirmDeposit(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        data = request.data
 
 
 
