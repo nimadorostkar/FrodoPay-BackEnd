@@ -13,3 +13,4 @@ django-allauth
 psycopg2-binary
 
 coinpayments-py
+django-coinpayments

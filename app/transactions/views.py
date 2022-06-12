@@ -287,6 +287,8 @@ class Withdrawal(APIView):
 
 
 
+
+
 #----------------------------------------------------------- Deposit -----------
 class Deposit(APIView):
     permission_classes = [IsAuthenticated]
@@ -316,10 +318,6 @@ class Deposit(APIView):
 
 
 
-
-
-
-
 #----------------------------------------------------------- Deposit -----------
 class Coinpay(APIView):
     permission_classes = [AllowAny]
@@ -332,30 +330,21 @@ class Coinpay(APIView):
 
         params = { 'amount':10, 'currency1':'USD', 'currency2':'BTC' }
         amount = 22
-        c = api.create_transaction()
+        cc = api.create_transaction()
 
+        #zz = CryptoPayments().getBasicInfo()
 
         print('-------------')
-        print(c)
+        print(cc)
 
-        return Response('ooooooo', status=status.HTTP_200_OK)
+        #payment = get_object_or_404(Payment, pk=pk)
+        #create_tx(request, payment)
 
+        tx = payment.create_tx()
+        payment.status = Payment.PAYMENT_STATUS_PENDING
+        payment.save()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return Response( cc , status=status.HTTP_200_OK)
 
 
 
@@ -370,6 +359,18 @@ class PaymentList(APIView):
 
         payments = Payment.objects.all().values()
         return Response(payments, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
