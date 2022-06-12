@@ -12,4 +12,5 @@ urlpatterns = [
     path('deposit', views.Deposit.as_view(), name='deposit'),
     # coinpayment
     path('payments', views.PaymentList.as_view(), name='payment_list'),
+    path('coinpay', views.Coinpay.as_view(), name='coinpay'),
 ]

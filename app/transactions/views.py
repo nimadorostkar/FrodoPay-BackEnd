@@ -23,7 +23,7 @@ from rest_framework.pagination import LimitOffsetPagination, PageNumberPaginatio
 from rest_framework import pagination
 import json
 from datetime import datetime, timedelta
-
+from coinpayments import CoinPaymentsAPI
 
 
 
@@ -320,6 +320,30 @@ class Deposit(APIView):
 
 
 
+#----------------------------------------------------------- Deposit -----------
+class Coinpay(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        api = CoinPaymentsAPI(public_key='b5ab7e069860af7711a209cf1aa3343d330b155643f231189477a1731aaa87ad', private_key='fcF29cad06dd9900980d3b4221ab7d7afdDF26c9B521337295a43cBDcdd7535B')
+
+        a = api.rates()
+        b = api.check_signature('ipn_message', 'ipn signautre')
+
+        params = { 'amount':10, 'currency1':'USD', 'currency2':'BTC' }
+        amount = 22
+        c = api.create_transaction()
+
+
+        print('-------------')
+        print(c)
+
+        return Response('ooooooo', status=status.HTTP_200_OK)
+
+
+
+
+
 
 
 
@@ -342,8 +366,8 @@ class Deposit(APIView):
 #----------------------------------------------------- PaymentList -------------
 class PaymentList(APIView):
     permission_classes = [AllowAny]
-
     def get(self, request, format=None):
+
         payments = Payment.objects.all().values()
         return Response(payments, status=status.HTTP_200_OK)
 
