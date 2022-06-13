@@ -309,10 +309,13 @@ def create_tx(request, payment):
         tx = payment.create_tx()
         payment.status = Payment.PAYMENT_STATUS_PENDING
         payment.save()
-        context['object'] = payment
+        context = { 'id':payment.id, 'currency_original':payment.currency_original, 'currency_paid':payment.currency_paid, 'amount':payment.amount,
+                 'amount_paid':payment.amount_paid, 'buyer_email':payment.buyer_email, 'provider_tx_id':payment.provider_tx_id, 'status':payment.status,
+                 'created':payment.created, 'modified':payment.modified, 'qrcode_url':payment.provider_tx.qrcode_url, 'status_url':payment.provider_tx.status_url,
+                 'address':payment.provider_tx.address, 'timeout':payment.provider_tx.timeout }
     except CoinPaymentsProviderError as e:
-        context['error'] = e
-    return Response(str(context), status=status.HTTP_200_OK)
+        context = e
+    return Response(context, status=status.HTTP_200_OK)
 
 
 
@@ -331,7 +334,8 @@ class PaymentDetail(APIView):
             object = Payment.objects.get(id=self.kwargs["pk"])
             data = { 'id':object.id, 'currency_original':object.currency_original, 'currency_paid':object.currency_paid, 'amount':object.amount,
                      'amount_paid':object.amount_paid, 'buyer_email':object.buyer_email, 'provider_tx_id':object.provider_tx_id, 'status':object.status,
-                     'created':object.created, 'modified':object.modified }
+                     'created':object.created, 'modified':object.modified, 'qrcode_url':object.provider_tx.qrcode_url, 'status_url':object.provider_tx.status_url,
+                     'address':object.provider_tx.address, 'timeout':object.provider_tx.timeout }
             return Response(data, status=status.HTTP_200_OK)
         except:
             return Response("Payment not found", status=status.HTTP_400_BAD_REQUEST)
