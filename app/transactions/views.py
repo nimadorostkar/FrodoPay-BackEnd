@@ -294,6 +294,11 @@ class Withdrawal(APIView):
 
 
 
+#------------------------------------------------------------------------------#
+#------------------------------------------------------- Coinpayment ----------#
+#------------------------------------------------------------------------------#
+
+
 
 
 
@@ -308,6 +313,10 @@ def create_tx(request, payment):
     except CoinPaymentsProviderError as e:
         context['error'] = e
     return Response(str(context), status=status.HTTP_200_OK)
+
+
+
+
 
 
 
@@ -334,6 +343,7 @@ class PaymentDetail(APIView):
 
 
 
+
 #---------------------------------------------------- PaymentSetupView ---------
 class PaymentSetupView(APIView):
     permission_classes = [IsAuthenticated]
@@ -345,6 +355,9 @@ class PaymentSetupView(APIView):
                           amount=req['amount'], amount_paid=Decimal(0), buyer_email=req['buyer_email'],
                           status=Payment.PAYMENT_STATUS_PROVIDER_PENDING)
         return create_tx(self.request, payment)
+
+
+
 
 
 
@@ -363,23 +376,6 @@ class PaymentList(APIView):
 
 
 
-'''
-#-------------------------------------------------- create_new_payment ---------
-class create_new_payment(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        payment = Payment()
-        if payment.status in [Payment.PAYMENT_STATUS_PROVIDER_PENDING, Payment.PAYMENT_STATUS_TIMEOUT]:
-            pass
-        elif payment.status in [Payment.PAYMENT_STATUS_PENDING]:
-            payment.provider_tx.delete()
-        else:
-            error = "Invalid status - {}".format(payment.get_status_display())
-            return Response(error, status=status.HTTP_200_OK)
-        return create_tx(request, payment)
-
-'''
 
 
 def create_new_payment(self, request, *args, **kwargs):
@@ -392,162 +388,6 @@ def create_new_payment(self, request, *args, **kwargs):
         error = "Invalid status - {}".format(payment.get_status_display())
         return render(request, 'django_coinpayments/payment_result.html', {'error': error})
     return create_tx(request, payment)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-
-#----------------------------------------------------------- Deposit -----------
-class Deposit(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, format=None):
-        amount = request.data['amount']
-        fee = 0.02
-        fee_amount = amount*fee
-        total_amount = amount+fee_amount
-
-        deposit = Transaction()
-        deposit.type = 'deposit'
-        deposit.source = 'coinpayment address'
-        deposit.destination = request.user.username
-        deposit.amount = amount
-        deposit.description = request.data['description']
-        deposit.fee = fee_amount
-        deposit.status = 'pending'
-        deposit.save()
-
-        deposit_data = { 'amount':deposit.amount, 'fee':deposit.fee, 'total_amount':total_amount,
-                         'description':deposit.description, 'status':deposit.status, 'withdrawal_id':deposit.id }
-
-        return Response(deposit_data, status=status.HTTP_200_OK)
-
-
-
-
-
-#----------------------------------------------------------- Deposit -----------
-class Coinpay(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, format=None):
-        api = CoinPaymentsAPI(public_key='b5ab7e069860af7711a209cf1aa3343d330b155643f231189477a1731aaa87ad', private_key='fcF29cad06dd9900980d3b4221ab7d7afdDF26c9B521337295a43cBDcdd7535B')
-
-        a = api.rates()
-        b = api.check_signature('ipn_message', 'ipn signautre')
-
-        params = { 'amount':10, 'currency1':'USD', 'currency2':'BTC' }
-        amount = 22
-        cc = api.create_transaction()
-
-        #zz = CryptoPayments().getBasicInfo()
-
-        print('-------------')
-        print(cc)
-
-        #payment = get_object_or_404(Payment, pk=pk)
-        #create_tx(request, payment)
-
-        tx = payment.create_tx()
-        payment.status = Payment.PAYMENT_STATUS_PENDING
-        payment.save()
-
-        return Response( cc , status=status.HTTP_200_OK)
-
-
-
-
-
-
-
-#----------------------------------------------------- PaymentList -------------
-class PaymentList(APIView):
-    permission_classes = [AllowAny]
-    def get(self, request, format=None):
-
-        payments = Payment.objects.all().values()
-        return Response(payments, status=status.HTTP_200_OK)
-
-
-
-
-
-
-
-
-
-
-#----------------------------------------------------- NewDeposit -------------
-class NewDeposit(APIView):
-    permission_classes = [IsAuthenticated]
-    def post(self, request, format=None):
-        data = request.data
-
-        trans = CoinPaymentsTransaction()
-        trans.id = randint(100, 999)
-        trans.address = '0x45A6fFdE061B24E02073F506c69D55d62B97F5E6'
-        trans.amount = data['amount']
-        trans.confirms_needed = 1
-        trans.qrcode_url = 'https://github.com/'
-        trans.status_url = 'https://github.com/'
-        trans.timeout = datetime.now()
-        trans.save()
-
-
-        payment = Payment( currency_original='ETH', currency_paid=data['currency_paid'], provider_tx=trans,
-                           amount=trans.amount, amount_paid=Decimal(100), status=Payment.PAYMENT_STATUS_PROVIDER_PENDING  )
-
-        print('-------------')
-        print(payment)
-
-
-
-        def create_tx(request, payment):
-            context = {}
-            try:
-                tx = payment.create_tx()
-                payment.status = Payment.PAYMENT_STATUS_PENDING
-                payment.save()
-                context['object'] = payment
-            except CoinPaymentsProviderError as e:
-                context['error'] = e
-
-        payment = Payment(currency_original=data['currency_original'], currency_paid=data['currency_paid'], amount=data['amount'], amount_paid=Decimal(0), status=Payment.PAYMENT_STATUS_PROVIDER_PENDING)
-        create_tx(self.request, payment)
-
-
-        return Response(status=status.HTTP_200_OK)
-
-
-
-
-
-#--------------------------------------------------- ConfirmDeposit -----------
-class ConfirmDeposit(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, format=None):
-        data = request.data
-
-
-'''
-
-
-
 
 
 
