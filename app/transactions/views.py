@@ -313,9 +313,9 @@ def create_tx(request, payment):
                  'amount_paid':payment.amount_paid, 'buyer_email':payment.buyer_email, 'provider_tx_id':payment.provider_tx_id, 'status':payment.status,
                  'created':payment.created, 'modified':payment.modified, 'qrcode_url':payment.provider_tx.qrcode_url, 'status_url':payment.provider_tx.status_url,
                  'address':payment.provider_tx.address, 'timeout':payment.provider_tx.timeout }
+        return Response(context, status=status.HTTP_200_OK)
     except CoinPaymentsProviderError as e:
-        context = e
-    return Response(context, status=status.HTTP_200_OK)
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
 
 
