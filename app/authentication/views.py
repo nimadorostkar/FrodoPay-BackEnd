@@ -82,9 +82,6 @@ def Logout(request):
 
 
 
-
-
-
 #------------------------------------------------------- Register -------------
 class Register(APIView):
     permission_classes = [AllowAny]
@@ -100,14 +97,20 @@ class Register(APIView):
         login(request, user)
         token = RefreshToken.for_user(user)
 
+        code = helper.random_code()
+        user.conf_code = code
+        user.save()
+        if helper.send_code(user, code):
+            email_msg = "Activation code send to {}".format(user.email)
+        else:
+            email_msg = "Error sending email - Please send activation email again!"
+
         token_response = { "refresh": str(token), "access": str(token.access_token) }
         user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
-                      "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory }
+                      "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "activation_email":email_msg }
 
         response = { 'token':token_response , 'user':user_response }
         return Response(response, status=status.HTTP_200_OK)
-
-
 
 
 
