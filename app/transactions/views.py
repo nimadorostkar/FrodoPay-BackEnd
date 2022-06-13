@@ -298,6 +298,14 @@ class Withdrawal(APIView):
 
 
 
+
+
+
+
+
+
+'''
+
 #----------------------------------------------------------- Deposit -----------
 class Deposit(APIView):
     permission_classes = [IsAuthenticated]
@@ -431,6 +439,7 @@ class ConfirmDeposit(APIView):
         data = request.data
 
 
+'''
 
 
 
@@ -440,4 +449,13 @@ class ConfirmDeposit(APIView):
 
 
 
-#
+
+
+
+
+
+
+
+
+
+#End

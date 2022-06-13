@@ -10,13 +10,8 @@ urlpatterns = [
     path('confirm_transfer/<int:id>', views.ConfirmTransfer.as_view(), name='confirm_transfer'),
     path('withdrawal_req', views.Withdrawal.as_view(), name='withdrawal_req'),
 
-
-    path('new_deposit', views.NewDeposit.as_view(), name='new_deposit'),
-
-
-
-    path('deposit', views.Deposit.as_view(), name='deposit'),
-    # coinpayment
-    path('payments', views.PaymentList.as_view(), name='payment_list'),
-    path('coinpay', views.Coinpay.as_view(), name='coinpay'),
+    #path('new_deposit', views.NewDeposit.as_view(), name='new_deposit'),
+    #path('deposit', views.Deposit.as_view(), name='deposit'),
+    #path('payments', views.PaymentList.as_view(), name='payment_list'),
+    #path('coinpay', views.Coinpay.as_view(), name='coinpay'),
 ]
