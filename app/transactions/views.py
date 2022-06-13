@@ -385,7 +385,7 @@ class NewDeposit(APIView):
         data = request.data
 
         trans = CoinPaymentsTransaction()
-        #trans.id = randint(100, 999)
+        trans.id = randint(100, 999)
         trans.address = '0x45A6fFdE061B24E02073F506c69D55d62B97F5E6'
         trans.amount = data['amount']
         trans.confirms_needed = 1
@@ -394,11 +394,13 @@ class NewDeposit(APIView):
         trans.timeout = datetime.now()
         trans.save()
 
+
         payment = Payment( currency_original='ETH', currency_paid=data['currency_paid'], provider_tx=trans,
-                           amount=trans.amount, amount_paid=Decimal(0), status=Payment.PAYMENT_STATUS_PROVIDER_PENDING  )
+                           amount=trans.amount, amount_paid=Decimal(100), status=Payment.PAYMENT_STATUS_PROVIDER_PENDING  )
 
         print('-------------')
         print(payment)
+
 
         '''
         def create_tx(request, payment):
