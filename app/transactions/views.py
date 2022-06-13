@@ -23,16 +23,15 @@ from rest_framework.pagination import LimitOffsetPagination, PageNumberPaginatio
 from rest_framework import pagination
 import json
 from datetime import datetime, timedelta
-
-#from coinpayments import CoinPaymentsAPI
 from random import randint
-
-
 from django_coinpayments.models import Payment, CoinPaymentsTransaction
 from django_coinpayments.exceptions import CoinPaymentsProviderError
-
 from django.shortcuts import render, get_object_or_404
 from decimal import Decimal
+from django import forms
+
+
+
 
 
 
@@ -299,6 +298,112 @@ class Withdrawal(APIView):
 
 
 
+def create_tx(request, payment):
+    context = {}
+    try:
+        tx = payment.create_tx()
+        payment.status = Payment.PAYMENT_STATUS_PENDING
+        payment.save()
+        context['object'] = payment
+    except CoinPaymentsProviderError as e:
+        context['error'] = e
+    return Response(str(context), status=status.HTTP_200_OK)
+
+
+
+
+
+#------------------------------------------------------ PaymentDetail ----------
+class PaymentDetail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            object = Payment.objects.get(id=self.kwargs["pk"])
+            data = { 'id':object.id, 'currency_original':object.currency_original, 'currency_paid':object.currency_paid, 'amount':object.amount,
+                     'amount_paid':object.amount_paid, 'buyer_email':object.buyer_email, 'provider_tx_id':object.provider_tx_id, 'status':object.status,
+                     'created':object.created, 'modified':object.modified }
+            return Response(data, status=status.HTTP_200_OK)
+        except:
+            return Response("Payment not found", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+#---------------------------------------------------- PaymentSetupView ---------
+class PaymentSetupView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        req = request.data
+
+        payment = Payment(currency_original=req['currency_original'], currency_paid=req['currency_paid'],
+                          amount=req['amount'], amount_paid=Decimal(0), buyer_email=req['buyer_email'],
+                          status=Payment.PAYMENT_STATUS_PROVIDER_PENDING)
+        return create_tx(self.request, payment)
+
+
+
+
+
+#------------------------------------------------------- PaymentList -----------
+class PaymentList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        obj = Payment.objects.all()
+        return Response(obj.values(), status=status.HTTP_200_OK)
+
+
+
+
+
+
+'''
+#-------------------------------------------------- create_new_payment ---------
+class create_new_payment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        payment = Payment()
+        if payment.status in [Payment.PAYMENT_STATUS_PROVIDER_PENDING, Payment.PAYMENT_STATUS_TIMEOUT]:
+            pass
+        elif payment.status in [Payment.PAYMENT_STATUS_PENDING]:
+            payment.provider_tx.delete()
+        else:
+            error = "Invalid status - {}".format(payment.get_status_display())
+            return Response(error, status=status.HTTP_200_OK)
+        return create_tx(request, payment)
+
+'''
+
+
+def create_new_payment(self, request, *args, **kwargs):
+    payment = get_object_or_404(Payment, pk=self.kwargs["pk"])
+    if payment.status in [Payment.PAYMENT_STATUS_PROVIDER_PENDING, Payment.PAYMENT_STATUS_TIMEOUT]:
+        pass
+    elif payment.status in [Payment.PAYMENT_STATUS_PENDING]:
+        payment.provider_tx.delete()
+    else:
+        error = "Invalid status - {}".format(payment.get_status_display())
+        return render(request, 'django_coinpayments/payment_result.html', {'error': error})
+    return create_tx(request, payment)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -410,7 +515,7 @@ class NewDeposit(APIView):
         print(payment)
 
 
-        '''
+
         def create_tx(request, payment):
             context = {}
             try:
@@ -423,7 +528,7 @@ class NewDeposit(APIView):
 
         payment = Payment(currency_original=data['currency_original'], currency_paid=data['currency_paid'], amount=data['amount'], amount_paid=Decimal(0), status=Payment.PAYMENT_STATUS_PROVIDER_PENDING)
         create_tx(self.request, payment)
-        '''
+
 
         return Response(status=status.HTTP_200_OK)
 
