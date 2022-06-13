@@ -355,9 +355,8 @@ class PaymentSetupView(APIView):
     def post(self, request, format=None):
         req = request.data
 
-        payment = Payment(currency_original=req['currency_original'], currency_paid=req['currency_paid'],
-                          amount=req['amount'], amount_paid=Decimal(0), buyer_email=req['buyer_email'],
-                          status=Payment.PAYMENT_STATUS_PROVIDER_PENDING)
+        payment = Payment( currency_original="USDT", currency_paid=req['currency_paid'], amount=req['amount'],
+                           amount_paid=Decimal(0), buyer_email=request.user.email, status=Payment.PAYMENT_STATUS_PROVIDER_PENDING )
         return create_tx(self.request, payment)
 
 
@@ -389,8 +388,7 @@ def create_new_payment(self, request, *args, **kwargs):
     elif payment.status in [Payment.PAYMENT_STATUS_PENDING]:
         payment.provider_tx.delete()
     else:
-        error = "Invalid status - {}".format(payment.get_status_display())
-        return render(request, 'django_coinpayments/payment_result.html', {'error': error})
+        return Response("Invalid status - {}".format(payment.get_status_display()), status=status.HTTP_400_BAD_REQUEST)
     return create_tx(request, payment)
 
 
