@@ -86,7 +86,7 @@ class UsertransHistory(GenericAPIView):
     pagination_class = CustomPagination
     queryset = Transaction.objects.filter()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['status', 'type', 'created_at']
+    filterset_fields = ['status', 'type', 'created_at', 'source', 'destination']
     search_fields = ['source', 'destination', 'description']
     ordering_fields = ['created_at', 'fee', 'amount']
 
@@ -140,6 +140,45 @@ class UsertransHistory(GenericAPIView):
             transactions.append(trans)
         return Response(transactions, status=status.HTTP_200_OK)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------ UsertransChart ---------
+class UsertransChart(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Transaction.objects.filter()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'type', 'created_at']
+    search_fields = ['source', 'destination', 'description']
+    ordering_fields = ['created_at', 'fee', 'amount']
+
+    def get(self, request, format=None):
+        if request.GET.get('date'):
+            if request.GET.get('date') == 'past_7_days':
+                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=7) ).order_by('-created_at') )
+            elif request.GET.get('date') == 'this_month':
+                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=30) ).order_by('-created_at') )
+            elif request.GET.get('date') == 'today':
+                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=1) ).order_by('-created_at') )
+            else:
+                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at') )
+        else:
+            query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at') )
 
 
 
