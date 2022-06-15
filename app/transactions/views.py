@@ -159,26 +159,38 @@ class UsertransHistory(GenericAPIView):
 
 
 #------------------------------------------------------ UsertransChart ---------
-class UsertransChart(GenericAPIView):
+class UsertransChart(APIView):
     permission_classes = [IsAuthenticated]
-    queryset = Transaction.objects.filter()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['status', 'type', 'created_at']
-    search_fields = ['source', 'destination', 'description']
-    ordering_fields = ['created_at', 'fee', 'amount']
 
     def get(self, request, format=None):
         if request.GET.get('date'):
-            if request.GET.get('date') == 'past_7_days':
-                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=7) ).order_by('-created_at') )
-            elif request.GET.get('date') == 'this_month':
-                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=30) ).order_by('-created_at') )
-            elif request.GET.get('date') == 'today':
-                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=1) ).order_by('-created_at') )
+            if request.GET.get('date') == 'week':
+                query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=7) ).order_by('-created_at')
+            elif request.GET.get('date') == 'month':
+                query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=30) ).order_by('-created_at')
+            elif request.GET.get('date') == 'day':
+                income_past1days = sum(Transaction.objects.filter(destination=request.user.username, created_at__gte=datetime.now()-timedelta(days=1)).values_list('amount', flat=True))
+                income_past2days = sum(Transaction.objects.filter(destination=request.user.username, created_at__day=datetime.datetime.utcnow().date()-timedelta(days=1)     ).values_list('amount', flat=True))
+                income_past3days = sum(Transaction.objects.filter(destination=request.user.username, created_at__gte=datetime.now()-timedelta(days=3)).values_list('amount', flat=True))
+                income_past4days = sum(Transaction.objects.filter(destination=request.user.username, created_at__gte=datetime.now()-timedelta(days=4)).values_list('amount', flat=True))
+                income_past5days = sum(Transaction.objects.filter(destination=request.user.username, created_at__gte=datetime.now()-timedelta(days=5)).values_list('amount', flat=True))
+
+                ex_query = Transaction.objects.filter(source=request.user.username, created_at__gte=datetime.now()-timedelta(days=1)).values('amount', 'created_at').order_by('-created_at')[:5]
+
+
+                transactions = { 'income_past1days':income_past1days, 'income_past2days':income_past2days, 'income_past3days':income_past3days, 'income_past4days':income_past4days, 'expense':ex_query }
+                return Response(transactions, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
             else:
-                query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at') )
+                query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at')
         else:
-            query = self.filter_queryset(Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at') )
+            query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at')
 
 
 
