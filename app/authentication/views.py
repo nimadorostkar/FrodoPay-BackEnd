@@ -283,7 +283,7 @@ class Countries(APIView):
 
 class Users(APIView):
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         users = models.User.objects.all()
@@ -307,7 +307,7 @@ class Users(APIView):
 
 class Usernames(APIView):
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         users = models.User.objects.all().values_list('username', flat=True)
