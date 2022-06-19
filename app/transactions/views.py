@@ -156,7 +156,7 @@ class UsertransHistory(GenericAPIView):
 
 
 
-
+ 
 
 #------------------------------------------------------ UsertransChart ---------
 class UsertransChart(APIView):
