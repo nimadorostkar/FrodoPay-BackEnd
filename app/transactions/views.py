@@ -156,13 +156,14 @@ class UsertransHistory(GenericAPIView):
 
 
 
- 
+
 
 #------------------------------------------------------ UsertransChart ---------
 class UsertransChart(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
+
         if request.GET.get('date'):
             if request.GET.get('date') == 'week':
                 query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=7) ).order_by('-created_at')
@@ -182,15 +183,11 @@ class UsertransChart(APIView):
                 return Response(transactions, status=status.HTTP_200_OK)
 
 
-
-
-
-
-
             else:
                 query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at')
         else:
             query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at')
+            return Response(query, status=status.HTTP_200_OK)
 
 
 
