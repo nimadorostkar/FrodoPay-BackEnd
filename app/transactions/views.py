@@ -165,36 +165,31 @@ class UsertransChart(APIView):
     def get(self, request, format=None):
 
         if request.GET.get('date'):
-            if request.GET.get('date') == 'week':
-                query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=7) ).order_by('-created_at')
-            elif request.GET.get('date') == 'month':
-                query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username), created_at__gte=datetime.now()-timedelta(days=30) ).order_by('-created_at')
+            now = datetime.now().date()
+            thisyear = int(now.strftime("%Y"))
+            thismonth = int(now.strftime("%m"))
+            today = int(now.strftime("%d"))
+
+            if request.GET.get('date') == 'month':
+                data=[]
+                for month in [thismonth, thismonth-1, thismonth-2,  thismonth-3,  thismonth-4]:
+                    date = "{},{}".format(thisyear,month)
+                    income = sum(Transaction.objects.filter(destination=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
+                    expense = sum(Transaction.objects.filter(source=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
+                    month_data = {'date':date, 'income':income, 'expense':expense}
+                    data.append(month_data)
+                return Response(data, status=status.HTTP_200_OK)
             elif request.GET.get('date') == 'day':
-                income_past1days = sum(Transaction.objects.filter(destination=request.user.username, created_at__gte=datetime.now()-timedelta(days=1)).values_list('amount', flat=True))
-                income_past2days = sum(Transaction.objects.filter(destination=request.user.username, created_at__day=datetime.datetime.utcnow().date()-timedelta(days=1)     ).values_list('amount', flat=True))
-                income_past3days = sum(Transaction.objects.filter(destination=request.user.username, created_at__gte=datetime.now()-timedelta(days=3)).values_list('amount', flat=True))
-                income_past4days = sum(Transaction.objects.filter(destination=request.user.username, created_at__gte=datetime.now()-timedelta(days=4)).values_list('amount', flat=True))
-                income_past5days = sum(Transaction.objects.filter(destination=request.user.username, created_at__gte=datetime.now()-timedelta(days=5)).values_list('amount', flat=True))
-
-                ex_query = Transaction.objects.filter(source=request.user.username, created_at__gte=datetime.now()-timedelta(days=1)).values('amount', 'created_at').order_by('-created_at')[:5]
-
-
-                transactions = { 'income_past1days':income_past1days, 'income_past2days':income_past2days, 'income_past3days':income_past3days, 'income_past4days':income_past4days, 'expense':ex_query }
-                return Response(transactions, status=status.HTTP_200_OK)
-
-
-            else:
-                query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at')
+                data=[]
+                for day in [today, today-1, today-2,  today-3,  today-4]:
+                    date = "{},{},{}".format(thisyear,thismonth,day)
+                    income = sum(Transaction.objects.filter(destination=request.user.username, status='success', created_at__year=thisyear, created_at__month=thismonth, created_at__day=day ).values_list('amount', flat=True))
+                    expense = sum(Transaction.objects.filter(source=request.user.username, status='success', created_at__year=thisyear, created_at__month=thismonth, created_at__day=day ).values_list('amount', flat=True))
+                    day_data = {'date':date, 'income':income, 'expense':expense}
+                    data.append(day_data)
+                return Response(data, status=status.HTTP_200_OK)
         else:
-            query = Transaction.objects.filter(Q(destination=request.user.username) | Q(source=request.user.username) ).order_by('-created_at')
-            return Response(query, status=status.HTTP_200_OK)
-
-
-
-
-
-
-
+            return Response("Enter date in params", status=status.HTTP_200_OK)
 
 
 
