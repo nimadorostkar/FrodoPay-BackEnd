@@ -29,8 +29,6 @@ from django_coinpayments.exceptions import CoinPaymentsProviderError
 from django.shortcuts import render, get_object_or_404
 from decimal import Decimal
 from django import forms
-from operator import attrgetter
-
 
 
 
@@ -170,24 +168,29 @@ class UsertransChart(APIView):
             thismonth = int(now.strftime("%m"))
             today = int(now.strftime("%d"))
 
+            chart_data=[]
+
+            total_income = sum(Transaction.objects.filter(destination=request.user.username, status='success').values_list('amount', flat=True))
+            total_expense = sum(Transaction.objects.filter(source=request.user.username, status='success').values_list('amount', flat=True))
+
             if request.GET.get('date') == 'month':
-                data=[]
                 for month in [thismonth, thismonth-1, thismonth-2,  thismonth-3,  thismonth-4]:
                     date = "{},{}".format(thisyear,month)
                     income = sum(Transaction.objects.filter(destination=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
                     expense = sum(Transaction.objects.filter(source=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
                     month_data = {'date':date, 'income':income, 'expense':expense}
-                    data.append(month_data)
-                return Response(data, status=status.HTTP_200_OK)
+                    chart_data.append(month_data)
+
             elif request.GET.get('date') == 'day':
-                data=[]
                 for day in [today, today-1, today-2,  today-3,  today-4]:
                     date = "{},{},{}".format(thisyear,thismonth,day)
                     income = sum(Transaction.objects.filter(destination=request.user.username, status='success', created_at__year=thisyear, created_at__month=thismonth, created_at__day=day ).values_list('amount', flat=True))
                     expense = sum(Transaction.objects.filter(source=request.user.username, status='success', created_at__year=thisyear, created_at__month=thismonth, created_at__day=day ).values_list('amount', flat=True))
                     day_data = {'date':date, 'income':income, 'expense':expense}
-                    data.append(day_data)
-                return Response(data, status=status.HTTP_200_OK)
+                    chart_data.append(day_data)
+
+            data = { 'total_income':total_income, 'total_expense':total_expense, 'chart_data':chart_data}
+            return Response(data, status=status.HTTP_200_OK)
         else:
             return Response("Enter date in params", status=status.HTTP_200_OK)
 
