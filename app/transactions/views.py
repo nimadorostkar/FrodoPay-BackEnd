@@ -29,7 +29,7 @@ from django_coinpayments.exceptions import CoinPaymentsProviderError
 from django.shortcuts import render, get_object_or_404
 from decimal import Decimal
 from django import forms
-
+from fee.models import FeeRates
 
 
 
@@ -207,7 +207,7 @@ class Transfer(APIView):
 
     def post(self, request, format=None):
         amount = request.data['amount']
-        fee = 0.02
+        fee = FeeRates.objects.get(id=1).transfer
         fee_amount = amount*fee
         total_amount = amount+fee_amount
 
@@ -299,7 +299,7 @@ class Withdrawal(APIView):
 
     def post(self, request, format=None):
         amount = request.data['amount']
-        fee = 0.02
+        fee = FeeRates.objects.get(id=1).withdrawal
         fee_amount = amount*fee
         total_amount = amount+fee_amount
 
