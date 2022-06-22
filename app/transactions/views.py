@@ -29,7 +29,7 @@ from django_coinpayments.exceptions import CoinPaymentsProviderError
 from django.shortcuts import render, get_object_or_404
 from decimal import Decimal
 from django import forms
-
+from operator import attrgetter
 
 
 
@@ -415,6 +415,16 @@ class PaymentList(APIView):
 
     def get(self, request, *args, **kwargs):
         obj = Payment.objects.all()
+        '''
+        data=[]
+        for payment in obj:
+            paymentdata = {'created':payment.created, 'modified':payment.modified, 'id':payment.id, 'currency_original':payment.currency_original,
+                    'currency_paid':payment.currency_paid, 'amount':payment.amount, 'amount_paid':payment.amount_paid, 'buyer_email':payment.buyer_email,
+                    'provider_tx_id':payment.provider_tx_id, 'status':payment.status }
+            data.append(paymentdata)
+        sorteddata= sorted(data, key=attrgetter('created'))
+        '''
+
         return Response(obj.values(), status=status.HTTP_200_OK)
 
 
