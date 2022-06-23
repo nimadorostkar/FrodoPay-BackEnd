@@ -175,7 +175,7 @@ class UsertransChart(APIView):
 
             if request.GET.get('date') == 'month':
                 for month in [thismonth, thismonth-1, thismonth-2,  thismonth-3,  thismonth-4]:
-                    date = "{}-{}-10".format(thisyear,month)
+                    date = "{}-{}".format(thisyear,month)
                     income = sum(Transaction.objects.filter(destination=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
                     expense = sum(Transaction.objects.filter(source=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
                     month_data = {'date':date, 'income':income, 'expense':expense}
