@@ -51,9 +51,9 @@ class InputHistory(models.Model):
 
 #------------------------------------------------------------------------------
 class FeeRates(models.Model):
-    withdrawal = models.DecimalField(max_digits=30, decimal_places=5)
-    deposit = models.DecimalField(max_digits=30, decimal_places=5)
-    transfer = models.DecimalField(max_digits=30, decimal_places=5)
+    withdrawal = models.DecimalField(max_digits=30, decimal_places=5, default=0)
+    deposit = models.DecimalField(max_digits=30, decimal_places=5, default=0)
+    transfer = models.DecimalField(max_digits=30, decimal_places=5, default=0)
 
     def save(self, *args, **kwargs):
         if self.__class__.objects.count():
