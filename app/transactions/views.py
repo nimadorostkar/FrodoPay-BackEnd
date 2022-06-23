@@ -29,7 +29,7 @@ from django_coinpayments.exceptions import CoinPaymentsProviderError
 from django.shortcuts import render, get_object_or_404
 from decimal import Decimal
 from django import forms
-from fee.models import FeeRates
+from fee.models import FeeRates, InputHistory, Inventory
 
 
 
@@ -175,7 +175,7 @@ class UsertransChart(APIView):
 
             if request.GET.get('date') == 'month':
                 for month in [thismonth, thismonth-1, thismonth-2,  thismonth-3,  thismonth-4]:
-                    date = "{},{}".format(thisyear,month)
+                    date = "{}-{}-10".format(thisyear,month)
                     income = sum(Transaction.objects.filter(destination=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
                     expense = sum(Transaction.objects.filter(source=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
                     month_data = {'date':date, 'income':income, 'expense':expense}
@@ -183,7 +183,7 @@ class UsertransChart(APIView):
 
             elif request.GET.get('date') == 'day':
                 for day in [today, today-1, today-2,  today-3,  today-4]:
-                    date = "{},{},{}".format(thisyear,thismonth,day)
+                    date = "{}-{}-{}".format(thisyear,thismonth,day)
                     income = sum(Transaction.objects.filter(destination=request.user.username, status='success', created_at__year=thisyear, created_at__month=thismonth, created_at__day=day ).values_list('amount', flat=True))
                     expense = sum(Transaction.objects.filter(source=request.user.username, status='success', created_at__year=thisyear, created_at__month=thismonth, created_at__day=day ).values_list('amount', flat=True))
                     day_data = {'date':date, 'income':income, 'expense':expense}
@@ -260,17 +260,21 @@ class ConfirmTransfer(APIView):
             if transfer.status == 'pending':
                 try:
                     total_amount = transfer.amount+transfer.fee
-
                     source = User.objects.get(username=transfer.source)
                     destination = User.objects.get(username=transfer.destination)
-
                     source.inventory = source.inventory - total_amount
                     source.save()
                     destination.inventory = destination.inventory + transfer.amount
                     destination.save()
-
                     transfer.status = 'success'
                     transfer.save()
+                    feeinput = InputHistory()
+                    feeinput.transaction = transfer
+                    feeinput.amount = transfer.fee
+                    feeinput.save()
+                    fee_inventory = Inventory.objects.get(id=1)
+                    fee_inventory.amount += transfer.fee
+                    fee_inventory.save()
                     return Response('The transfer was successful', status=status.HTTP_200_OK)
                 except:
                     transfer.status = 'fail'
