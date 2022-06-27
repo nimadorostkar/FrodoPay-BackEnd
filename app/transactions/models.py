@@ -36,5 +36,27 @@ class Transaction(models.Model):
 
 
 
+#------------------------------------------------------------------------------
+class WithdrawalCeiling(models.Model):
+    monthly = models.DecimalField(max_digits=30, decimal_places=5, default=0)
+    daily = models.DecimalField(max_digits=30, decimal_places=5, default=0)
+
+
+    def save(self, *args, **kwargs):
+        if self.__class__.objects.count():
+            self.pk = self.__class__.objects.first().pk
+        super().save(*args, **kwargs)
+
+
+    def __str__(self):
+        return 'monthly: '+str(self.monthly) +'|'+ 'daily: '+str(self.daily)  
+
+
+
+
+
+
+
+
 
 #End
