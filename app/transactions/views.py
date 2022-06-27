@@ -155,7 +155,6 @@ class UsertransHistory(GenericAPIView):
 
 
 
-
 #------------------------------------------------------ UsertransChart ---------
 class UsertransChart(APIView):
     permission_classes = [IsAuthenticated]
@@ -172,6 +171,8 @@ class UsertransChart(APIView):
 
             total_income = sum(Transaction.objects.filter(destination=request.user.username, status='success').values_list('amount', flat=True))
             total_expense = sum(Transaction.objects.filter(source=request.user.username, status='success').values_list('amount', flat=True))
+            total_spending = sum(Transaction.objects.filter( Q(source=request.user.username) | Q(destination=request.user.username) , status='success').values_list('amount', flat=True))
+
 
             if request.GET.get('date') == 'month':
                 for month in [thismonth, thismonth-1, thismonth-2,  thismonth-3,  thismonth-4]:
@@ -189,7 +190,15 @@ class UsertransChart(APIView):
                     day_data = {'date':date, 'income':income, 'expense':expense}
                     chart_data.append(day_data)
 
-            data = { 'total_income':total_income, 'total_expense':total_expense, 'chart_data':chart_data}
+            if request.GET.get('date') == '90day':
+                for month in [thismonth, thismonth-1, thismonth-2,  thismonth-3,  thismonth-4]:
+                    date = "{}-{}".format(thisyear,month)
+                    income = sum(Transaction.objects.filter(destination=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
+                    expense = sum(Transaction.objects.filter(source=request.user.username, status='success', created_at__year=thisyear, created_at__month=month ).values_list('amount', flat=True))
+                    month_data = {'date':date, 'income':income, 'expense':expense}
+                    chart_data.append(month_data)
+
+            data = { 'total_spending':total_spending, 'total_income':total_income, 'total_expense':total_expense, 'chart_data':chart_data}
             return Response(data, status=status.HTTP_200_OK)
         else:
             return Response("Enter date in params", status=status.HTTP_200_OK)
