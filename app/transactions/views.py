@@ -15,7 +15,7 @@ from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from .models import Transaction
+from .models import Transaction, WithdrawalCeiling
 from django_coinpayments.models import Payment
 from django_coinpayments.exceptions import CoinPaymentsProviderError
 from django.db.models import Q
@@ -319,6 +319,20 @@ class Withdrawal(APIView):
         withdrawal = Transaction()
         withdrawal.type = 'withdrawal'
         withdrawal.source = request.user.username
+
+        now = datetime.now().date()
+        thisyear = int(now.strftime("%Y"))
+        thismonth = int(now.strftime("%m"))
+        today = int(now.strftime("%d"))
+        ceiling = WithdrawalCeiling.objects.get(id=1)
+
+        daily = sum(Transaction.objects.filter(source=request.user.username,type='withdrawal',status='success', created_at__year=thisyear, created_at__month=thismonth, created_at__day=today ).values_list('amount', flat=True))
+        monthly = sum(Transaction.objects.filter(source=request.user.username,type='withdrawal',status='success', created_at__year=thisyear, created_at__month=thismonth ).values_list('amount', flat=True))
+
+        if daily+total_amount >= ceiling.daily:
+            return Response("Your daily withdrawal limit is full", status=status.HTTP_400_BAD_REQUEST)
+        elif monthly+total_amount >= ceiling.monthly:
+            return Response("Your monthly withdrawal limit is full", status=status.HTTP_400_BAD_REQUEST)
 
         if request.user.wallet_address == None:
             return Response("Wallet address is empty. Please complete your profile information", status=status.HTTP_400_BAD_REQUEST)
