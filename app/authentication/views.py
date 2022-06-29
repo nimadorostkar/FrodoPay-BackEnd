@@ -22,9 +22,8 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.conf import settings
 from . import helper
 
-
-
-
+from firebase_admin.messaging import Message, Notification
+from fcm_django.models import FCMDevice
 
 
 
@@ -312,6 +311,30 @@ class Usernames(APIView):
     def get(self, request, *args, **kwargs):
         users = models.User.objects.all().values_list('username', flat=True)
         return Response(users, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------ notification -----------
+class Notif(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+
+        device = FCMDevice.objects.all().first()
+        device.send_message(Message(notification=Notification(title="title", body="text", image="url"), topic="Optional topic parameter: Whatever you want"))
+        return Response('send', status=status.HTTP_200_OK)
 
 
 
