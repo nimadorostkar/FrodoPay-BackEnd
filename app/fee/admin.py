@@ -48,7 +48,7 @@ admin.site.register(FeeRates, FeeRatesAdmin)
 
 #------------------------------------------------------------------------------
 class UserFeeRatesAdmin(admin.ModelAdmin):
-    list_display = ('fee',)
+    list_display = ('name', 'fee')
 admin.site.register(UserFeeRates, UserFeeRatesAdmin)
 
 

@@ -71,11 +71,12 @@ class FeeRates(models.Model):
 
 #------------------------------------------------------------------------------
 class UserFeeRates(models.Model):
+    name = models.CharField(max_length=256, null=True, blank=True)
     users = models.ManyToManyField(User)
     fee = models.DecimalField(max_digits=30, decimal_places=5)
 
     def __str__(self):
-        return str(self.users) +"|"+ str(self.fee)
+        return str(self.name) +" | "+ str(self.fee)
 
 
 
