@@ -48,7 +48,6 @@ class InputHistory(models.Model):
 
 
 
-
 #------------------------------------------------------------------------------
 class FeeRates(models.Model):
     withdrawal = models.DecimalField(max_digits=30, decimal_places=5, default=0)
