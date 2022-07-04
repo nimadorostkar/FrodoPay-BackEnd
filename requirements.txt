@@ -11,6 +11,7 @@ djangorestframework-simplejwt
 dj-rest-auth
 django-allauth
 psycopg2-binary
-
 coinpayments-py
 django-coinpayments
+fcm-django
+django-push-notifications

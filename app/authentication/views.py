@@ -28,7 +28,6 @@ from fcm_django.models import FCMDevice
 
 
 
-
 #------------------------------------------------------- Login ----------------
 class Login(APIView):
     permission_classes = [AllowAny]
@@ -390,9 +389,16 @@ class Notif(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-
-        device = FCMDevice.objects.all().first()
-        device.send_message(Message(notification=Notification(title="title", body="text", image="url"), topic="Optional topic parameter: Whatever you want"))
+        device = FCMDevice()
+        device.device_id = 5
+        device.registration_id = "Device registration id"
+        device.type = "Android"
+        device.name = "Can be anything"
+        device.user = models.User.objects.get(id=1)
+        device.save()
+        #device.send_message(title="Title", body="Message", data={"test": "test"})
+        #device = FCMDevice.objects.all().first()
+        device.send_message(Message(notification=Notification(title="title", body="text", image="url")))
         return Response('send', status=status.HTTP_200_OK)
 
 

@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'django_extensions',
     'fcm_django',
+    'push_notifications'
 ]
 
 
@@ -121,6 +122,39 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 
 
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+]
+
+
+
+PUSH_NOTIFICATIONS_SETTINGS = {
+        "FCM_API_KEY": "BJrMSnh20LeSc3JMhI083KGpSUgaA-QnnAjRyI_LMV7hy1eGJqgYUxKZjDSDt8wWGmdLMA32fz_jmLVTnW9fQe4",
+        "GCM_API_KEY": "[your api key]",
+        "APNS_CERTIFICATE": "/path/to/your/certificate.pem",
+        "APNS_TOPIC": "com.example.push_test",
+        "WNS_PACKAGE_SECURITY_ID": "[your package security id, e.g: 'ms-app://e-3-4-6234...']",
+        "WNS_SECRET_KEY": "[your app secret key, e.g.: 'KDiejnLKDUWodsjmewuSZkk']",
+        "WP_PRIVATE_KEY": "/path/to/your/private.pem",
+        "WP_CLAIMS": {'sub': "mailto: development@example.com"}
+}
+
+
+
+
+
+'''
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "core/frodopay-fd31b-5bd6a961c40b.json")
+
 
 FIREBASE_APP = initialize_app()
 # To learn more, visit the docs here:
@@ -131,7 +165,9 @@ FCM_DJANGO_SETTINGS = {
      # default: None (the default Firebase app)
     "DEFAULT_FIREBASE_APP": None,
      # default: _('FCM Django')
-    "APP_VERBOSE_NAME": "[string for AppConfig's verbose_name]",
+    "APP_VERBOSE_NAME": "FCM",
+     # Your firebase API KEY
+    #"FCM_SERVER_KEY": "AAAAsM1f8bU:APA91bELsdJ8WaSy...",
      # true if you want to have only one active device per registered user at a time
      # default: False
     "ONE_DEVICE_PER_USER": True,
@@ -145,7 +181,15 @@ FCM_DJANGO_SETTINGS = {
     "UPDATE_ON_DUPLICATE_REG_ID": True,
 }
 
+'''
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "core/frodopay-fd31b-5bd6a961c40b.json")
+FIREBASE_APP = initialize_app()
+FCM_DJANGO_SETTINGS = {
+ #"FCM_SERVER_KEY": "[your api key]",
+ "ONE_DEVICE_PER_USER": True,
+ "DELETE_INACTIVE_DEVICES": True,
+}
 
 
 
