@@ -334,14 +334,22 @@ class ForgotPass(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        username = request.data['username']
-        profile = models.User.objects.get(username=username)
-        print('---------')
-        print(profile.password)
-        if helper.send_code(profile, code):
-            return Response("Activation code send to {}".format(profile.email) , status=status.HTTP_200_OK)
-        else:
-            return Response("Error sending email - Please try again!" , status=status.HTTP_400_BAD_REQUEST)
+        try:
+            code = helper.random_code()
+            username = request.data['username']
+            profile = models.User.objects.get(username=username)
+            profile.conf_code = code
+            profile.save()
+            if helper.rest_pass_send_code(profile, code):
+                return Response("Code send to {}".format(profile.email) , status=status.HTTP_200_OK)
+            else:
+                return Response("Error sending email - Please try again!" , status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response("username not found, please try again" , status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
 
 

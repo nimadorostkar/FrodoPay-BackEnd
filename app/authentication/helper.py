@@ -44,6 +44,26 @@ def send_code(profile, code):
 
 
 
+def rest_pass_send_code(profile, code):
+    subject = 'FrodoPay reset password code'
+    message = f'Hi {profile.username}, Thank you for using our service. reset password code is: {code}'
+    from_email = settings.EMAIL_HOST_USER
+    recipient_list = [profile.email, ]
+    if subject and message and from_email:
+        try:
+            send_mail(subject, message, from_email, recipient_list)
+        except BadHeaderError:
+            return 0
+            #return HttpResponse('Invalid header found.')
+        return 1
+        #return HttpResponseRedirect('/contact/thanks/')
+    else:
+        return 0
+        #return HttpResponse('Make sure all fields are entered and valid.')
+
+
+
+
 
 '''
 def send_code(profile, code):
