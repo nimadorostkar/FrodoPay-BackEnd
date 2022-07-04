@@ -353,6 +353,29 @@ class ForgotPass(APIView):
 
 
 
+#------------------------------------------------------- ForgotPass ------------
+class ForgotPassConf(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        profile = models.User.objects.get(username=request.data['username'])
+        code = request.data['code']
+        newpass = request.data['newpass']
+
+        if code == str(profile.conf_code):
+            profile.set_password(newpass)
+            profile.save()
+            return Response("New password applied successfully" , status=status.HTTP_200_OK)
+        else:
+            return Response("The sent code does not match", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
 
 
 
