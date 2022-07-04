@@ -56,15 +56,14 @@ INSTALLED_APPS = [
     'fee',
     'import_export',
     'django_coinpayments',
-
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth',
-
     'django_extensions',
     'fcm_django',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
