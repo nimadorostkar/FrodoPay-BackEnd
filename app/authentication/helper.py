@@ -16,7 +16,7 @@ import json
 
 
 def random_code():
-    return  randint(100000, 999999)
+    return  randint(10000, 99999)
 
 
 

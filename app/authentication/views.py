@@ -242,7 +242,13 @@ class Confirmation(APIView):
         if data['code'] == str(profile.conf_code):
             profile.is_confirmed = True
             profile.save()
-            return Response("User verified", status=status.HTTP_200_OK)
+            data = {
+                    'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
+                    'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral,
+                    'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
+                    'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
+                    'last_login':profile.last_login, 'inventory':profile.inventory }
+            return Response(data, status=status.HTTP_200_OK)
         else:
             return Response("User not verified", status=status.HTTP_406_NOT_ACCEPTABLE)
 
@@ -314,6 +320,28 @@ class Usernames(APIView):
 
 
 
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------- ForgotPass ------------
+class ForgotPass(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        username = request.data['username']
+        profile = models.User.objects.get(username=username)
+        print('---------')
+        print(profile.password)
+        if helper.send_code(profile, code):
+            return Response("Activation code send to {}".format(profile.email) , status=status.HTTP_200_OK)
+        else:
+            return Response("Error sending email - Please try again!" , status=status.HTTP_400_BAD_REQUEST)
 
 
 

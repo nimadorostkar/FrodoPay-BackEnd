@@ -14,5 +14,6 @@ urlpatterns = [
     path('countries/', views.Countries.as_view(), name='Countries'),
     path('users/', views.Users.as_view(), name='users'),
     path('usernames/', views.Usernames.as_view(), name='usernames'),
+    path('forgot_pass/', views.ForgotPass.as_view(), name='forgot_pass'),
     path('notif/', views.Notif.as_view(), name='notif'),
 ]

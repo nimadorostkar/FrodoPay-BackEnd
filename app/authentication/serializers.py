@@ -52,7 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ConfirmationSerializer(serializers.Serializer):
-    code = serializers.CharField(max_length=6, allow_null=False)
+    code = serializers.CharField(max_length=5, allow_null=False)
 
 
 
