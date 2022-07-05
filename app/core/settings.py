@@ -184,6 +184,7 @@ FCM_DJANGO_SETTINGS = {
 
 '''
 
+
 cred = credentials.Certificate(os.path.join(BASE_DIR, "core/frodopay-f24e4-firebase-adminsdk-c3id1-f43637258b.json"))
 firebase_admin.initialize_app(cred)
 

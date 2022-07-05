@@ -406,7 +406,6 @@ class Notif(APIView):
         except Exception as e:
             print('===============')
             print(e)
-
         return Response('oooo', status=status.HTTP_200_OK)
 
 
