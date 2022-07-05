@@ -386,9 +386,10 @@ class ForgotPassConf(APIView):
 
 #------------------------------------------------------ notification -----------
 class Notif(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
+        '''
         device = FCMDevice()
         device.device_id = 5
         device.registration_id = "Device registration id"
@@ -396,10 +397,17 @@ class Notif(APIView):
         device.name = "Can be anything"
         device.user = models.User.objects.get(id=1)
         device.save()
+        '''
         #device.send_message(title="Title", body="Message", data={"test": "test"})
-        #device = FCMDevice.objects.all().first()
-        device.send_message(Message(notification=Notification(title="title", body="text", image="url")))
-        return Response('send', status=status.HTTP_200_OK)
+
+        try:
+            device = FCMDevice.objects.all()
+            device.send_message(Message(notification=Notification(title="title", body="texxxxxxt", image="url"),token='feU1hDqcR-qARKOh9Jz-iL:APA91bHRiZMoQhDERp1SyeCx6msN8x8p-OgDLG7L02_GSJTzDI60uYR4mlk0DItnyuoqGM5NJ17dYCY9CeCXZZOVg9gFat9Ss2deG-8BXSXTlglwOcQNAJDKbblJ_me-s9y-Ofl785WL'))
+        except Exception as e:
+            print('===============')
+            print(e)
+
+        return Response('oooo', status=status.HTTP_200_OK)
 
 
 

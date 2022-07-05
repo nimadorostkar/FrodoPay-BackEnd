@@ -1,7 +1,9 @@
 from pathlib import Path
 import os
 from datetime import timedelta
-from firebase_admin import initialize_app
+import firebase_admin
+from firebase_admin import credentials
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -155,7 +157,6 @@ PUSH_NOTIFICATIONS_SETTINGS = {
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "core/frodopay-fd31b-5bd6a961c40b.json")
 
-
 FIREBASE_APP = initialize_app()
 # To learn more, visit the docs here:
 # https://cloud.google.com/docs/authentication/getting-started>
@@ -183,13 +184,18 @@ FCM_DJANGO_SETTINGS = {
 
 '''
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "core/frodopay-fd31b-5bd6a961c40b.json")
-FIREBASE_APP = initialize_app()
+cred = credentials.Certificate(os.path.join(BASE_DIR, "core/frodopay-f24e4-firebase-adminsdk-c3id1-f43637258b.json"))
+firebase_admin.initialize_app(cred)
+
 FCM_DJANGO_SETTINGS = {
- #"FCM_SERVER_KEY": "[your api key]",
- "ONE_DEVICE_PER_USER": True,
- "DELETE_INACTIVE_DEVICES": True,
+  "FCM_SERVER_KEY": "f43637258b57affc7acc873d218d2f5ef3f78cc1",
+  "ONE_DEVICE_PER_USER": False,
+  "DELETE_INACTIVE_DEVICES": False,
 }
+
+
+
+
 
 
 
