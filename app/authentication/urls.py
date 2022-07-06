@@ -25,7 +25,6 @@ urlpatterns = [
     path('forgot_pass/', views.ForgotPass.as_view(), name='forgot_pass'),
     path('forgot_pass_conf/', views.ForgotPassConf.as_view(), name='forgot_pass_conf'),
     path('notif/', views.Notif.as_view(), name='notif'),
-    path('notif2/', views.Notif2.as_view(), name='notif2'),
     #
     path('devices', FCMDeviceAuthorizedViewSet.as_view({'post': 'create'}), name='create_fcm_device'),
 ]

@@ -22,7 +22,7 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.conf import settings
 from . import helper
 
-from firebase_admin.messaging import Message, Notification
+from firebase_admin.messaging import Message, Notification, AndroidNotification
 from fcm_django.models import FCMDevice
 
 
@@ -104,7 +104,7 @@ class Register(APIView):
             email_msg = "Error sending email - Please send activation email again!"
 
         token_response = { "refresh": str(token), "access": str(token.access_token) }
-        user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name,
+        user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name, "is_confirmed":user.is_confirmed,
                       "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "activation_email":email_msg }
 
         response = { 'token':token_response , 'user':user_response }
@@ -241,13 +241,23 @@ class Confirmation(APIView):
         if data['code'] == str(profile.conf_code):
             profile.is_confirmed = True
             profile.save()
+
+            token = RefreshToken.for_user(profile)
+            token_response = { "refresh": str(token), "access": str(token.access_token) }
+            user_response = { "id":profile.id, "username":profile.username, "email":profile.email, 'is_confirmed':profile.is_confirmed, "first_name":profile.first_name,
+                          "last_name":profile.last_name, "image":profile.photo.url, "inventory":profile.inventory }
+            response = { 'token':token_response , 'user':user_response }
+
+            '''
             data = {
                     'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
                     'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral,
                     'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
                     'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
                     'last_login':profile.last_login, 'inventory':profile.inventory }
-            return Response(data, status=status.HTTP_200_OK)
+            '''
+
+            return Response(response, status=status.HTTP_200_OK)
         else:
             return Response("User not verified", status=status.HTTP_406_NOT_ACCEPTABLE)
 
@@ -388,26 +398,52 @@ class ForgotPassConf(APIView):
 class Notif(APIView):
     permission_classes = [AllowAny]
 
+    def post(self, request, *args, **kwargs):
+
+        title = request.data['title']
+        body = request.data['body']
+        image = "url"
+        user = request.data['user']
+
+        try:
+            device = FCMDevice.objects.filter(user=user)
+            device.send_message(Message(
+                 notification=Notification(title="title", body="texxxxxxt", image="url" ),
+                 data={ "username": "nimaaaaaaaa" }
+            ))
+
+        except Exception as e:
+            print(e)
+
+
+
+
+
+
+
+
+
+        if code == str(profile.conf_code):
+            profile.set_password(newpass)
+            profile.save()
+            return Response("New password applied successfully" , status=status.HTTP_200_OK)
+        else:
+            return Response("The sent code does not match", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
     def get(self, request, *args, **kwargs):
-        '''
-        device = FCMDevice()
-        device.device_id = 5
-        device.registration_id = "Device registration id"
-        device.type = "Android"
-        device.name = "Can be anything"
-        device.user = models.User.objects.get(id=1)
-        device.save()
-        '''
-        #device.send_message(title="Title", body="Message", data={"test": "test"})
 
         try:
             device = FCMDevice.objects.filter(name='nima')
-            #print('=======')
-            #for tt in device:
-                #print(tt.registration_id)
-            device.send_message(Message(notification=Notification(title="title", body="texxxxxxt", image="url")))
+
+            device.send_message(Message(
+                 notification=Notification(title="title", body="texxxxxxt", image="url" ),
+                 data={ "username": "nimaaaaaaaa" }
+            ))
+
         except Exception as e:
-            print('===============')
             print(e)
         return Response('oooo', status=status.HTTP_200_OK)
 
@@ -415,22 +451,6 @@ class Notif(APIView):
 
 
 
-
-
-#------------------------------------------------------ notification -----------
-class Notif2(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, *args, **kwargs):
-
-        try:
-            device = FCMDevice.objects.filter(name='nima')
-            device.send_message(Message(notification=Notification(title="title", body="text", image="url"),
-                topic="Optional topic parameter: Whatever you want",))
-        except Exception as e:
-            print('===============')
-            print(e)
-        return Response('oooo', status=status.HTTP_200_OK)
 
 
 
