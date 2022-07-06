@@ -189,9 +189,10 @@ cred = credentials.Certificate(os.path.join(BASE_DIR, "core/frodopay-f24e4-fireb
 firebase_admin.initialize_app(cred)
 
 FCM_DJANGO_SETTINGS = {
+  "APP_VERBOSE_NAME": "FCM",
   "FCM_SERVER_KEY": "f43637258b57affc7acc873d218d2f5ef3f78cc1",
   "ONE_DEVICE_PER_USER": False,
-  "DELETE_INACTIVE_DEVICES": False,
+  "DELETE_INACTIVE_DEVICES": True,
 }
 
 
