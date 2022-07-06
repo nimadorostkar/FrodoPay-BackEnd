@@ -139,14 +139,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 PUSH_NOTIFICATIONS_SETTINGS = {
-        "FCM_API_KEY": "BJrMSnh20LeSc3JMhI083KGpSUgaA-QnnAjRyI_LMV7hy1eGJqgYUxKZjDSDt8wWGmdLMA32fz_jmLVTnW9fQe4",
-        "GCM_API_KEY": "[your api key]",
-        "APNS_CERTIFICATE": "/path/to/your/certificate.pem",
-        "APNS_TOPIC": "com.example.push_test",
-        "WNS_PACKAGE_SECURITY_ID": "[your package security id, e.g: 'ms-app://e-3-4-6234...']",
-        "WNS_SECRET_KEY": "[your app secret key, e.g.: 'KDiejnLKDUWodsjmewuSZkk']",
-        "WP_PRIVATE_KEY": "/path/to/your/private.pem",
-        "WP_CLAIMS": {'sub': "mailto: development@example.com"}
+        "FCM_API_KEY": "f43637258b57affc7acc873d218d2f5ef3f78cc1",
+        "GCM_API_KEY": "f43637258b57affc7acc873d218d2f5ef3f78cc1"
 }
 
 
@@ -192,7 +186,7 @@ FCM_DJANGO_SETTINGS = {
   "APP_VERBOSE_NAME": "FCM",
   "FCM_SERVER_KEY": "f43637258b57affc7acc873d218d2f5ef3f78cc1",
   "ONE_DEVICE_PER_USER": False,
-  "DELETE_INACTIVE_DEVICES": True,
+  "DELETE_INACTIVE_DEVICES": False,
 }
 
 

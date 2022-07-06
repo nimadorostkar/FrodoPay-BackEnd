@@ -401,14 +401,36 @@ class Notif(APIView):
         #device.send_message(title="Title", body="Message", data={"test": "test"})
 
         try:
-            device = FCMDevice.objects.all()
-            device.send_message(Message(notification=Notification(title="title", body="texxxxxxt", image="url"),token='feU1hDqcR-qARKOh9Jz-iL:APA91bHRiZMoQhDERp1SyeCx6msN8x8p-OgDLG7L02_GSJTzDI60uYR4mlk0DItnyuoqGM5NJ17dYCY9CeCXZZOVg9gFat9Ss2deG-8BXSXTlglwOcQNAJDKbblJ_me-s9y-Ofl785WL'))
+            device = FCMDevice.objects.filter(name='nima')
+            #print('=======')
+            #for tt in device:
+                #print(tt.registration_id)
+            device.send_message(Message(notification=Notification(title="title", body="texxxxxxt", image="url")))
         except Exception as e:
             print('===============')
             print(e)
         return Response('oooo', status=status.HTTP_200_OK)
 
 
+
+
+
+
+
+#------------------------------------------------------ notification -----------
+class Notif2(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+
+        try:
+            device = FCMDevice.objects.filter(name='nima')
+            device.send_message(Message(notification=Notification(title="title", body="text", image="url"),
+                topic="Optional topic parameter: Whatever you want",))
+        except Exception as e:
+            print('===============')
+            print(e)
+        return Response('oooo', status=status.HTTP_200_OK)
 
 
 
