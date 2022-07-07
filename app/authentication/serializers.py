@@ -6,8 +6,10 @@ from .models import User, Countries
 
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=254, allow_null=False)
-    password = serializers.CharField(max_length=254, allow_null=False)
+    username = serializers.CharField(max_length=256, allow_null=False)
+    password = serializers.CharField(max_length=256, allow_null=False)
+    device_token = serializers.CharField(max_length=256, allow_null=False)
+    device_type = serializers.CharField(max_length=256, allow_null=False)
 
 
 
@@ -28,9 +30,11 @@ class CountriesSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    device_token = serializers.CharField(max_length=256, allow_null=False)
+    device_type = serializers.CharField(max_length=256, allow_null=False)
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'country', 'referral')
+        fields = ('email', 'username', 'password', 'country', 'referral', 'device_token', 'device_type')
 
 
 

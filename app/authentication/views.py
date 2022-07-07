@@ -42,6 +42,19 @@ class Login(APIView):
             user = authenticate(request, username=data['username'], password=data['password'])
             login(request, user)
             token = RefreshToken.for_user(user)
+
+            if request.user.is_authenticated:
+                if FCMDevice.objects.filter(user=request.user):
+                    FCMDevice.objects.filter(user=request.user).delete()
+                device = FCMDevice()
+                device.user = request.user
+                device.name = request.user.username
+                device.active = True
+                device.registration_id = data['device_token']
+                device.device_id = request.user.id
+                device.type = data['device_type']
+                device.save()
+
             token_response = { "refresh": str(token), "access": str(token.access_token) }
             user_response = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, "first_name":user.first_name,
                           "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory }
@@ -98,10 +111,25 @@ class Register(APIView):
         code = helper.random_code()
         user.conf_code = code
         user.save()
+        '''
         if helper.send_code(user, code):
             email_msg = "Activation code send to {}".format(user.email)
         else:
             email_msg = "Error sending email - Please send activation email again!"
+        '''
+        email_msg = "email service not active"
+
+        if request.user.is_authenticated:
+            if FCMDevice.objects.filter(user=request.user):
+                FCMDevice.objects.filter(user=request.user).delete()
+            device = FCMDevice()
+            device.user = request.user
+            device.name = request.user.username
+            device.active = True
+            device.registration_id = data['device_token']
+            device.device_id = request.user.id
+            device.type = data['device_type']
+            device.save()
 
         token_response = { "refresh": str(token), "access": str(token.access_token) }
         user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name, "is_confirmed":user.is_confirmed,
