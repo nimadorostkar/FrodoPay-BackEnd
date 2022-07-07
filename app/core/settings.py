@@ -63,8 +63,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'dj_rest_auth',
     'django_extensions',
-    'fcm_django',
-    'push_notifications'
+    'fcm_django'
 ]
 
 
@@ -147,36 +146,7 @@ PUSH_NOTIFICATIONS_SETTINGS = {
 
 
 
-'''
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "core/frodopay-fd31b-5bd6a961c40b.json")
-
-FIREBASE_APP = initialize_app()
-# To learn more, visit the docs here:
-# https://cloud.google.com/docs/authentication/getting-started>
-
-FCM_DJANGO_SETTINGS = {
-     # an instance of firebase_admin.App to be used as default for all fcm-django requests
-     # default: None (the default Firebase app)
-    "DEFAULT_FIREBASE_APP": None,
-     # default: _('FCM Django')
-    "APP_VERBOSE_NAME": "FCM",
-     # Your firebase API KEY
-    #"FCM_SERVER_KEY": "AAAAsM1f8bU:APA91bELsdJ8WaSy...",
-     # true if you want to have only one active device per registered user at a time
-     # default: False
-    "ONE_DEVICE_PER_USER": True,
-     # devices to which notifications cannot be sent,
-     # are deleted upon receiving error response from FCM
-     # default: False
-    "DELETE_INACTIVE_DEVICES": True,
-    # Transform create of an existing Device (based on registration id) into
-                # an update. See the section
-    # "Update of device with duplicate registration ID" for more details.
-    "UPDATE_ON_DUPLICATE_REG_ID": True,
-}
-
-'''
 
 
 cred = credentials.Certificate(os.path.join(BASE_DIR, "core/frodopay-f24e4-firebase-adminsdk-c3id1-f43637258b.json"))

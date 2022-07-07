@@ -432,36 +432,17 @@ class Notif(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-
         title = request.data['title']
         body = request.data['body']
         image = "url"
         user = request.data['user']
-
         try:
             device = FCMDevice.objects.filter(user=user)
-            device.send_message(Message(
-                 notification=Notification(title="title", body="texxxxxxt", image="url" ),
-                 data={ "username": "nimaaaaaaaa" }
-            ))
-
+            device.send_message(Message( notification=Notification(title=title, body=body, image=image ), data={ "username": "mohamad7" } ))
+            return Response("notification sent successfully" , status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-
-
-
-
-
-
-
-        if code == str(profile.conf_code):
-            profile.set_password(newpass)
-            profile.save()
-            return Response("New password applied successfully" , status=status.HTTP_200_OK)
-        else:
-            return Response("The sent code does not match", status=status.HTTP_400_BAD_REQUEST)
-
-
+            return Response("Error in sending notification", status=status.HTTP_400_BAD_REQUEST)
 
 
 
