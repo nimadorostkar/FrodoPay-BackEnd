@@ -456,5 +456,4 @@ class Notif(APIView):
 
 
 
-
 #End
