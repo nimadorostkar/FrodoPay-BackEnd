@@ -28,6 +28,11 @@ from fcm_django.models import FCMDevice
 
 
 
+
+
+
+
+
 #------------------------------------------------------- Login ----------------
 class Login(APIView):
     permission_classes = [AllowAny]
@@ -449,8 +454,6 @@ class Notif(APIView):
 
 
 
-
-
         if code == str(profile.conf_code):
             profile.set_password(newpass)
             profile.save()
@@ -458,22 +461,6 @@ class Notif(APIView):
         else:
             return Response("The sent code does not match", status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-    def get(self, request, *args, **kwargs):
-
-        try:
-            device = FCMDevice.objects.filter(name='nima')
-
-            device.send_message(Message(
-                 notification=Notification(title="title", body="texxxxxxt", image="url" ),
-                 data={ "username": "nimaaaaaaaa" }
-            ))
-
-        except Exception as e:
-            print(e)
-        return Response('oooo', status=status.HTTP_200_OK)
 
 
 
