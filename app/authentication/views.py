@@ -21,11 +21,9 @@ from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.conf import settings
 from . import helper
-
 from firebase_admin.messaging import Message, Notification, AndroidNotification
 from fcm_django.models import FCMDevice
-
-
+from datetime import datetime, timedelta
 
 
 
@@ -456,9 +454,10 @@ class DataNotif(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
+            now = datetime.now().date()
             user = models.User.objects.get(id=request.data['user'])
             device = FCMDevice.objects.filter(user=request.data['user'])
-            device.send_message(Message( data={ "username":user.username, "title":request.data['title'], "body":request.data['body'], "type":request.data['type'] } ))
+            device.send_message(Message( data={ "username":user.username, "title":request.data['title'], "body":request.data['body'], "type":request.data['type'], "time":now } ))
             return Response("data notification sent successfully" , status=status.HTTP_200_OK)
 
         except Exception as e:

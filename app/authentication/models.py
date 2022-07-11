@@ -67,4 +67,26 @@ class User(AbstractUser):
 
 
 
+
+
+
+
+
+#------------------------------------------------------------------------------
+class NotifLists(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=256, null=True, blank=True)
+    body = models.CharField(max_length=256, null=True, blank=True)
+    type = models.CharField(max_length=256, null=True, blank=True)
+    time = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.title)
+
+
+
+
+
+
+
 #End
