@@ -1,7 +1,7 @@
-from .models import User, Countries
+from .models import User, Countries, NotifLists
 from . import models
 from django.http import JsonResponse
-from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, ConfirmationSerializer, CountriesSerializer
+from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, ConfirmationSerializer, CountriesSerializer, NotifListsSerializer
 from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.decorators import api_view, permission_classes
@@ -454,10 +454,17 @@ class DataNotif(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            now = datetime.now().date()
+            now = datetime.now()
             user = models.User.objects.get(id=request.data['user'])
             device = FCMDevice.objects.filter(user=request.data['user'])
-            device.send_message(Message( data={ "username":user.username, "title":request.data['title'], "body":request.data['body'], "type":request.data['type'], "time":now } ))
+            device.send_message(Message( data={ "username":user.username, "title":request.data['title'], "body":request.data['body'], "type":request.data['type'], "time":str(now) } ))
+            notif = NotifLists()
+            notif.title = request.data['title']
+            notif.body = request.data['body']
+            notif.type = request.data['type']
+            notif.time = now
+            notif.user = user
+            notif.save()
             return Response("data notification sent successfully" , status=status.HTTP_200_OK)
 
         except Exception as e:
@@ -471,23 +478,22 @@ class DataNotif(APIView):
 
 
 
-#--------------------------------------------------------- NotifList -----------
-class NotifList(APIView):
+
+
+#----------------------------------------------------- Transaction -------------
+class NotifList(GenericAPIView):
     permission_classes = [AllowAny]
+    serializer_class = NotifListsSerializer
+    queryset = NotifLists.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['time', 'type', 'user']
+    search_fields = ['title', 'body']
+    ordering_fields = ['time']
 
-    def post(self, request, *args, **kwargs):
-        try:
-            user = models.User.objects.get(id=request.data['user'])
-            device = FCMDevice.objects.filter(user=request.data['user'])
-            device.send_message(Message( data={ "username":user.username, "title":request.data['title'], "body":request.data['body'], "type":request.data['type'] } ))
-            return Response("data notification sent successfully" , status=status.HTTP_200_OK)
-
-        except Exception as e:
-            print(e)
-            return Response("Error in sending data notification", status=status.HTTP_400_BAD_REQUEST)
-
-
-
+    def get(self, request, format=None):
+        query = self.filter_queryset(NotifLists.objects.all())
+        serializer = NotifListsSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 

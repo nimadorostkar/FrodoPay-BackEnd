@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Countries
+from .models import User, Countries, NotifLists
 
 
 
@@ -62,6 +62,12 @@ class ConfirmationSerializer(serializers.Serializer):
 
 
 
+
+
+class NotifListsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NotifLists
+        fields = ('id', 'user','title', 'body', 'type', 'time')
 
 
 

@@ -39,7 +39,7 @@ admin.site.register(User, UserAdmin)
 
 
 #------------------------------------------------------------------------------
-class NotifListsAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class NotifListsAdmin(admin.ModelAdmin):
     list_display = ('title', 'time', 'type', 'user')
     list_filter = ('time', 'type', 'user')
 admin.site.register(NotifLists, NotifListsAdmin)
