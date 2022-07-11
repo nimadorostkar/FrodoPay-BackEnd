@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Countries
+from .models import User, Countries, NotifLists
 from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 
@@ -30,3 +30,27 @@ class UserAdmin(admin.ModelAdmin):
     raw_id_fields = ('country'),
     search_fields = ['email', 'firs_name', 'last_name', 'shop']
 admin.site.register(User, UserAdmin)
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class NotifListsAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ('title', 'time', 'type', 'user')
+    list_filter = ('time', 'type', 'user')
+admin.site.register(NotifLists, NotifListsAdmin)
+
+
+
+
+
+
+
+
+
+
+#End
