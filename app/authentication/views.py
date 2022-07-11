@@ -451,6 +451,33 @@ class Notif(APIView):
 
 
 
+#--------------------------------------------------------- DataNotif -----------
+class DataNotif(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        title = request.data['title']
+        body = request.data['body']
+        image = "url"
+        user = request.data['user']
+        try:
+            device = FCMDevice.objects.filter(user=user)
+
+            device.send_message(Message(
+              #notification=Notification(title=title, body=body, image=image ),
+              data={ "username": "mohamad77777777", "body": "heeeeeeeeey" }
+            ))
+
+            return Response("data notification sent successfully" , status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response("Error in sending data notification", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
 
 
 
