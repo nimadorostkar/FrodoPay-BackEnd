@@ -77,13 +77,12 @@ class NotifLists(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=256, null=True, blank=True)
     body = models.CharField(max_length=256, null=True, blank=True)
-    type = models.CharField(max_length=256, null=True, blank=True)
+    CHOICES = ( ('TRANSFER','TRANSFER'), ('DEPOSIT','DEPOSIT'), ('WITHDRAWAL','WITHDRAWAL'), ('USER','USER'), ('DEFAULT','DEFAULT') )
+    type = models.CharField(max_length=256, default='DEFAULT', choices=CHOICES)
     time = models.DateTimeField()
 
     def __str__(self):
         return str(self.title)
-
-
 
 
 
