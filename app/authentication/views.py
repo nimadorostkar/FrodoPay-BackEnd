@@ -502,4 +502,27 @@ class NotifList(GenericAPIView):
 
 
 
+
+
+#------------------------------------------------------ notification -----------
+class GeneratReferral(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        try:
+            device = FCMDevice.objects.filter(user=user)
+            device.send_message(Message( notification=Notification(title=title, body=body, image=image ), data={ "username": "mohamad7" } ))
+            return Response("notification sent successfully" , status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response("Error in sending notification", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+
+
 #End
