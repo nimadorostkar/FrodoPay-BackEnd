@@ -42,7 +42,7 @@ class User(AbstractUser):
     conf_code = models.IntegerField(null=True, blank=True)
     is_confirmed = models.BooleanField(default=False)
     inventory = models.DecimalField(max_digits=30, decimal_places=5, default=0)
-    #invitation_referral = ShortUUIDField(length=8, max_length=15, alphabet="abcdefg1234", editable=False, null=True, blank=True)
+    invitation_referral = ShortUUIDField(length=8, max_length=15, alphabet="abcdefg1234", editable=False)
 
     #objects = UserManager()
     #USERNAME_FIELD = 'email'
