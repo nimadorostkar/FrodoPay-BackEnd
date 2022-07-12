@@ -504,7 +504,7 @@ class NotifList(GenericAPIView):
 
 
 
-#------------------------------------------------------ notification -----------
+#------------------------------------------------------ get referral -----------
 class Referral(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
