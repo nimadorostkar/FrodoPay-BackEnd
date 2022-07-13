@@ -60,7 +60,7 @@ class Login(APIView):
 
             token_response = { "refresh": str(token), "access": str(token.access_token) }
             user_response = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, "first_name":user.first_name,
-                          "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory }
+                          "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "referral":user.referral, "invitation_referral":user.invitation_referral }
             response = { 'token':token_response , 'user':user_response }
             return Response(response, status=status.HTTP_200_OK)
 
@@ -136,7 +136,7 @@ class Register(APIView):
 
         token_response = { "refresh": str(token), "access": str(token.access_token) }
         user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name, "is_confirmed":user.is_confirmed,
-                      "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "activation_email":email_msg }
+                      "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "activation_email":email_msg, "referral":user.referral, "invitation_referral":user.invitation_referral }
 
         response = { 'token':token_response , 'user':user_response }
         return Response(response, status=status.HTTP_200_OK)
@@ -162,7 +162,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         profile = models.User.objects.get(id=self.request.user.id)
         data = {
                 'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
-                'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral,
+                'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral, "invitation_referral":profile.invitation_referral,
                 'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
                 'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
                 'last_login':profile.last_login, 'inventory':profile.inventory }
@@ -276,17 +276,8 @@ class Confirmation(APIView):
             token = RefreshToken.for_user(profile)
             token_response = { "refresh": str(token), "access": str(token.access_token) }
             user_response = { "id":profile.id, "username":profile.username, "email":profile.email, 'is_confirmed':profile.is_confirmed, "first_name":profile.first_name,
-                          "last_name":profile.last_name, "image":profile.photo.url, "inventory":profile.inventory }
+                          "last_name":profile.last_name, "image":profile.photo.url, "inventory":profile.inventory, "referral":profile.referral, "invitation_referral":profile.invitation_referral }
             response = { 'token':token_response , 'user':user_response }
-
-            '''
-            data = {
-                    'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
-                    'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral,
-                    'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
-                    'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
-                    'last_login':profile.last_login, 'inventory':profile.inventory }
-            '''
 
             return Response(response, status=status.HTTP_200_OK)
         else:
@@ -482,39 +473,22 @@ class DataNotif(APIView):
 
 #----------------------------------------------------- Transaction -------------
 class NotifList(GenericAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     serializer_class = NotifListsSerializer
     queryset = NotifLists.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['time', 'type', 'user']
+    filterset_fields = ['time', 'type']
     search_fields = ['title', 'body']
     ordering_fields = ['time']
 
     def get(self, request, format=None):
-        query = self.filter_queryset(NotifLists.objects.all())
+        query = self.filter_queryset(NotifLists.objects.filter(user=self.request.user))
         serializer = NotifListsSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
 
-
-
-
-
-
-
-#------------------------------------------------------ get referral -----------
-class Referral(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request, *args, **kwargs):
-        try:
-            ref = request.user.invitation_referral
-            response = { 'referral':ref }
-            return Response(response , status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
-            return Response("Error in generate referral, try again", status=status.HTTP_400_BAD_REQUEST)
 
 
 
