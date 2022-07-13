@@ -93,8 +93,6 @@ class Logout(APIView):
             print(e)
             return Response('Error in logout', status=status.HTTP_400_BAD_REQUEST)
 
-
-
 #request.user.auth_token.delete()
 #logout(request)
 #request.user.access_token.delete()
