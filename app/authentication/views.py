@@ -83,16 +83,17 @@ class Logout(APIView):
     def get(self, request, *args, **kwargs):
         try:
             user = models.User.objects.get(id=request.user.id)
-            device = FCMDevice.objects.get(user=user)
-            device.delete()
+            #device = FCMDevice.objects.get(user=user)
+            #device.delete()
             token = RefreshToken.for_user(user)
             token.blacklist()
+            logout(request)
+            print(token.access_token)
             return Response('User Logged out successfully', status=status.HTTP_200_OK)
         except Exception as e:
             print('-------------')
-            print(e.message)
-            print(e.args)
-            return Response('Error', status=status.HTTP_400_BAD_REQUEST)
+            print(e)
+            return Response('Error in logout', status=status.HTTP_400_BAD_REQUEST)
 
 
 
