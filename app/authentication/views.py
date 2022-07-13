@@ -13,7 +13,7 @@ from django.contrib.auth import login, authenticate, logout, update_session_auth
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
 from django.core.mail import send_mail
 import coinaddrvalidator
 from django.contrib.auth.password_validation import validate_password
@@ -24,7 +24,6 @@ from . import helper
 from firebase_admin.messaging import Message, Notification, AndroidNotification
 from fcm_django.models import FCMDevice
 from datetime import datetime, timedelta
-
 
 
 
@@ -78,36 +77,30 @@ class Login(APIView):
 
 
 #--------------------------------------------------------- logout -------------
-    #request.user.auth_token.delete()
-    #logout(request)
-
 class Logout(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         try:
-            #refresh_token = request.data["refresh_token"]
-            #token = RefreshToken(refresh_token)
             user = models.User.objects.get(id=request.user.id)
+            device = FCMDevice.objects.get(user=user)
+            device.delete()
             token = RefreshToken.for_user(user)
-            token.delete()
+            token.blacklist()
             return Response('User Logged out successfully', status=status.HTTP_200_OK)
-
         except Exception as e:
-            print(e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            print('-------------')
+            print(e.message)
+            print(e.args)
+            return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
 
 
-        #user = models.User.objects.get(id=request.user.id)
-        #request.user.logout()
-        #logout(user)
-        #user.logout()
-        #return Response('User Logged out successfully', status=status.HTTP_200_OK)
-
-
-
-
+#request.user.auth_token.delete()
+#logout(request)
+#request.user.access_token.delete()
+#return HttpResponseRedirect('rest_logout')
+#return redirect('rest_logout')
 
 
 
