@@ -76,15 +76,36 @@ class Login(APIView):
 
 
 
-'''
+
 #--------------------------------------------------------- logout -------------
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def Logout(request):
-    request.user.auth_token.delete()
-    logout(request)
-    return Response('User Logged out successfully', status=status.HTTP_401_UNAUTHORIZED)
-'''
+    #request.user.auth_token.delete()
+    #logout(request)
+
+class Logout(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            #refresh_token = request.data["refresh_token"]
+            #token = RefreshToken(refresh_token)
+            user = models.User.objects.get(id=request.user.id)
+            token = RefreshToken.for_user(user)
+            token.delete()
+            return Response('User Logged out successfully', status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+        #user = models.User.objects.get(id=request.user.id)
+        #request.user.logout()
+        #logout(user)
+        #user.logout()
+        #return Response('User Logged out successfully', status=status.HTTP_200_OK)
+
+
 
 
 
@@ -114,6 +135,13 @@ class Register(APIView):
         code = helper.random_code()
         user.conf_code = code
         user.save()
+
+        referral_user = models.User.objects.filter(invitation_referral=user.referral).first()
+        if referral_user:
+            referral_user.invited_users += 1
+            referral_user.save()
+
+
         '''
         if helper.send_code(user, code):
             email_msg = "Activation code send to {}".format(user.email)
@@ -482,7 +510,7 @@ class NotifList(GenericAPIView):
     ordering_fields = ['time']
 
     def get(self, request, format=None):
-        query = self.filter_queryset(NotifLists.objects.filter(user=self.request.user))
+        query = self.filter_queryset(NotifLists.objects.filter(user=self.request.user).order_by('-time')[:20])
         serializer = NotifListsSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
