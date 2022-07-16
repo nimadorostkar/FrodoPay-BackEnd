@@ -216,7 +216,8 @@ class Transfer(APIView):
 
     def post(self, request, format=None):
         amount = request.data['amount']
-        fee = FeeRates.objects.get(id=1).transfer
+        fee = float(FeeRates.objects.get(id=1).transfer)
+
         fee_amount = amount*fee
         total_amount = amount+fee_amount
 
