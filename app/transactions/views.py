@@ -454,7 +454,7 @@ class PaymentSetupView(APIView):
     def post(self, request, format=None):
         req = request.data
 
-        payment = Payment( currency_original='USDT', currency_paid=req['currency_paid'], amount=req['amount'],
+        payment = Payment( currency_original='USDT.TRC20', currency_paid=req['currency_paid'], amount=Decimal(req['amount']),
                            amount_paid=Decimal(0), buyer_email=request.user.email, status=Payment.PAYMENT_STATUS_PROVIDER_PENDING )
         return create_tx(self.request, payment)
 
