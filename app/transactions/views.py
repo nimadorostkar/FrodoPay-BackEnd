@@ -268,12 +268,10 @@ class ConfirmTransfer(APIView):
     def get(self, request, *args, **kwargs):
         try:
             transfer = Transaction.objects.get(id=self.kwargs["id"])
-
             if transfer.source != request.user.username:
                 return Response("You don't have access to this transfer", status=status.HTTP_400_BAD_REQUEST)
 
             if transfer.status == 'pending':
-
                 try:
                     total_amount = transfer.amount+transfer.fee
                     source = User.objects.get(username=transfer.source)
