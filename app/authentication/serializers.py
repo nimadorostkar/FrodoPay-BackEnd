@@ -8,16 +8,11 @@ from .models import User, Countries, NotifLists
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=256, allow_null=False)
     password = serializers.CharField(max_length=256, allow_null=False)
-    otp = serializers.CharField(max_length=256, allow_null=False)
     device_token = serializers.CharField(max_length=256, allow_null=False)
     device_type = serializers.CharField(max_length=256, allow_null=False)
 
 
 
-
-
-class LoginOTPSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=256, allow_null=False)
 
 
 

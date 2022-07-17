@@ -5,8 +5,7 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 
 
 urlpatterns = [
-    path('login_otp/', views.SendLoginOTP.as_view(), name='login_otp'),
-    path('login_confirmation/', views.LoginConf.as_view(), name='login'),
+    path('login/', views.Login.as_view(), name='Login'),
     path('logout/', views.Logout.as_view(), name='logout'),
     path('token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
     path('register/', views.Register.as_view(), name='register'),

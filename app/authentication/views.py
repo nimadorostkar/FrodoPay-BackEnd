@@ -1,7 +1,7 @@
 from .models import User, Countries, NotifLists
 from . import models
 from django.http import JsonResponse
-from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, ConfirmationSerializer, CountriesSerializer, NotifListsSerializer, LoginOTPSerializer
+from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, ConfirmationSerializer, CountriesSerializer, NotifListsSerializer
 from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.decorators import api_view, permission_classes
@@ -31,7 +31,7 @@ from datetime import datetime, timedelta
 
 
 #------------------------------------------------------- Login ----------------
-class LoginConf(APIView):
+class Login(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -40,76 +40,41 @@ class LoginConf(APIView):
             data = serializer.validated_data
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
-
         try:
-            profile = models.User.objects.get(username=data['username'])
-        except:
-            return Response('user not found', status=status.HTTP_406_NOT_ACCEPTABLE)
+            user = authenticate(request, username=data['username'], password=data['password'])
+            login(request, user)
+            token = RefreshToken.for_user(user)
 
-        if profile.conf_code == int(data['otp']):
+            if request.user.is_authenticated:
+                if FCMDevice.objects.filter(user=request.user):
+                    FCMDevice.objects.filter(user=request.user).delete()
+                device = FCMDevice()
+                device.user = request.user
+                device.name = request.user.username
+                device.active = True
+                device.registration_id = data['device_token']
+                device.device_id = request.user.id
+                device.type = data['device_type']
+                device.save()
+
+            code = helper.random_code()
+            user.conf_code = code
+            user.save()
             try:
-                user = authenticate(request, username=data['username'], password=data['password'])
-                login(request, user)
-                token = RefreshToken.for_user(user)
-
-                if request.user.is_authenticated:
-                    if FCMDevice.objects.filter(user=request.user):
-                        FCMDevice.objects.filter(user=request.user).delete()
-                    device = FCMDevice()
-                    device.user = request.user
-                    device.name = request.user.username
-                    device.active = True
-                    device.registration_id = data['device_token']
-                    device.device_id = request.user.id
-                    device.type = data['device_type']
-                    device.save()
-
-                token_response = { "refresh": str(token), "access": str(token.access_token) }
-                user_response = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, "first_name":user.first_name,
-                              "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "referral":user.referral, "invitation_referral":user.invitation_referral }
-                response = { 'token':token_response , 'user':user_response }
-                return Response(response, status=status.HTTP_200_OK)
-
+                helper.send_code(user, code)
+                otp_send = True
             except:
-                return Response('username or password is incorrect', status=status.HTTP_406_NOT_ACCEPTABLE)
+                otp_send = False
+                #return Response("Error sending OTP email", status=status.HTTP_400_BAD_REQUEST)
 
-        else:
-            return Response('OTP code is incorrect', status=status.HTTP_406_NOT_ACCEPTABLE)
+            token_response = { "refresh": str(token), "access": str(token.access_token) }
+            user_response = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, 'login':False, "first_name":user.first_name, "otp_send":otp_send,
+                          "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "referral":user.referral, "invitation_referral":user.invitation_referral }
+            response = { 'token':token_response , 'user':user_response }
+            return Response(response, status=status.HTTP_200_OK)
 
-
-
-
-
-
-
-
-
-
-#---------------------------------------------------- LoginConf ----------------
-class SendLoginOTP(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-
-        serializer = serializers.LoginOTPSerializer(data=request.data)
-        if serializer.is_valid():
-            data = serializer.validated_data
-        else:
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
-
-        try:
-            profile = models.User.objects.get(username=data['username'])
         except:
-            return Response("User not found" , status=status.HTTP_400_BAD_REQUEST)
-
-        code = helper.random_code()
-        profile.conf_code = code
-        profile.save()
-
-        if helper.send_code(profile, code):
-            return Response("OTP code send to {}".format(profile.email) , status=status.HTTP_200_OK)
-        else:
-            return Response("Error sending email - Please try again!" , status=status.HTTP_400_BAD_REQUEST)
+            return Response('username or password is incorrect', status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 
@@ -198,7 +163,7 @@ class Register(APIView):
             device.save()
 
         token_response = { "refresh": str(token), "access": str(token.access_token) }
-        user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name, "is_confirmed":user.is_confirmed,
+        user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name, "is_confirmed":user.is_confirmed, 'login':False,
                       "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "activation_email":email_msg, "referral":user.referral, "invitation_referral":user.invitation_referral }
 
         response = { 'token':token_response , 'user':user_response }
@@ -225,7 +190,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         profile = models.User.objects.get(id=self.request.user.id)
         data = {
                 'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
-                'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'referral':profile.referral, "invitation_referral":profile.invitation_referral,
+                'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'login':True, 'referral':profile.referral, "invitation_referral":profile.invitation_referral,
                 'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
                 'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
                 'last_login':profile.last_login, 'inventory':profile.inventory }
@@ -338,7 +303,7 @@ class Confirmation(APIView):
 
             token = RefreshToken.for_user(profile)
             token_response = { "refresh": str(token), "access": str(token.access_token) }
-            user_response = { "id":profile.id, "username":profile.username, "email":profile.email, 'is_confirmed':profile.is_confirmed, "first_name":profile.first_name,
+            user_response = { "id":profile.id, "username":profile.username, "email":profile.email, 'is_confirmed':profile.is_confirmed, 'login':True, "first_name":profile.first_name,
                           "last_name":profile.last_name, "image":profile.photo.url, "inventory":profile.inventory, "referral":profile.referral, "invitation_referral":profile.invitation_referral }
             response = { 'token':token_response , 'user':user_response }
 
