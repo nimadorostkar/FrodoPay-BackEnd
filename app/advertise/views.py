@@ -1,4 +1,4 @@
-from .models import Advertise
+from . import models
 from django.http import JsonResponse
 from .serializers import AdvertiseSerializer
 from django_filters.rest_framework import DjangoFilterBackend
@@ -27,7 +27,7 @@ class Advertise(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
-        ad = Advertise.objects.all()
+        ad = models.Advertise.objects.all()
         serializer = AdvertiseSerializer(ad, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

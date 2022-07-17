@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/', include('authentication.urls')),
     path('api/', include('transactions.urls')),
     path('api/', include('fee.urls')),
+    path('api/', include('advertise.urls')),
     #path('api/token', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     #path('api/token/refresh', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('api/rest-auth/', include('dj_rest_auth.urls')),
