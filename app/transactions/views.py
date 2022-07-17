@@ -31,6 +31,9 @@ from decimal import Decimal
 from django import forms
 from fee.models import FeeRates, InputHistory, Inventory
 
+from firebase_admin.messaging import Message, Notification, AndroidNotification
+from fcm_django.models import FCMDevice
+
 
 
 
@@ -229,7 +232,7 @@ class Transfer(APIView):
             return Response("Transfer to your account is not possible", status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            destination = User.objects.get(username=request.data['destination'])
+            destination = User.objects.get(is_confirmed=True, username=request.data['destination'])
             transfer.destination = destination.username
         except:
             return Response("Destination wallet address isn't valid", status=status.HTTP_400_BAD_REQUEST)
@@ -248,6 +251,8 @@ class Transfer(APIView):
                           'fee':transfer.fee, 'total_amount':total_amount, 'description':transfer.description, 'status':transfer.status }
 
         return Response(transfer_data, status=status.HTTP_200_OK)
+
+
 
 
 
@@ -285,6 +290,18 @@ class ConfirmTransfer(APIView):
                     fee_inventory = Inventory.objects.get(id=1)
                     fee_inventory.amount += transfer.fee
                     fee_inventory.save()
+
+                    now = datetime.now()
+                    device = FCMDevice.objects.filter(user=request.data['user'])
+                    device.send_message(Message( data={ "username":request.user.username, "title":"transfer to {}".format(transfer.destination), "body":"transfer {} to {} was done successfully".format(transfer.amount,transfer.destination), "type":"transfer", "time":str(now) } ))
+                    notif = NotifLists()
+                    notif.title = "transfer to {}".format(transfer.destination)
+                    notif.body = "transfer {} to {} was done successfully".format(transfer.amount,transfer.destination)
+                    notif.type = "transfer"
+                    notif.time = now
+                    notif.user = request.user
+                    notif.save()
+                    print("data notification sent successfully" )
                     return Response('The transfer was successful', status=status.HTTP_200_OK)
                 except:
                     transfer.status = 'fail'
