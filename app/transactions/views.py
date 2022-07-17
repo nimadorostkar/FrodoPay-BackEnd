@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
-from authentication.models import User
+from authentication.models import User, NotifLists
 from .serializers import TransactionSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
 from django_filters.rest_framework import DjangoFilterBackend
@@ -273,6 +273,7 @@ class ConfirmTransfer(APIView):
                 return Response("You don't have access to this transfer", status=status.HTTP_400_BAD_REQUEST)
 
             if transfer.status == 'pending':
+
                 try:
                     total_amount = transfer.amount+transfer.fee
                     source = User.objects.get(username=transfer.source)
@@ -290,23 +291,32 @@ class ConfirmTransfer(APIView):
                     fee_inventory = Inventory.objects.get(id=1)
                     fee_inventory.amount += transfer.fee
                     fee_inventory.save()
+                except Exception as e:
+                    print('-------------')
+                    print(e)
+                    transfer.status = 'fail'
+                    transfer.save()
+                    return Response("Error in completing the confirmation", status=status.HTTP_400_BAD_REQUEST)
 
+                try:
                     now = datetime.now()
-                    device = FCMDevice.objects.filter(user=request.data['user'])
-                    device.send_message(Message( data={ "username":request.user.username, "title":"transfer to {}".format(transfer.destination), "body":"transfer {} to {} was done successfully".format(transfer.amount,transfer.destination), "type":"transfer", "time":str(now) } ))
+                    device = FCMDevice.objects.filter(user=request.user)
+                    device.send_message(Message( data={ "username":request.user.username, "title":"transfer to {}".format(transfer.destination), "body":"transfer {} to {} was done successfully".format(transfer.amount,transfer.destination), "type":"TRANSFER", "time":str(now) } ))
                     notif = NotifLists()
                     notif.title = "transfer to {}".format(transfer.destination)
                     notif.body = "transfer {} to {} was done successfully".format(transfer.amount,transfer.destination)
-                    notif.type = "transfer"
+                    notif.type = "TRANSFER"
                     notif.time = now
                     notif.user = request.user
                     notif.save()
                     print("data notification sent successfully" )
                     return Response('The transfer was successful', status=status.HTTP_200_OK)
-                except:
+                except Exception as e:
+                    print('-------------')
+                    print(e)
                     transfer.status = 'fail'
                     transfer.save()
-                    return Response("Transfer failed", status=status.HTTP_400_BAD_REQUEST)
+                    return Response("Error in sending notification", status=status.HTTP_400_BAD_REQUEST)
 
             else:
                 return Response("This request is invalid", status=status.HTTP_400_BAD_REQUEST)
