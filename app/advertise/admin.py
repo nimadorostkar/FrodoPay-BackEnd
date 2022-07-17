@@ -11,6 +11,6 @@ from .models import Advertise
 
 
 #------------------------------------------------------------------------------
-class AdvertiseAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class AdvertiseAdmin(admin.ModelAdmin):
     list_display = ('Img', 'link')
 admin.site.register(Advertise, AdvertiseAdmin)
