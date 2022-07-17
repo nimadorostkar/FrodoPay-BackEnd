@@ -1,3 +1,16 @@
 from django.contrib import admin
+from .models import Advertise
 
-# Register your models here.
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class AdvertiseAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ('Img', 'link')
+admin.site.register(Advertise, AdvertiseAdmin)
