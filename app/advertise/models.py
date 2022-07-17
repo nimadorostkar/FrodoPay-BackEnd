@@ -1,8 +1,8 @@
 from django.db import models
 from django.urls import reverse
 from django.dispatch import receiver
-from transactions.models import Transaction
-from authentication.models import User
+
+
 
 
 
