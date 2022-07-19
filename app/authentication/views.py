@@ -24,8 +24,7 @@ from . import helper
 from firebase_admin.messaging import Message, Notification, AndroidNotification
 from fcm_django.models import FCMDevice
 from datetime import datetime, timedelta
-
-
+from transactions.models import WithdrawalCeiling, Transaction
 
 
 
@@ -67,9 +66,15 @@ class Login(APIView):
                 otp_send = False
                 #return Response("Error sending OTP email", status=status.HTTP_400_BAD_REQUEST)
 
+            daily_ceiling = WithdrawalCeiling.objects.get(id=1).daily
+            monthly_ceiling = WithdrawalCeiling.objects.get(id=1).monthly
+            daily_withdraw_ceiling_remains = daily_ceiling-sum(Transaction.objects.filter(source=str(request.user.username), type='withdrawal', status='success', created_at__gte=datetime.now()-timedelta(days=1)).values_list('amount', flat=True) )
+            monthly_withdraw_ceiling_remains = monthly_ceiling-sum(Transaction.objects.filter(source=str(request.user.username), type='withdrawal', status='success', created_at__gte=datetime.now()-timedelta(days=30)).values_list('amount', flat=True) )
+
             token_response = { "refresh": str(token), "access": str(token.access_token) }
             user_response = { "id":user.id, "username":user.username, "email":user.email, 'is_confirmed':user.is_confirmed, 'login':False, "first_name":user.first_name, "otp_send":otp_send,
-                          "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "referral":user.referral, "invitation_referral":user.invitation_referral }
+                          "last_name":user.last_name, "image":user.photo.url, "inventory":user.inventory, "referral":user.referral, "invitation_referral":user.invitation_referral,
+                          "daily_withdraw_ceiling_remains":daily_withdraw_ceiling_remains, "monthly_withdraw_ceiling_remains":monthly_withdraw_ceiling_remains }
             response = { 'token':token_response , 'user':user_response }
             return Response(response, status=status.HTTP_200_OK)
 
@@ -188,12 +193,18 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
     def get(self, request, *args, **kwargs):
         profile = models.User.objects.get(id=self.request.user.id)
+
+        daily_ceiling = WithdrawalCeiling.objects.get(id=1).daily
+        monthly_ceiling = WithdrawalCeiling.objects.get(id=1).monthly
+        daily_withdraw_ceiling_remains = daily_ceiling-sum(Transaction.objects.filter(source=str(request.user.username), type='withdrawal', status='success', created_at__gte=datetime.now()-timedelta(days=1)).values_list('amount', flat=True) )
+        monthly_withdraw_ceiling_remains = monthly_ceiling-sum(Transaction.objects.filter(source=str(request.user.username), type='withdrawal', status='success', created_at__gte=datetime.now()-timedelta(days=30)).values_list('amount', flat=True) )
+
         data = {
                 'id':profile.id, 'username':profile.username, 'first_name':profile.first_name,
                 'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'login':True, 'referral':profile.referral, "invitation_referral":profile.invitation_referral,
                 'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
                 'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
-                'last_login':profile.last_login, 'inventory':profile.inventory }
+                'last_login':profile.last_login, 'inventory':profile.inventory, "daily_withdraw_ceiling_remains":daily_withdraw_ceiling_remains, "monthly_withdraw_ceiling_remains":monthly_withdraw_ceiling_remains }
         return Response(data, status=status.HTTP_200_OK)
 
 
