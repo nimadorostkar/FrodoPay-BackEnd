@@ -299,7 +299,11 @@ class ConfirmTransfer(APIView):
                 try:
                     now = datetime.now()
                     device = FCMDevice.objects.filter(user=request.user)
+                    #device2 = FCMDevice.objects.filter(user=transfer.destination)
+                    #print('------------------')
+                    #print(device2)
                     device.send_message(Message( data={ "username":request.user.username, "title":"transfer to {}".format(transfer.destination), "body":"transfer {} to {} was done successfully".format(transfer.amount,transfer.destination), "type":"TRANSFER", "time":str(now) } ))
+                    #device2.send_message(Message( data={ "username":request.user.username, "title":"transfer to {}".format(transfer.destination), "body":"transfer {} to {} was done successfully".format(transfer.amount,transfer.destination), "type":"TRANSFER", "time":str(now) } ))
                     notif = NotifLists()
                     notif.title = "transfer to {}".format(transfer.destination)
                     notif.body = "transfer {} to {} was done successfully".format(transfer.amount,transfer.destination)
