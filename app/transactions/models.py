@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-
+from authentication.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django_coinpayments.models import Payment
@@ -29,8 +29,12 @@ class Transaction(models.Model):
     def post_save(sender, instance, created, **kwargs):
         if not created:
             if instance.status == "PAID":
-                deposit = Transaction(source="coinpayment", destination='nima', type='deposit', status='success', amount=22, description='test vase depo')
+                user = User.objects.get(email=instance.buyer_email)
+                deposit = Transaction(source="coinpayments", destination=user.username, type='deposit', status='success', amount=instance.amount_paid, description='deposit from coinpayments, payment:{}, provider_tx:{}'.format(instance.id,instance.provider_tx))
                 deposit.save()
+                user.inventory += instance.amount
+                user.save()
+
 
 
 
