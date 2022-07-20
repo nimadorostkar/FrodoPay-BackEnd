@@ -29,15 +29,8 @@ class Transaction(models.Model):
     def post_save(sender, instance, created, **kwargs):
         if not created:
             if instance.status == "PAID":
-                print('------------')
-                print('paiddd')
-                d = Transaction()
-                d.destination='nima'
-                d.type='deposit'
-                d.status='success'
-                d.amount=22
-                d.description='test vase depo'
-                d.save()
+                deposit = Transaction(source="coinpayment", destination='nima', type='deposit', status='success', amount=22, description='test vase depo')
+                deposit.save()
 
 
 
