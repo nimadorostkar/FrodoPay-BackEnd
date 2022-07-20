@@ -1,7 +1,9 @@
 from django.db import models
 from django.urls import reverse
-from django.dispatch import receiver
 
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django_coinpayments.models import Payment
 
 
 
@@ -21,6 +23,25 @@ class Transaction(models.Model):
 
     def __str__(self):
         return self.type +"|"+ self.status +"|"+ str(self.source)
+
+
+    @receiver(post_save, sender=Payment)
+    def post_save(sender, instance, created, **kwargs):
+        if not created:
+            if instance.status == "PAID":
+                print('------------')
+                print('paiddd')
+                d = Transaction()
+                d.destination='nima'
+                d.type='deposit'
+                d.status='success'
+                d.amount=22
+                d.description='test vase depo'
+                d.save()
+
+
+
+
 
 
 
@@ -49,7 +70,7 @@ class WithdrawalCeiling(models.Model):
 
 
     def __str__(self):
-        return 'monthly: '+str(self.monthly) +'|'+ 'daily: '+str(self.daily)  
+        return 'monthly: '+str(self.monthly) +'|'+ 'daily: '+str(self.daily)
 
 
 
