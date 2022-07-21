@@ -32,10 +32,29 @@ class Banner(models.Model):
 
 
 
+
+
+
 #------------------------------------------------------------------------------
-class Transaction(models.Model):
+class UserScore(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    score = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.user) + '|' + str(self.score)
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class Lottery(models.Model):
     source = models.CharField(max_length=256, null=True, blank=True)
-    destination = models.CharField(max_length=256, null=True, blank=True)
+
     amount = models.DecimalField(max_digits=30, decimal_places=5)
     CHOICES1 = (('deposit','deposit'),('transfer','transfer'),('withdrawal','withdrawal'))
     type = models.CharField(max_length=256, choices=CHOICES1)
@@ -49,12 +68,14 @@ class Transaction(models.Model):
         return self.type +"|"+ self.status +"|"+ str(self.source)
 
 
-    @receiver(post_save, sender=Payment)
-    def post_save(sender, instance, created, **kwargs):
-        if not created:
-            if instance.status == "PAID":
-                user = User.objects.get(email=instance.buyer_email)
-                deposit = Transaction(source="coinpayments", destination=user.username, type='deposit', status='success', amount=instance.amount_paid, description='deposit from coinpayments, payment:{}, provider_tx:{}'.format(instance.id,instance.provider_tx))
-                deposit.save()
-                user.inventory += instance.amount
-                user.save()
+
+
+
+
+
+
+
+
+
+
+#End
