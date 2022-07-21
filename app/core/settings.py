@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'transactions',
     'fee',
     'advertise',
+    'lottery',
     'import_export',
     'django_coinpayments',
     'allauth',
