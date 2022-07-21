@@ -52,21 +52,19 @@ class UserScore(models.Model):
 
 
 #------------------------------------------------------------------------------
-class Lottery(models.Model):
-    source = models.CharField(max_length=256, null=True, blank=True)
+class GetScore(models.Model):
+    invite = models.IntegerField(default=0)
+    deposit = models.IntegerField(default=0)
+    register = models.IntegerField(default=0)
 
-    amount = models.DecimalField(max_digits=30, decimal_places=5)
-    CHOICES1 = (('deposit','deposit'),('transfer','transfer'),('withdrawal','withdrawal'))
-    type = models.CharField(max_length=256, choices=CHOICES1)
-    CHOICES2 = (('success','success'),('fail','fail'),('pending','pending'))
-    status = models.CharField(max_length=256, choices=CHOICES2)
-    description = models.TextField(max_length=256, null=True, blank=True)
-    fee = models.DecimalField(max_digits=30, decimal_places=5, default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    def save(self, *args, **kwargs):
+        if self.__class__.objects.count():
+            self.pk = self.__class__.objects.first().pk
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
-        return self.type +"|"+ self.status +"|"+ str(self.source)
-
+        return 'invite_score: '+str(self.invite) +'|'+ 'deposit_score: '+str(self.deposit) +'|'+ 'register_score: '+str(self.register)
 
 
 
