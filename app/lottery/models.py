@@ -14,6 +14,7 @@ from django.utils.html import format_html
 #------------------------------------------------------------------------------
 class Banner(models.Model):
     title = models.CharField(max_length=256)
+    body = models.TextField(null=True, blank=True)
     img = models.ImageField(upload_to='lottery/banner')
 
     def BannerImg(self):
@@ -65,6 +66,10 @@ class GetScore(models.Model):
 
     def __str__(self):
         return 'invite_score: '+str(self.invite) +'|'+ 'deposit_score: '+str(self.deposit) +'|'+ 'register_score: '+str(self.register)
+
+
+
+
 
 
 
