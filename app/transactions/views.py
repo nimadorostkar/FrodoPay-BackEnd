@@ -16,8 +16,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from .models import Transaction, WithdrawalCeiling
-from django_coinpayments.models import Payment
-from django_coinpayments.exceptions import CoinPaymentsProviderError
 from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework import pagination
@@ -26,7 +24,6 @@ from datetime import datetime, timedelta
 from random import randint
 from django_coinpayments.models import Payment, CoinPaymentsTransaction
 from django_coinpayments.exceptions import CoinPaymentsProviderError
-from django.shortcuts import render, get_object_or_404
 from decimal import Decimal
 from django import forms
 from fee.models import FeeRates, InputHistory, Inventory
@@ -458,7 +455,7 @@ class PaymentSetupView(APIView):
     def post(self, request, format=None):
         req = request.data
 
-        payment = Payment( currency_original='USDT.TRC20', currency_paid=req['currency_paid'], amount=Decimal(req['amount']),
+        payment = Payment( currency_original='BUSD.BEP20', currency_paid=req['currency_paid'], amount=Decimal(req['amount']),
                            amount_paid=Decimal(0), buyer_email=request.user.email, status=Payment.PAYMENT_STATUS_PROVIDER_PENDING )
         return create_tx(self.request, payment)
 
