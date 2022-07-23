@@ -25,6 +25,7 @@ from firebase_admin.messaging import Message, Notification, AndroidNotification
 from fcm_django.models import FCMDevice
 from datetime import datetime, timedelta
 from transactions.models import WithdrawalCeiling, Transaction
+from advertise.models import HomeBanners
 
 
 
@@ -192,6 +193,11 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
+
+        banners = []
+        for Banner in HomeBanners.objects.all():
+            banners.append(Banner.img.url)
+
         profile = models.User.objects.get(id=self.request.user.id)
 
         daily_ceiling = WithdrawalCeiling.objects.get(id=1).daily
@@ -204,7 +210,8 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
                 'last_name':profile.last_name, 'email':profile.email, 'is_confirmed':profile.is_confirmed, 'login':True, 'referral':profile.referral, "invitation_referral":profile.invitation_referral,
                 'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
                 'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
-                'last_login':profile.last_login, 'inventory':profile.inventory, "daily_withdraw_ceiling_remains":daily_withdraw_ceiling_remains, "monthly_withdraw_ceiling_remains":monthly_withdraw_ceiling_remains }
+                'last_login':profile.last_login, 'inventory':profile.inventory, "daily_withdraw_ceiling_remains":daily_withdraw_ceiling_remains, "monthly_withdraw_ceiling_remains":monthly_withdraw_ceiling_remains,
+                'banners':banners }
         return Response(data, status=status.HTTP_200_OK)
 
 
