@@ -14,6 +14,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import Banner, UserScore, GetScore
 from django.db.models import Q
 from random import randint
+from authentication.models import User
 
 
 
@@ -53,12 +54,13 @@ class Winners(APIView):
 
     def get(self, request, format=None):
         try:
-            score = UserScore.objects.get(user=request.user)
-            banner = Banner.objects.get(id=1)
-            winners = {'1':'nimaaa', '2':'nimaaa2', '3':'nimaaa3', '4':'nimaaa', '5':'nimaaa5', '6':'nimaaa6'}
+
+            user = User.objects.all()
+
+            #winners = {'1':'nimaaa', '2':'nimaaa2', '3':'nimaaa3', '4':'nimaaa', '5':'nimaaa5', '6':'nimaaa6'}
             data = {'user_score':score.score, 'banner:':banner.img.url, 'body:':banner.body, 'title:':banner.title, 'winners':winners}
 
-            
+
             return Response(data, status=status.HTTP_200_OK)
         except:
             return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)

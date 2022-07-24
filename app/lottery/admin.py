@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Banner, UserScore, GetScore
+from .models import Banner, UserScore, GetScore, Winner
 
 
 
@@ -33,6 +33,7 @@ admin.site.register(UserScore, UserScoreAdmin)
 
 
 
+
 #------------------------------------------------------------------------------
 class GetScoreAdmin(admin.ModelAdmin):
     list_display = ('invite', 'deposit', 'register')
@@ -41,6 +42,17 @@ admin.site.register(GetScore, GetScoreAdmin)
 
 
 
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class WinnerAdmin(admin.ModelAdmin):
+    list_display = ('winners_qty', 'bonus_amount')
+admin.site.register(Winner, WinnerAdmin)
 
 
 
