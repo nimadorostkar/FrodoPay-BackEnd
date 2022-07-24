@@ -26,6 +26,7 @@ from fcm_django.models import FCMDevice
 from datetime import datetime, timedelta
 from transactions.models import WithdrawalCeiling, Transaction
 from advertise.models import HomeBanners
+from lottery.models import UserScore
 
 
 
@@ -167,6 +168,11 @@ class Register(APIView):
             device.device_id = request.user.id
             device.type = data['device_type']
             device.save()
+
+        user_score = UserScore()
+        user_score.user = user
+        user_score.score = 1
+        user_score.save()
 
         token_response = { "refresh": str(token), "access": str(token.access_token) }
         user_response = { "id":user.id, "username":user.username, "email":user.email, "first_name":user.first_name, "is_confirmed":user.is_confirmed, 'login':False,

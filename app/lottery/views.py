@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from .models import Banner, UserScore, GetScore
+from .models import Banner, UserScore, GetScore, Winner
 from django.db.models import Q
 from random import randint
 from authentication.models import User
@@ -54,8 +54,14 @@ class Winners(APIView):
 
     def get(self, request, format=None):
         try:
+            winners_data = Winner.objects.get(id=1)
+            winners_qty = winners_data.winners_qty
+            bonus_amount = winners_data.bonus_amount
 
+            scores = UserScore.objects.all()
             user = User.objects.all()
+
+
 
             #winners = {'1':'nimaaa', '2':'nimaaa2', '3':'nimaaa3', '4':'nimaaa', '5':'nimaaa5', '6':'nimaaa6'}
             data = {'user_score':score.score, 'banner:':banner.img.url, 'body:':banner.body, 'title:':banner.title, 'winners':winners}
