@@ -16,6 +16,7 @@ class Banner(models.Model):
     title = models.CharField(max_length=256)
     body = models.TextField(null=True, blank=True)
     img = models.ImageField(upload_to='lottery/banner')
+    link = models.CharField(max_length=256, null=True, blank=True)
 
     def BannerImg(self):
         return format_html("<img width=30 src='{}'>".format(self.img.url))
