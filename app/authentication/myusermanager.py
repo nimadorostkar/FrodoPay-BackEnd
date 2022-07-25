@@ -1,5 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
-
+#from django.contrib.auth.models import AbstractUser, UserManager
 
 
 class UserManager(BaseUserManager):
@@ -21,3 +21,26 @@ class UserManager(BaseUserManager):
         if other_fields.get('is_superuser') is not True:
             raise ValueError('Superuser muse have is_superuser=True')
         return self.create_user(email, password, **other_fields)
+
+
+
+
+
+
+
+'''
+class CustomUserManager(UserManager):
+    def get_by_natural_key(self, username):
+        case_insensitive_username_field = '{}__iexact'.format(self.model.USERNAME_FIELD)
+        return self.get(**{case_insensitive_username_field: username})
+
+'''
+
+
+
+
+
+
+
+
+#End

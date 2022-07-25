@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-#from authentication.myusermanager import UserManager
+#from authentication.myusermanager import CustomUserManager #UserManager
 from django.utils.html import format_html
 from shortuuid.django_fields import ShortUUIDField
 
@@ -49,6 +49,8 @@ class User(AbstractUser):
     #USERNAME_FIELD = 'email'
     #REQUIRED_FIELDS = []
     #backend = 'authentication.mybackend.ModelBackend'
+
+    #objects = CustomUserManager()
 
     def img(self):
         return format_html("<img width=30 src='{}'>".format(self.photo.url))

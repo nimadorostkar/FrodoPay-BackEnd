@@ -39,7 +39,6 @@ AUTH_USER_MODEL = 'authentication.User'
 
 
 
-
 # Application definition
 
 INSTALLED_APPS = [
