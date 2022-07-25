@@ -10,6 +10,7 @@ from .models import Banner, UserScore, GetScore, Winner, WinnersList
 #------------------------------------------------------------------------------
 class WinnersListAdmin(admin.ModelAdmin):
     list_display = ('user', 'img')
+    raw_id_fields = ('user'),
 admin.site.register(WinnersList, WinnersListAdmin)
 
 
