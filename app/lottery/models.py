@@ -88,9 +88,26 @@ class Winner(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return 'winners_qty: '+str(self.winners_qty) +'|'+ 'bonus_amount: '+str(self.bonus_amount) 
+        return 'winners_qty: '+str(self.winners_qty) +'|'+ 'bonus_amount: '+str(self.bonus_amount)
+
+    class Meta:
+        verbose_name = "Winners setting"
+        verbose_name_plural = "Winners settings"
 
 
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class WinnersList(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user)
 
 
 

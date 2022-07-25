@@ -1,5 +1,21 @@
 from django.contrib import admin
-from .models import Banner, UserScore, GetScore, Winner
+from .models import Banner, UserScore, GetScore, Winner, WinnersList
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class WinnersListAdmin(admin.ModelAdmin):
+    list_display = ('user',)
+admin.site.register(WinnersList, WinnersListAdmin)
+
+
+
+
+
 
 
 
