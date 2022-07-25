@@ -107,6 +107,9 @@ class Winner(models.Model):
 class WinnersList(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+    def img(self):
+        return format_html("<img width=30 src='{}'>".format(self.user.photo.url))
+
     def __str__(self):
         return str(self.user)
 
