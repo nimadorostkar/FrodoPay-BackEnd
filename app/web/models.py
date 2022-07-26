@@ -37,7 +37,7 @@ class Top(models.Model):
 #------------------------------------------------------------------------------
 class Features(models.Model):
     title = models.CharField(max_length=256, null=True, blank=True)
-    description = models.CharField(max_length=256, null=True, blank=True)
+    description = models.TextField(max_length=256, null=True, blank=True)
     image = models.ImageField(upload_to='web/Features')
 
 
@@ -57,7 +57,7 @@ class Features(models.Model):
 #------------------------------------------------------------------------------
 class Description(models.Model):
     title = models.CharField(max_length=256, null=True, blank=True)
-    description = models.CharField(max_length=256, null=True, blank=True)
+    description = models.TextField(max_length=256, null=True, blank=True)
     image = models.ImageField(upload_to='web/descriptions')
     button_title = models.CharField(max_length=256, null=True, blank=True)
     button_link = models.CharField(max_length=256, null=True, blank=True)
@@ -86,7 +86,7 @@ class Banners(models.Model):
 
 
     def __str__(self):
-        return str(self.title)
+        return str(self.link)
 
 
 
