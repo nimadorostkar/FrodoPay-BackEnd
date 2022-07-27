@@ -55,7 +55,28 @@ class BannersSerializer(serializers.ModelSerializer):
 
 
 
+class MobileBannersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MobileBanners
+        fields = ('image', 'link')
 
+
+
+
+
+
+
+
+
+
+
+
+
+class FooterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Footer
+        fields = '__all__' 
+        #fields = ('copyright_text', 'slogan_text', 'aaaaa', 'aaaaa', 'aaaaa', 'aaaaa', 'aaaaa', 'aaaaa', 'aaaaa', 'aaaaa', 'aaaaa', 'aaaaa', 'aaaaa', )
 
 
 

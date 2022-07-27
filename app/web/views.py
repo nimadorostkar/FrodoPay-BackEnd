@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from .models import Top, Features, Description, Banners, MobileBanners, Footer
-from .serializers import TopSerializer, FeaturesSerializer, DescriptionSerializer, BannersSerializer
+from .serializers import TopSerializer, FeaturesSerializer, DescriptionSerializer, BannersSerializer, MobileBannersSerializer, FooterSerializer
 from . import models
 
 
@@ -67,7 +67,7 @@ class Features(APIView):
 
 
 
-#--------------------------------------------------------- Features ------------
+#------------------------------------------------------ Description ------------
 class Description(APIView):
     permission_classes = [AllowAny]
 
@@ -85,7 +85,7 @@ class Description(APIView):
 
 
 
-#--------------------------------------------------------- Features ------------
+#---------------------------------------------------------- Banners ------------
 class Banners(APIView):
     permission_classes = [AllowAny]
 
@@ -103,6 +103,40 @@ class Banners(APIView):
 
 
 
+
+
+
+
+
+
+#---------------------------------------------------- MobileBanners ------------
+class MobileBanners(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        try:
+            mobilebanners = models.MobileBanners.objects.all()
+            serializer = MobileBannersSerializer(mobilebanners, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+#-------------------------------------------------------------- Top ------------
+class Footer(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        try:
+            footer = models.Footer.objects.get(id=1)
+            serializer = FooterSerializer(footer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
 
 
 

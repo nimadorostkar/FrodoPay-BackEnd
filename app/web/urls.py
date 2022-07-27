@@ -8,6 +8,6 @@ urlpatterns = [
     path('features/', views.Features.as_view(), name='features'),
     path('description/', views.Description.as_view(), name='description'),
     path('banners/', views.Banners.as_view(), name='banners'),
-    #path('mobile_banners/', views.MobileBanners.as_view(), name='mobile_banners'),
-    #path('footer/', views.Footer.as_view(), name='footer'),
+    path('mobile_banners/', views.MobileBanners.as_view(), name='mobile_banners'),
+    path('footer/', views.Footer.as_view(), name='footer'),
 ]
