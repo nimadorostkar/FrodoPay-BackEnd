@@ -126,7 +126,10 @@ class MobileBanners(APIView):
 
 
 
-#-------------------------------------------------------------- Top ------------
+
+
+
+#----------------------------------------------------------- Footer ------------
 class Footer(APIView):
     permission_classes = [AllowAny]
 
@@ -137,6 +140,11 @@ class Footer(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
 
 
 
