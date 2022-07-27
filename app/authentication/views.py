@@ -129,6 +129,11 @@ class Register(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+
+        username_insensitive = models.User.objects.filter(username__iexact=request.data['username']).exclude(email=request.data['email']).exists()  # instead of count, used exists() which does not make any DB query
+        if username_insensitive:
+            return Response("User with that username already exists.", status=status.HTTP_406_NOT_ACCEPTABLE)
+
         serializer = serializers.RegisterSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
