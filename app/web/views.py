@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from .models import Top, Features, Description, Banners, MobileBanners, Footer
-from .serializers import TopSerializer
+from .serializers import TopSerializer, FeaturesSerializer
 from . import models
 
 
@@ -17,7 +17,7 @@ from . import models
 
 
 
-# -------------------------------------------------------------- Top -----------
+#-------------------------------------------------------------- Top ------------
 class Top(APIView):
     permission_classes = [AllowAny]
 
@@ -41,17 +41,21 @@ class Top(APIView):
 
 
 
-# ---------------------------------------------------------- AAAAAAAA ----------
-class AAAAAAAA(APIView):
+
+#--------------------------------------------------------- Features ------------
+class Features(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, format=None):
         try:
-            score = UserScore.objects.get(user=request.user)
-            data = {'user_score':score.score, 'banner':banner}
-            return Response(data, status=status.HTTP_200_OK)
+            features = models.Features.objects.all()
+            serializer = FeaturesSerializer(features, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 
