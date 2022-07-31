@@ -11,11 +11,11 @@ from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from .models import Banner, UserScore, GetScore, Winner
+from .models import Banner, UserScore, GetScore, Winner, WinnersList
 from django.db.models import Q
 from random import randint
 from authentication.models import User
-
+import random
 
 
 
@@ -66,18 +66,23 @@ class Winners(APIView):
             bonus_amount = winners_data.bonus_amount   # each winner bonus
 
             all_users = []
-            print('------------')
             for User in UserScore.objects.all():
-                print(User.user)
-                print(User.score)
+                for x in range(User.score):
+                    all_users.append(User.user)
 
+            random_items = random.sample(all_users, winners_qty)
 
+            winners_list = WinnersList.objects.all()
+            for obj in winners_list:
+                obj.delete()
 
-            #winners = {'1':'nimaaa', '2':'nimaaa2', '3':'nimaaa3', '4':'nimaaa', '5':'nimaaa5', '6':'nimaaa6'}
-            data = {'user_score':score.score, 'banner:':banner.img.url, 'body:':banner.body, 'title:':banner.title, 'winners':winners}
+            for winner in random_items:
+                if not WinnersList.objects.filter(user=winner):
+                    WL = WinnersList()
+                    WL.user = winner
+                    WL.save()
 
-
-            return Response(data, status=status.HTTP_200_OK)
+            return Response('The list of winners has been determined', status=status.HTTP_200_OK)
         except:
             return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
 
