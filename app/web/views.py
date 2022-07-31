@@ -137,7 +137,28 @@ class Footer(APIView):
         try:
             footer = models.Footer.objects.get(id=1)
             serializer = FooterSerializer(footer)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            social = {
+             'instagram_image': serializer.data['instagram_image'],
+             'instagram_link': serializer.data['instagram_link'],
+             'linkedin_image': serializer.data['linkedin_image'],
+             'linkedin_link': serializer.data['linkedin_link'],
+             'youtube_image': serializer.data['youtube_image'],
+             'youtube_link': serializer.data['youtube_link'],
+             'facebook_image': serializer.data['facebook_image'],
+             'facebook_link': serializer.data['facebook_link'],
+             'medium_image': serializer.data['medium_image'],
+             'medium_link': serializer.data['medium_link'],
+             'whatsapp_image': serializer.data['whatsapp_image'],
+             'whatsapp_link': serializer.data['whatsapp_link'],
+             'discord_image': serializer.data['discord_image'],
+             'discord_link': serializer.data['discord_link'],
+             'reddit_image': serializer.data['reddit_image'],
+             'reddit_link': serializer.data['reddit_link'],
+             'telegram_image': serializer.data['telegram_image'],
+             'telegram_link': serializer.data['telegram_link']
+            }
+            data = { 'copyright_text':serializer.data['copyright_text'], 'slogan_text':serializer.data['slogan_text'], 'social':social }
+            return Response(data, status=status.HTTP_200_OK)
         except:
             return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
 
