@@ -62,11 +62,15 @@ class Winners(APIView):
     def get(self, request, format=None):
         try:
             winners_data = Winner.objects.get(id=1)
-            winners_qty = winners_data.winners_qty
-            bonus_amount = winners_data.bonus_amount
+            winners_qty = winners_data.winners_qty     # number of winners
+            bonus_amount = winners_data.bonus_amount   # each winner bonus
 
-            scores = UserScore.objects.all()
-            user = User.objects.all()
+            all_users = []
+            print('------------')
+            for User in UserScore.objects.all():
+                print(User.user)
+                print(User.score)
+
 
 
             #winners = {'1':'nimaaa', '2':'nimaaa2', '3':'nimaaa3', '4':'nimaaa', '5':'nimaaa5', '6':'nimaaa6'}
