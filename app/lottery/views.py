@@ -12,6 +12,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from .models import Banner, UserScore, GetScore, Winner, WinnersList
+from . import models
 from django.db.models import Q
 from random import randint
 from authentication.models import User
@@ -55,7 +56,7 @@ class Lottery(APIView):
 
 
 
-# ----------------------------------------------------------- Lottery ----------
+# ----------------------------------------------------------- Winners ----------
 class Winners(APIView):
     permission_classes = [AllowAny]
 
@@ -86,6 +87,34 @@ class Winners(APIView):
         except:
             return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
 
+
+
+
+
+
+
+
+
+
+
+
+
+#----------------------------------------------------- AppWinnPrizes -----------
+class AppWinnPrizes(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        try:
+            winners_data = models.Winner.objects.get(id=1)
+            bonus_amount = winners_data.bonus_amount   # each winner bonus
+
+            print('------------')
+            for Winner in WinnersList.objects.all():
+                print(Winner.user)
+
+            return Response('The', status=status.HTTP_200_OK)
+        except:
+            return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
 
 
 
