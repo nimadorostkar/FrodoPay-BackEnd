@@ -120,6 +120,7 @@ class MobileBanners(models.Model):
 class Footer(models.Model):
     copyright_text = models.CharField(max_length=256, null=True, blank=True)
     slogan_text = models.CharField(max_length=256, null=True, blank=True)
+    '''
     instagram_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
     instagram_link = models.CharField(max_length=256, null=True, blank=True)
     linkedin_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
@@ -138,6 +139,7 @@ class Footer(models.Model):
     reddit_link = models.CharField(max_length=256, null=True, blank=True)
     telegram_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
     telegram_link = models.CharField(max_length=256, null=True, blank=True)
+    '''
 
     def __str__(self):
         return str('Footer Info')
@@ -146,6 +148,20 @@ class Footer(models.Model):
         if self.__class__.objects.count():
             self.pk = self.__class__.objects.first().pk
         super().save(*args, **kwargs)
+
+
+#------------------------------------------------------------------------------
+class Socials(models.Model):
+    footer = models.ForeignKey(Footer, on_delete=models.CASCADE)
+    name = models.CharField(max_length=256)
+    image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png')
+    link = models.CharField(max_length=256)
+
+    def __str__(self):
+        return str(self.name)
+
+
+
 
 
 

@@ -1,9 +1,5 @@
 from django.contrib import admin
-from .models import Top, Features, Description, Banners, MobileBanners, Footer
-
-
-
-
+from .models import Top, Features, Description, Banners, MobileBanners, Footer, Socials
 
 
 
@@ -51,10 +47,21 @@ admin.site.register(MobileBanners, MobileBannersAdmin)
 
 
 
+
+
+#------------------------------------------------------------------------------
+class SocialsInline(admin.TabularInline):
+    model = Socials
+    extra = 1
 #------------------------------------------------------------------------------
 class FooterAdmin(admin.ModelAdmin):
     list_display = ('slogan_text', 'copyright_text')
+    inlines = [SocialsInline]
 admin.site.register(Footer, FooterAdmin)
+
+
+
+
 
 
 

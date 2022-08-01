@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Top, Features, Description, Banners, MobileBanners, Footer
+from .models import Top, Features, Description, Banners, MobileBanners, Footer, Socials
 
 
 
@@ -78,7 +78,15 @@ class FooterSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-        
+
+
+
+
+class SocialsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Socials
+        fields = '__all__'
+
 
 
 
