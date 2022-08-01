@@ -58,7 +58,7 @@ class Lottery(APIView):
 
 # ----------------------------------------------------------- Winners ----------
 class Winners(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
         try:
@@ -101,18 +101,19 @@ class Winners(APIView):
 
 #----------------------------------------------------- AppWinnPrizes -----------
 class AppWinnPrizes(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
         try:
             winners_data = models.Winner.objects.get(id=1)
             bonus_amount = winners_data.bonus_amount   # each winner bonus
 
-            print('------------')
             for Winner in WinnersList.objects.all():
-                print(Winner.user)
+                user = User.objects.get(username=Winner.user.username)
+                user.inventory += bonus_amount
+                user.save()
 
-            return Response('The', status=status.HTTP_200_OK)
+            return Response('The bonus was awarded to the winners', status=status.HTTP_200_OK)
         except:
             return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
 
