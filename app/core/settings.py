@@ -66,8 +66,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'dj_rest_auth',
     'django_extensions',
-    'fcm_django',
-    'rest_framework_simplejwt.token_blacklist'
+    'fcm_django'
+    #'rest_framework_simplejwt.token_blacklist'
 ]
 
 
@@ -235,7 +235,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': True,
 
     'ALGORITHM': 'HS256',

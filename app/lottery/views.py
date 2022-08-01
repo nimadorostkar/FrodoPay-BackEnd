@@ -58,7 +58,7 @@ class Lottery(APIView):
 
 # ----------------------------------------------------------- Winners ----------
 class Winners(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
         try:
@@ -101,7 +101,7 @@ class Winners(APIView):
 
 #----------------------------------------------------- AppWinnPrizes -----------
 class AppWinnPrizes(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
         try:
