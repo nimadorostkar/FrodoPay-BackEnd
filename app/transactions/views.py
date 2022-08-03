@@ -77,7 +77,7 @@ class Transactions(GenericAPIView):
 
 
 
-#-----------------------------------------------------user transactions --------
+#---------------------------------------------------- user transactions --------
 class UsertransHistory(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TransactionSerializer
@@ -315,7 +315,7 @@ class ConfirmTransfer(APIView):
                     notif2.time = now
                     notif2.user = destination_user
                     notif2.save()
-                    
+
                     print("data notification sent successfully" )
                     return Response('The transfer was successful', status=status.HTTP_200_OK)
                 except Exception as e:
