@@ -37,7 +37,7 @@ class Top(models.Model):
 #------------------------------------------------------------------------------
 class Features(models.Model):
     title = models.CharField(max_length=256, null=True, blank=True)
-    description = models.TextField(max_length=256, null=True, blank=True)
+    description = models.TextField(max_length=2000, null=True, blank=True)
     image = models.ImageField(upload_to='web/Features')
 
 
@@ -57,7 +57,7 @@ class Features(models.Model):
 #------------------------------------------------------------------------------
 class Description(models.Model):
     title = models.CharField(max_length=256, null=True, blank=True)
-    description = models.TextField(max_length=256, null=True, blank=True)
+    description = models.TextField(max_length=2000, null=True, blank=True)
     image = models.ImageField(upload_to='web/descriptions')
     button_title = models.CharField(max_length=256, null=True, blank=True)
     button_link = models.CharField(max_length=256, null=True, blank=True)
@@ -120,26 +120,6 @@ class MobileBanners(models.Model):
 class Footer(models.Model):
     copyright_text = models.CharField(max_length=256, null=True, blank=True)
     slogan_text = models.CharField(max_length=256, null=True, blank=True)
-    '''
-    instagram_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
-    instagram_link = models.CharField(max_length=256, null=True, blank=True)
-    linkedin_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
-    linkedin_link = models.CharField(max_length=256, null=True, blank=True)
-    youtube_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
-    youtube_link = models.CharField(max_length=256, null=True, blank=True)
-    facebook_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
-    facebook_link = models.CharField(max_length=256, null=True, blank=True)
-    medium_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
-    medium_link = models.CharField(max_length=256, null=True, blank=True)
-    whatsapp_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
-    whatsapp_link = models.CharField(max_length=256, null=True, blank=True)
-    discord_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
-    discord_link = models.CharField(max_length=256, null=True, blank=True)
-    reddit_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
-    reddit_link = models.CharField(max_length=256, null=True, blank=True)
-    telegram_image = models.ImageField(upload_to='web/footer/socials', default='web/footer/socials/default.png', null=True, blank=True)
-    telegram_link = models.CharField(max_length=256, null=True, blank=True)
-    '''
 
     def __str__(self):
         return str('Footer Info')
