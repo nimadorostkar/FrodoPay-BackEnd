@@ -295,12 +295,9 @@ class ConfirmTransfer(APIView):
 
                 try:
                     now = datetime.now()
+                    destination_user = User.objects.get(username=transfer.destination)
                     device = FCMDevice.objects.filter(user=request.user)
-                    #device2 = FCMDevice.objects.filter(user=transfer.destination)
-                    #print('------------------')
-                    #print(device2)
                     device.send_message(Message( data={ "username":request.user.username, "title":"transfer to {}".format(transfer.destination), "body":"transfer {} to {} was done successfully".format(transfer.amount,transfer.destination), "type":"TRANSFER", "time":str(now) } ))
-                    #device2.send_message(Message( data={ "username":request.user.username, "title":"transfer to {}".format(transfer.destination), "body":"transfer {} to {} was done successfully".format(transfer.amount,transfer.destination), "type":"TRANSFER", "time":str(now) } ))
                     notif = NotifLists()
                     notif.title = "transfer to {}".format(transfer.destination)
                     notif.body = "transfer {} to {} was done successfully".format(transfer.amount,transfer.destination)
@@ -308,6 +305,17 @@ class ConfirmTransfer(APIView):
                     notif.time = now
                     notif.user = request.user
                     notif.save()
+
+                    device2 = FCMDevice.objects.filter(user=destination_user)
+                    device2.send_message(Message( data={ "username":destination_user.username, "title":"received from {}".format(transfer.source), "body":"received {} from {} successfully".format(transfer.amount,transfer.source), "type":"TRANSFER", "time":str(now) } ))
+                    notif2 = NotifLists()
+                    notif2.title = "received from {}".format(transfer.source)
+                    notif2.body = "received {} from {} successfully".format(transfer.amount,transfer.source)
+                    notif2.type = "TRANSFER"
+                    notif2.time = now
+                    notif2.user = destination_user
+                    notif2.save()
+                    
                     print("data notification sent successfully" )
                     return Response('The transfer was successful', status=status.HTTP_200_OK)
                 except Exception as e:
