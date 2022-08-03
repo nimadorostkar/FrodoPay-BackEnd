@@ -36,7 +36,7 @@ class Lottery(APIView):
             winners = WinnersList.objects.all()
             for Winner in winners:
                 user_score = UserScore.objects.get(user=Winner.user)
-                user = {'username':Winner.user.username, 'fname':Winner.user.first_name, 'lname':Winner.user.last_name, 'user_img':Winner.user.photo.url, 'score':user_score.score   }
+                user = {'username':Winner.user.username, 'first_name':Winner.user.first_name, 'last_name':Winner.user.last_name, 'photo':Winner.user.photo.url, 'score':user_score.score   }
                 winners_list.append(user)
 
             data = {'user_score':score.score, 'banner':banner.img.url, 'link':banner.link, 'body':banner.body, 'title':banner.title, 'winners':winners_list}
