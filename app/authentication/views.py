@@ -96,14 +96,11 @@ class Login(APIView):
 #--------------------------------------------------------- logout -------------
 class Logout(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request, *args, **kwargs):
         try:
             user = models.User.objects.get(id=request.user.id)
             device = FCMDevice.objects.get(user=user)
             device.delete()
-            token = RefreshToken.for_user(user)
-            token.blacklist()
             return Response('User Logged out successfully', status=status.HTTP_200_OK)
         except Exception as e:
             print('-------------')
@@ -115,6 +112,10 @@ class Logout(APIView):
 #request.user.access_token.delete()
 #return HttpResponseRedirect('rest_logout')
 #return redirect('rest_logout')
+
+#token = RefreshToken.for_user(user)
+#access = token.access_token
+#token.delete()
 
 
 
