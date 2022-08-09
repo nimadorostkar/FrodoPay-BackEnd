@@ -208,7 +208,8 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
         banners = []
         for Banner in HomeBanners.objects.all():
-            banners.append(Banner.img.url)
+            banner = {'title':Banner.title, 'image':Banner.img.url, 'link':Banner.link}
+            banners.append(banner)
 
         profile = models.User.objects.get(id=self.request.user.id)
 
