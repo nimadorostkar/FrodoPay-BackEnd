@@ -21,4 +21,5 @@ urlpatterns = [
     path('notif/', views.Notif.as_view(), name='notif'),
     path('data_notif/', views.DataNotif.as_view(), name='data_notif'),
     path('notif_list/', views.NotifList.as_view(), name='notif_list'),
+    path('invited_by_me/', views.InvitedByMe.as_view(), name='invited_by_me'),
 ]

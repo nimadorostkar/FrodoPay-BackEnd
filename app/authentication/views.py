@@ -558,4 +558,31 @@ class NotifList(GenericAPIView):
 
 
 
+
+#--------------------------------------------------------- InvitedByMe -------------
+class InvitedByMe(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        users = models.User.objects.filter(referral=request.user.invitation_referral)
+        print(users)
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #End
