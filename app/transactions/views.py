@@ -225,6 +225,9 @@ class Transfer(APIView):
         transfer.type = 'transfer'
         transfer.source = request.user.username
 
+        #zzz = Decimal('123.090000')
+        #print(zzz.normalize())
+
         if request.data['destination'] == request.user.username:
             return Response("Transfer to your account is not possible", status=status.HTTP_400_BAD_REQUEST)
 
