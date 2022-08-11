@@ -235,7 +235,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         data['username'] = profile.username
 
         if data['wallet_address']:
-            addr = coinaddrvalidator.validate('eth', data['wallet_address'])
+            addr = coinaddrvalidator.validate('tronix', data['wallet_address'])
             if addr.valid:
                 serializer = UserSerializer(profile, data=data)
                 if serializer.is_valid():
