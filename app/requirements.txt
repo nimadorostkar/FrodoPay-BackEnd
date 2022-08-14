@@ -14,3 +14,4 @@ psycopg2-binary
 coinpayments-py
 django-coinpayments
 fcm-django
+mysqlclient
