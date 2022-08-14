@@ -9,7 +9,7 @@ services:
       - MYSQL_USER='root'
       - MYSQL_PASSWORD='some_password'
       - MYSQL_ROOT_PASSWORD='some_password'
-      - MYSQL_HOST=''
+      - MYSQL_HOST='localhost'
     volumes:
       - /tmp/app/mysqld:/var/run/mysqld
       - ./db:/var/lib/mysql
