@@ -16,3 +16,4 @@ django-coinpayments
 fcm-django
 mysqlclient
 django-mysql
+django_extensions
