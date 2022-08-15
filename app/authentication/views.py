@@ -430,10 +430,13 @@ class ForgotPass(APIView):
             profile = models.User.objects.get(username=username)
             profile.conf_code = code
             profile.save()
+            return Response("The code was not sent but added to the panel. code: {}".format(code) , status=status.HTTP_200_OK)
+            '''
             if helper.rest_pass_send_code(profile, code):
                 return Response("Code send to {}".format(profile.email) , status=status.HTTP_200_OK)
             else:
                 return Response("Error sending email - Please try again!" , status=status.HTTP_400_BAD_REQUEST)
+            '''
         except:
             return Response("username not found, please try again" , status=status.HTTP_400_BAD_REQUEST)
 
