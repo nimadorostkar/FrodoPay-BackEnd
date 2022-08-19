@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+import requests
 from django.shortcuts import render, get_object_or_404
 from authentication.models import User, NotifLists
 from .serializers import TransactionSerializer
@@ -391,6 +392,43 @@ class Withdrawal(APIView):
                             'description':withdrawal.description, 'status':withdrawal.status, 'total_amount':total_amount }
 
         return Response(withdrawal_data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+#--------------------------------------------- WalletConnectDeposit ------------
+class WalletConnectDeposit(APIView):
+    #serializer_class = AdvertiseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        req = request.data
+
+        txhash = req['txhash']
+        user = User.objects.get(username=req['user'])
+        amount = req['amount']
+
+        bscscan_check = 'https://api.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash={}'.format(txhash)
+        url_json_data = requests.get(bscscan_check).json()
+        dump_data = json.dumps(url_json_data)
+        url_data = json.loads(dump_data)
+
+        print(url_data["status"])
+
+        data = { 'data':url_data }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+
+
+
 
 
 
