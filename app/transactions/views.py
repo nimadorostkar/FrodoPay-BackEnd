@@ -402,6 +402,9 @@ class Withdrawal(APIView):
 
 
 
+
+
+
 #--------------------------------------------- WalletConnectDeposit ------------
 class WalletConnectDeposit(APIView):
     permission_classes = [IsAuthenticated]
@@ -421,6 +424,7 @@ class WalletConnectDeposit(APIView):
 
         data = { 'data':url_data }
         return Response(data, status=status.HTTP_200_OK)
+
 
 
 
