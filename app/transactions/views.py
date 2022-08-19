@@ -404,7 +404,6 @@ class Withdrawal(APIView):
 
 #--------------------------------------------- WalletConnectDeposit ------------
 class WalletConnectDeposit(APIView):
-    #serializer_class = AdvertiseSerializer
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
@@ -418,11 +417,9 @@ class WalletConnectDeposit(APIView):
         url_json_data = requests.get(bscscan_check).json()
         dump_data = json.dumps(url_json_data)
         url_data = json.loads(dump_data)
-
         print(url_data["status"])
 
         data = { 'data':url_data }
-
         return Response(data, status=status.HTTP_200_OK)
 
 
