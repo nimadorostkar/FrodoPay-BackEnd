@@ -50,6 +50,26 @@ class HomeBanners(models.Model):
 
 
 
+#------------------------------------------------------------------------------
+class Version(models.Model):
+    version = models.CharField(max_length=256)
+
+    def __str__(self):
+        return str(self.version)
+
+    def save(self, *args, **kwargs):
+        if self.__class__.objects.count():
+            self.pk = self.__class__.objects.first().pk
+        super().save(*args, **kwargs)
+
+
+
+
+
+
+
+
+
 
 
 #End
