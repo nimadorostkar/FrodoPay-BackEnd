@@ -30,7 +30,7 @@ class Advertise(APIView):
         ads = list(models.Advertise.objects.all())
         random_ad = random.choice(ads)
         serializer = AdvertiseSerializer(random_ad)
-        version = "1.0.0"
+        version = models.Version.objects.get(id=1).version
         data = {'advertise':serializer.data, 'version':version }
         return Response(data, status=status.HTTP_200_OK)
 
