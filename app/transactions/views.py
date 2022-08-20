@@ -415,6 +415,7 @@ class WalletConnectDeposit(APIView):
         txhash = req['txhash']
         user = User.objects.get(username=req['user'])
         amount = req['amount']
+        token = req['token']
 
         bscscan_check = 'https://api.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash={}'.format(txhash)
         url_json_data = requests.get(bscscan_check).json()
