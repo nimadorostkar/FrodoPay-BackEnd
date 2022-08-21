@@ -117,8 +117,8 @@ class UsertransHistory(GenericAPIView):
                     trans_status = 'withdrawal'
                 elif obj['type'] == 'deposit':
                     trans_status = 'deposit'
-                trans = { 'trans_status':trans_status, 'id':obj['id'], 'source':obj['source'], 'destination':obj['destination'], 'amount':obj['amount'],
-                          'type':obj['type'], 'status':obj['status'], 'description':obj['description'], 'fee':obj['fee'], 'created_at':obj['created_at'] }
+                trans = { 'trans_status':trans_status, 'id':obj['id'], 'source':obj['source'], 'destination':obj['destination'], 'amount':obj['amount'], 'normalize_amount':Decimal(obj['amount']).normalize(),
+                          'type':obj['type'], 'status':obj['status'], 'description':obj['description'], 'fee':obj['fee'], 'normalize_fee':Decimal(obj['fee']).normalize(), 'created_at':obj['created_at'] }
                 transactions.append(trans)
             return self.get_paginated_response(transactions)
 
@@ -134,8 +134,8 @@ class UsertransHistory(GenericAPIView):
                 trans_status = 'withdrawal'
             elif obj['type'] == 'deposit':
                 trans_status = 'deposit'
-            trans = { 'trans_status':trans_status, 'id':obj['id'], 'source':obj['source'], 'destination':obj['destination'], 'amount':obj['amount'],
-                      'type':obj['type'], 'status':obj['status'], 'description':obj['description'], 'fee':obj['fee'], 'created_at':obj['created_at'] }
+            trans = { 'trans_status':trans_status, 'id':obj['id'], 'source':obj['source'], 'destination':obj['destination'], 'amount':obj['amount'], 'normalize_amount':Decimal(obj['amount']).normalize(),
+                      'type':obj['type'], 'status':obj['status'], 'description':obj['description'], 'fee':obj['fee'], 'normalize_fee':Decimal(obj['fee']).normalize(), 'created_at':obj['created_at'] }
             transactions.append(trans)
         return Response(transactions, status=status.HTTP_200_OK)
 
