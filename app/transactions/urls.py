@@ -16,4 +16,6 @@ urlpatterns = [
     path('payments/', views.PaymentList.as_view(), name='payment_list'),
     path('payments/<pk>', views.PaymentDetail.as_view(), name='payment_detail'),
     path('payments/new/<pk>', views.create_new_payment, name='payment_new'),
+    #
+    path('deposit', views.WalletConnectDeposit.as_view(), name='deposit'),
 ]

@@ -24,6 +24,11 @@ class Transaction(models.Model):
     def __str__(self):
         return self.type +"|"+ self.status +"|"+ str(self.source)
 
+    def normalize_amount(self):
+        return str(self.amount.normalize())
+
+    def normalize_fee(self):
+        return str(self.fee.normalize())
 
     @receiver(post_save, sender=Payment)
     def post_save(sender, instance, created, **kwargs):
