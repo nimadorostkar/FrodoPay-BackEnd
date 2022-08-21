@@ -1,4 +1,5 @@
 from .models import User, Countries, NotifLists
+from fee.models import FeeRates
 from . import models
 from django.http import JsonResponse
 from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, ConfirmationSerializer, CountriesSerializer, NotifListsSerializer
@@ -206,6 +207,8 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
     def get(self, request, *args, **kwargs):
 
+        fee = FeeRates.objects.get(id=1)
+
         banners = []
         for Banner in HomeBanners.objects.all():
             banner = {'title':Banner.title, 'image':Banner.img.url, 'link':Banner.link}
@@ -224,7 +227,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
                 'shop':profile.shop, 'photo':profile.photo.url, 'gender':profile.gender,
                 'birthday':profile.birthday, 'country':profile.country.name, 'wallet_address':profile.wallet_address,
                 'last_login':profile.last_login, 'inventory':profile.inventory, "daily_withdraw_ceiling_remains":daily_withdraw_ceiling_remains, "monthly_withdraw_ceiling_remains":monthly_withdraw_ceiling_remains,
-                'banners':banners }
+                'withdrawal_fee':fee.withdrawal, 'deposit_fee':fee.deposit, 'transfer_fee':fee.transfer, 'banners':banners }
         return Response(data, status=status.HTTP_200_OK)
 
 
