@@ -10,7 +10,6 @@ from django.db.models.signals import post_save
 
 
 
-
 #------------------------------------------------------------------------------
 class Top(models.Model):
     slogan_text = models.CharField(max_length=256, null=True, blank=True)
