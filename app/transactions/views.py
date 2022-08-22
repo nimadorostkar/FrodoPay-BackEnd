@@ -31,7 +31,7 @@ from fee.models import FeeRates, InputHistory, Inventory
 
 from firebase_admin.messaging import Message, Notification, AndroidNotification
 from fcm_django.models import FCMDevice
-
+import hashlib
 
 
 
@@ -407,13 +407,13 @@ class Withdrawal(APIView):
 
 #--------------------------------------------- WalletConnectDeposit ------------
 class WalletConnectDeposit(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         req = request.data
 
         txhash = req['txhash']
-        user = User.objects.get(username=req['user'])
+        user = User.objects.get(id=req['user'])
         amount = req['amount']
         token = req['token']
 
@@ -421,7 +421,19 @@ class WalletConnectDeposit(APIView):
         url_json_data = requests.get(bscscan_check).json()
         dump_data = json.dumps(url_json_data)
         url_data = json.loads(dump_data)
-        print(url_data["status"])
+        #print(url_data["status"])
+
+        # User_ID + frodopay * SHA-256
+
+        obj = str(req['user']) + 'frodopay'
+        hash_obj = hashlib.sha256(obj.encode('utf-8')).hexdigest()
+        print(hash_obj)
+
+
+
+
+
+
 
         data = { 'data':url_data }
         return Response(data, status=status.HTTP_200_OK)
