@@ -423,16 +423,10 @@ class WalletConnectDeposit(APIView):
         url_data = json.loads(dump_data)
         #print(url_data["status"])
 
-        # User_ID + frodopay * SHA-256
-
+        # User_ID + 'frodopay' * SHA-256
         obj = str(req['user']) + 'frodopay'
         hash_obj = hashlib.sha256(obj.encode('utf-8')).hexdigest()
         print(hash_obj)
-
-
-
-
-
 
 
         data = { 'data':url_data }
