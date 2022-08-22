@@ -350,7 +350,7 @@ class Withdrawal(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        amount = request.data['amount']
+        amount = Decimal(request.data['amount'])
         fee = FeeRates.objects.get(id=1).withdrawal
         fee_amount = amount*fee
         total_amount = amount+fee_amount
