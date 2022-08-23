@@ -404,7 +404,6 @@ class Withdrawal(APIView):
 
 
 
-
 #--------------------------------------------- WalletConnectDeposit ------------
 class WalletConnectDeposit(APIView):
     permission_classes = [AllowAny]

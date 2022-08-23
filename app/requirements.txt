@@ -17,3 +17,4 @@ fcm-django
 mysqlclient
 django-mysql
 django_extensions
+mysqlclient
