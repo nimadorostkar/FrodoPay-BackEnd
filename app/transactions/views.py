@@ -428,8 +428,7 @@ class WalletConnectDeposit(APIView):
         print(hash_obj)
 
 
-        data = { 'data':url_data }
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(url_data, status=status.HTTP_200_OK)
 
 
 
