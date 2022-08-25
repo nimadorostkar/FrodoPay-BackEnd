@@ -410,11 +410,11 @@ class WalletConnectDeposit(APIView):
 
     def post(self, request, *args, **kwargs):
         req = request.data
-
         txhash = req['txhash']
         user = User.objects.get(id=req['user'])
-        amount = req['amount']
+        amount = Decimal(req['amount'])
         token = req['token']
+        secure_hash = req['secure_hash']
 
         bscscan_check = 'https://api.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash={}'.format(txhash)
         url_json_data = requests.get(bscscan_check).json()
@@ -425,10 +425,38 @@ class WalletConnectDeposit(APIView):
         # User_ID + 'frodopay' * SHA-256
         obj = str(req['user']) + 'frodopay'
         hash_obj = hashlib.sha256(obj.encode('utf-8')).hexdigest()
-        print(hash_obj)
+        #print(hash_obj)
+
+        if hash_obj == secure_hash:
+
+            deposit = Transaction()
+            deposit.type = 'deposit'
+            deposit.source = txhash
+            deposit.destination = user.username
+            deposit.amount = amount
+            deposit.status = 'success'
+            deposit.fee = amount*(FeeRates.objects.get(id=1).deposit)
+            deposit.save()
+
+            user.inventory = user.inventory + amount
+            user.save()
+
+            feeinput = InputHistory()
+            feeinput.transaction = deposit
+            feeinput.amount = deposit.fee
+            feeinput.save()
+
+            fee_inventory = Inventory.objects.get(id=1)
+            fee_inventory.amount += deposit.fee
+            fee_inventory.save()
+
+            return Response('User inventory charged {} {}'.format(amount, token), status=status.HTTP_200_OK)
+        else:
+            return Response('secure hash is not valid !', status=status.HTTP_400_BAD_REQUEST)
 
 
-        return Response(url_data, status=status.HTTP_200_OK)
+
+
 
 
 
