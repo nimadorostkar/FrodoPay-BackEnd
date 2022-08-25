@@ -421,6 +421,10 @@ class WalletConnectDeposit(APIView):
         dump_data = json.dumps(url_json_data)
         url_data = json.loads(dump_data)
         #print(url_data["status"])
+        result = json.dumps(url_data['result'])
+        result_json = json.loads(result)
+        #print(result_json['status'])
+        txhash_status = result_json['status']
 
         # User_ID + 'frodopay' * SHA-256
         obj = str(req['user']) + 'frodopay'
@@ -428,29 +432,34 @@ class WalletConnectDeposit(APIView):
         #print(hash_obj)
 
         if hash_obj == secure_hash:
+            if txhash_status == '1':
 
-            deposit = Transaction()
-            deposit.type = 'deposit'
-            deposit.source = txhash
-            deposit.destination = user.username
-            deposit.amount = amount
-            deposit.status = 'success'
-            deposit.fee = amount*(FeeRates.objects.get(id=1).deposit)
-            deposit.save()
+                deposit = Transaction()
+                deposit.type = 'deposit'
+                deposit.source = txhash
+                deposit.destination = user.username
+                deposit.amount = amount
+                deposit.status = 'success'
+                deposit.fee = amount*(FeeRates.objects.get(id=1).deposit)
+                deposit.save()
 
-            user.inventory = user.inventory + amount
-            user.save()
+                user.inventory = user.inventory + amount
+                user.save()
 
-            feeinput = InputHistory()
-            feeinput.transaction = deposit
-            feeinput.amount = deposit.fee
-            feeinput.save()
+                feeinput = InputHistory()
+                feeinput.transaction = deposit
+                feeinput.amount = deposit.fee
+                feeinput.save()
 
-            fee_inventory = Inventory.objects.get(id=1)
-            fee_inventory.amount += deposit.fee
-            fee_inventory.save()
+                fee_inventory = Inventory.objects.get(id=1)
+                fee_inventory.amount += deposit.fee
+                fee_inventory.save()
 
-            return Response('User inventory charged {} {}'.format(amount, token), status=status.HTTP_200_OK)
+                return Response('User inventory charged {} {}'.format(amount, token), status=status.HTTP_200_OK)
+
+            else:
+                return Response('txhash status is not valid !', status=status.HTTP_400_BAD_REQUEST)
+
         else:
             return Response('secure hash is not valid !', status=status.HTTP_400_BAD_REQUEST)
 
