@@ -293,8 +293,8 @@ class ConfirmTransfer(APIView):
                 except Exception as e:
                     print('-------------')
                     print(e)
-                    transfer.status = 'fail'
-                    transfer.save()
+                    #transfer.status = 'fail'
+                    #transfer.save()
                     return Response("Error in completing the confirmation", status=status.HTTP_400_BAD_REQUEST)
 
                 try:
@@ -325,8 +325,8 @@ class ConfirmTransfer(APIView):
                 except Exception as e:
                     print('-------------')
                     print(e)
-                    transfer.status = 'fail'
-                    transfer.save()
+                    #transfer.status = 'fail'
+                    #transfer.save()
                     return Response("Error in sending notification", status=status.HTTP_400_BAD_REQUEST)
 
             else:
