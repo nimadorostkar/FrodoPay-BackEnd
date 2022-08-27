@@ -15,80 +15,42 @@ check demo or use api: https://frodopay.pythonanywhere.com/
 
 
 
-
-### Install Dependencies
-```
-pip install -r requirements.txt
-```
-
-
-### Run the following commands to get started:
-
-```
-python manage.py makemigrations
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
-```
-
-
-
-
-
-
-### you can run them manually, after the containers spin up, like so:
-
-```
-docker-compose exec web python manage.py makemigrations
-docker-compose exec web python manage.py migrate   
-```
-
-
-
-
-### Build the image:
-
+Build code with docker compose
 ```
 docker-compose build
 ```
 
-
-### Once the image is built, run the container:
-
+Run the built container
 ```
 docker-compose up -d
 ```
 
 
 
-### Build the image and spin up the two containers:
-
+Build the image and spin up the containers:
 ```
 docker-compose up -d --build
 ```
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-### Bring down the development containers (and the associated volumes with the -v flag):
-
+Migrate databases
 ```
-docker-compose down -v
+docker-compose exec app python manage.py makemigrations
+docker-compose exec app python manage.py migrate
 ```
 
 
-### Then, build the production images and spin up the containers:
 
+
+Collect static files
 ```
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose exec app python manage.py collectstatic
+```
+
+
+
+Create super user
+```
+docker-compose exec app python manage.py createsuperuser
 ```
