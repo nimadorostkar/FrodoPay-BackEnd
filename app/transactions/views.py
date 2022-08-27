@@ -295,7 +295,7 @@ class ConfirmTransfer(APIView):
                     print(e)
                     #transfer.status = 'fail'
                     #transfer.save()
-                    return Response("Error in completing the confirmation", status=status.HTTP_400_BAD_REQUEST)
+                    #return Response("Error in completing the confirmation", status=status.HTTP_400_BAD_REQUEST)
 
                 try:
                     now = datetime.now()
@@ -327,7 +327,8 @@ class ConfirmTransfer(APIView):
                     print(e)
                     #transfer.status = 'fail'
                     #transfer.save()
-                    return Response("Error in sending notification", status=status.HTTP_400_BAD_REQUEST)
+                    return Response('The transfer was successful but error in sending notification', status=status.HTTP_200_OK)
+                    #return Response("Error in sending notification", status=status.HTTP_400_BAD_REQUEST)
 
             else:
                 return Response("This request is invalid", status=status.HTTP_400_BAD_REQUEST)
