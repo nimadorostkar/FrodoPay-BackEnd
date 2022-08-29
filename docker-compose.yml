@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  db:
+    image: postgres
+    env_file:
+      - django.env
+    volumes:
+      - ./db:/var/lib/postgres
+
+  app:
+    build: app
+    container_name: django-gunicorn
+    restart: always
+    env_file:
+      - django.env
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    command:
+      "gunicorn --workers=2 --bind=0.0.0.0:8000 core.wsgi:application"
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:1.17
+    container_name: ngx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+
+
+volumes:
+  db:
+  app:

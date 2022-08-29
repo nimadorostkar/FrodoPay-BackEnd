@@ -10,11 +10,10 @@ coinaddrvalidator
 djangorestframework-simplejwt
 dj-rest-auth
 django-allauth
-psycopg2-binary
+gunicorn
+pytz
+psycopg2
 coinpayments-py
 django-coinpayments
 fcm-django
-mysqlclient
-django-mysql
 django_extensions
-mysqlclient
