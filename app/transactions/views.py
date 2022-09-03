@@ -236,7 +236,7 @@ class Transfer(APIView):
             destination = User.objects.get(is_confirmed=True, username=request.data['destination'])
             transfer.destination = destination.username
         except:
-            return Response("Destination wallet address isn't valid", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Destination wallet address isn't valid or confirmed", status=status.HTTP_400_BAD_REQUEST)
 
         if total_amount <= request.user.inventory:
             transfer.amount = amount
