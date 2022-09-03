@@ -18,10 +18,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-g#7&@7tr6-z88vp01(=*y7tr!f4mm%2%a09*+o7#29g%3em+d&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = ['https://api.frodopay.io', 'www.api.frodopay.io', 'api.frodopay.io']
 
 
 
@@ -123,8 +122,8 @@ DATABASES = {
 
 
 
-CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:8000',]
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000',]
+CORS_ALLOWED_ORIGINS = ['https://api.frodopay.io',]
+CSRF_TRUSTED_ORIGINS = ['https://api.frodopay.io',]
 CORS_ORIGIN_ALLOW_ALL = True
 
 
