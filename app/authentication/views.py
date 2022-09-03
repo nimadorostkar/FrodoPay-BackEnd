@@ -32,6 +32,9 @@ from lottery.models import UserScore
 
 
 
+
+
+
 #------------------------------------------------------- Login ----------------
 class Login(APIView):
     permission_classes = [AllowAny]
@@ -155,14 +158,12 @@ class Register(APIView):
             referral_user.invited_users += 1
             referral_user.save()
 
-
-        '''
         if helper.send_code(user, code):
             email_msg = "Activation code send to {}".format(user.email)
         else:
             email_msg = "Error sending email - Please send activation email again!"
-        '''
-        email_msg = "email service not active"
+
+        #email_msg = "email service not active"
 
         if request.user.is_authenticated:
             if FCMDevice.objects.filter(user=request.user):
@@ -318,6 +319,7 @@ class Activation(APIView):
 
 
 
+
 #------------------------------------------------------ Confirmation -----------
 class Confirmation(APIView):
     serializer_class = ConfirmationSerializer
@@ -433,13 +435,13 @@ class ForgotPass(APIView):
             profile = models.User.objects.get(username=username)
             profile.conf_code = code
             profile.save()
-            return Response("The code was not sent but added to the panel. code: {}".format(code) , status=status.HTTP_200_OK)
-            '''
+            #return Response("The code was not sent but added to the panel. code: {}".format(code) , status=status.HTTP_200_OK)
+
             if helper.rest_pass_send_code(profile, code):
                 return Response("Code send to {}".format(profile.email) , status=status.HTTP_200_OK)
             else:
                 return Response("Error sending email - Please try again!" , status=status.HTTP_400_BAD_REQUEST)
-            '''
+
         except:
             return Response("username not found, please try again" , status=status.HTTP_400_BAD_REQUEST)
 
