@@ -480,6 +480,25 @@ class WalletConnectDeposit(APIView):
 
 
 
+#--------------------------------------------- WalletConnectDeposit ------------
+class DepositHash(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        req = request.data
+
+        amount = Decimal(req['amount'])
+        user = User.objects.get(id=req['userId'])
+        token = req['token']
+        network = req['network']
+
+
+
+
+
+
+
+
 
 
 

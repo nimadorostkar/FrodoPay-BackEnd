@@ -18,4 +18,5 @@ urlpatterns = [
     path('payments/new/<pk>', views.create_new_payment, name='payment_new'),
     #
     path('deposit', views.WalletConnectDeposit.as_view(), name='deposit'),
+    path('deposit_hash', views.DepositHash.as_view(), name='deposit_hash'),
 ]

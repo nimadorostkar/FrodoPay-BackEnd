@@ -18,9 +18,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-g#7&@7tr6-z88vp01(=*y7tr!f4mm%2%a09*+o7#29g%3em+d&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+#DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['https://api.frodopay.io', 'www.api.frodopay.io', 'api.frodopay.io']
+#ALLOWED_HOSTS = ['https://api.frodopay.io', 'www.api.frodopay.io', 'api.frodopay.io']
+ALLOWED_HOSTS = ['*']
 
 
 
