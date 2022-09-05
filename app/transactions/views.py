@@ -487,17 +487,14 @@ class DepositHash(APIView):
     def get(self, request, format=None):
         try:
             query = DepoHash.objects.get(deposit_id=request.GET.get('id'))
-
             now = datetime.now()
             timedelta = now - query.created_at.replace(tzinfo=None)
             if timedelta.seconds > 900:
                 return Response('The transaction has expired', status=status.HTTP_400_BAD_REQUEST)
-
             serializer = DepoHashSerializer(query)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response('Transaction not found', status=status.HTTP_400_BAD_REQUEST)
-
 
 
     def post(self, request, format=None):
