@@ -107,7 +107,7 @@ class DepoHash(models.Model):
     token = models.CharField(max_length=60, choices=TOKEN)
     network = models.CharField(max_length=60, choices=NETWORK)
     deposit_id = ShortUUIDField(unique=True, length=16, max_length=40, alphabet="abcdefg1234", primary_key=True)
-
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.deposit_id) +'|'+str(self.user.username)

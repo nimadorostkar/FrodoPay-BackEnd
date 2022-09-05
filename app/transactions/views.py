@@ -3,7 +3,7 @@ from django.urls import reverse
 import requests
 from django.shortcuts import render, get_object_or_404
 from authentication.models import User, NotifLists
-from .serializers import TransactionSerializer
+from .serializers import TransactionSerializer, DepoHashSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views import generic
@@ -16,7 +16,7 @@ from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from .models import Transaction, WithdrawalCeiling
+from .models import Transaction, WithdrawalCeiling, DepoHash
 from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework import pagination
@@ -480,17 +480,35 @@ class WalletConnectDeposit(APIView):
 
 
 
-#--------------------------------------------- WalletConnectDeposit ------------
+#----------------------------------------------------- DepositHash -------------
 class DepositHash(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        req = request.data
+    def get(self, request, format=None):
+        try:
+            query = DepoHash.objects.get(deposit_id=request.GET.get('id'))
 
-        amount = Decimal(req['amount'])
-        user = User.objects.get(id=req['userId'])
-        token = req['token']
-        network = req['network']
+            now = datetime.now()
+            timedelta = now - query.created_at.replace(tzinfo=None)
+            if timedelta.seconds > 900:
+                return Response('The transaction has expired', status=status.HTTP_400_BAD_REQUEST)
+
+            serializer = DepoHashSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response('Transaction not found', status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    def post(self, request, format=None):
+            serializer = DepoHashSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 
