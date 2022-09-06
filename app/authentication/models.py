@@ -54,9 +54,7 @@ class User(AbstractUser):
 
     def img(self):
         return format_html("<img width=30 src='{}'>".format(self.photo.url))
-
-    def flag(self):
-        return format_html("<img width=30 src='{}'>".format(self.country.flag.url))
+        
 
     def __str__(self):
         return str(self.username)
