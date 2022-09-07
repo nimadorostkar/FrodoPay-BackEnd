@@ -3,7 +3,7 @@
 Frodo Pay a mobile app you always keep near on your phone at hand!
 Safe, Simple and helpful way to manage your crypto payments!
 
-check demo or use api: https://frodopay.pythonanywhere.com/
+check demo or use api: https://api.frodopay.io
 
 <br>
 
@@ -12,6 +12,19 @@ check demo or use api: https://frodopay.pythonanywhere.com/
 [![](https://warehouse-camo.ingress.cmh1.psfhosted.org/cd7ef4975d71b4a87a35b3c01b5b1ec8481c4549/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f7069702e737667)](https://pypi.org/project/django-extra-settings/)
 [![](https://img.shields.io/pypi/l/django-extra-settings.svg?color=blue)](https://github.com/fabiocaccamo/django-extra-settings/blob/master/LICENSE.txt)
 [![](https://warehouse-camo.ingress.cmh1.psfhosted.org/e6204225b517cffe323f2898cd51b8885664675e/68747470733a2f2f6769746875622e636f6d2f736c6173686d696c692f646a616e676f2d6a616c616c692f776f726b666c6f77732f54657374732f62616467652e7376673f6272616e63683d6d61696e)](https://github.com)
+
+
+<br>
+
+## launch
+```
+docker-compose up -d --build
+docker-compose exec app python manage.py makemigrations advertise authentication fee lottery transactions web
+docker-compose exec app python manage.py migrate
+docker-compose exec app python manage.py collectstatic
+docker-compose exec app python manage.py createsuperuser
+```
+<br><br><br>
 
 
 
