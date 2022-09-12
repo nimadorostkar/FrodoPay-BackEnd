@@ -23,17 +23,6 @@ services:
     depends_on:
       - db
 
-  nginx:
-    image: nginx:1.17
-    container_name: ngx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-    depends_on:
-      - app
-
-
 volumes:
   db:
   app:

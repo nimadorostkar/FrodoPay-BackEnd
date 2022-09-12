@@ -124,6 +124,31 @@ DATABASES = {
 
 
 
+
+
+LOGGING = {
+'version': 1,
+'disable_existing_loggers': False,
+'handlers': {
+    'file': {
+        'level': 'ERROR',
+        'class': 'logging.FileHandler',
+        'filename': os.path.join(BASE_DIR,'error.log'),
+    },
+},
+'loggers': {
+    'django': {
+        'handlers': ['file'],
+        'level': 'DEBUG',
+        'propagate': True,
+    },
+},
+}
+
+
+
+
+
 CORS_ALLOWED_ORIGINS = ['https://api.frodopay.io',]
 CSRF_TRUSTED_ORIGINS = ['https://api.frodopay.io',]
 CORS_ORIGIN_ALLOW_ALL = True
