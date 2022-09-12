@@ -3,7 +3,6 @@ from django.urls import reverse
 from authentication.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from django_coinpayments.models import Payment
 from shortuuid.django_fields import ShortUUIDField
 
 
