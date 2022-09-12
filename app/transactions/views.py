@@ -23,15 +23,14 @@ from rest_framework import pagination
 import json
 from datetime import datetime, timedelta
 from random import randint
-from django_coinpayments.models import Payment, CoinPaymentsTransaction
-from django_coinpayments.exceptions import CoinPaymentsProviderError
 from decimal import Decimal
 from django import forms
 from fee.models import FeeRates, InputHistory, Inventory
-
 from firebase_admin.messaging import Message, Notification, AndroidNotification
 from fcm_django.models import FCMDevice
 import hashlib
+
+
 
 
 
@@ -509,124 +508,6 @@ class DepositHash(APIView):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-#------------------------------------------------------------------------------#
-#------------------------------------------------------- Coinpayment ----------#
-#------------------------------------------------------------------------------#
-
-
-
-
-
-
-def create_tx(request, payment):
-    context = {}
-    try:
-        tx = payment.create_tx()
-        payment.status = Payment.PAYMENT_STATUS_PENDING
-        payment.save()
-        context = { 'id':payment.id, 'currency_original':payment.currency_original, 'currency_paid':payment.currency_paid, 'amount':payment.amount,
-                 'amount_paid':payment.amount_paid, 'buyer_email':payment.buyer_email, 'provider_tx_id':payment.provider_tx_id, 'status':payment.status,
-                 'created':payment.created, 'modified':payment.modified, 'qrcode_url':payment.provider_tx.qrcode_url, 'status_url':payment.provider_tx.status_url,
-                 'address':payment.provider_tx.address, 'timeout':payment.provider_tx.timeout }
-        return Response(context, status=status.HTTP_200_OK)
-    except CoinPaymentsProviderError as e:
-        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
-
-
-#------------------------------------------------------ PaymentDetail ----------
-class PaymentDetail(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        try:
-            object = Payment.objects.get(id=self.kwargs["pk"])
-            data = { 'id':object.id, 'currency_original':object.currency_original, 'currency_paid':object.currency_paid, 'amount':object.amount,
-                     'amount_paid':object.amount_paid, 'buyer_email':object.buyer_email, 'provider_tx_id':object.provider_tx_id, 'status':object.status,
-                     'created':object.created, 'modified':object.modified, 'qrcode_url':object.provider_tx.qrcode_url, 'status_url':object.provider_tx.status_url,
-                     'address':object.provider_tx.address, 'timeout':object.provider_tx.timeout }
-            return Response(data, status=status.HTTP_200_OK)
-        except:
-            return Response("Payment not found", status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
-
-
-#---------------------------------------------------- PaymentSetupView ---------
-class PaymentSetupView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, format=None):
-        req = request.data
-
-        payment = Payment( currency_original='USDT.TRC20', currency_paid=req['currency_paid'], amount=Decimal(req['amount']),
-                           amount_paid=Decimal(0), buyer_email=request.user.email, status=Payment.PAYMENT_STATUS_PROVIDER_PENDING )
-        return create_tx(self.request, payment)
-
-
-
-
-
-
-
-
-#------------------------------------------------------- PaymentList -----------
-class PaymentList(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        obj = Payment.objects.all()
-        '''
-        data=[]
-        for payment in obj:
-            paymentdata = {'created':payment.created, 'modified':payment.modified, 'id':payment.id, 'currency_original':payment.currency_original,
-                    'currency_paid':payment.currency_paid, 'amount':payment.amount, 'amount_paid':payment.amount_paid, 'buyer_email':payment.buyer_email,
-                    'provider_tx_id':payment.provider_tx_id, 'status':payment.status }
-            data.append(paymentdata)
-        sorteddata= sorted(data, key=attrgetter('created'))
-        '''
-
-        return Response(obj.values(), status=status.HTTP_200_OK)
-
-
-
-
-
-
-
-
-def create_new_payment(self, request, *args, **kwargs):
-    payment = get_object_or_404(Payment, pk=self.kwargs["pk"])
-    if payment.status in [Payment.PAYMENT_STATUS_PROVIDER_PENDING, Payment.PAYMENT_STATUS_TIMEOUT]:
-        pass
-    elif payment.status in [Payment.PAYMENT_STATUS_PENDING]:
-        payment.provider_tx.delete()
-    else:
-        return Response("Invalid status - {}".format(payment.get_status_display()), status=status.HTTP_400_BAD_REQUEST)
-    return create_tx(request, payment)
 
 
 

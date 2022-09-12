@@ -111,15 +111,7 @@ class Logout(APIView):
             print(e)
             return Response('Error in logout', status=status.HTTP_400_BAD_REQUEST)
 
-#request.user.auth_token.delete()
-#logout(request)
-#request.user.access_token.delete()
-#return HttpResponseRedirect('rest_logout')
-#return redirect('rest_logout')
 
-#token = RefreshToken.for_user(user)
-#access = token.access_token
-#token.delete()
 
 
 
@@ -163,8 +155,6 @@ class Register(APIView):
         else:
             email_msg = "Error sending email - Please send activation email again!"
 
-        #email_msg = "email service not active"
-
         if request.user.is_authenticated:
             if FCMDevice.objects.filter(user=request.user):
                 FCMDevice.objects.filter(user=request.user).delete()
@@ -188,7 +178,6 @@ class Register(APIView):
 
         response = { 'token':token_response , 'user':user_response }
         return Response(response, status=status.HTTP_200_OK)
-
 
 
 
@@ -300,6 +289,8 @@ class User(APIView):
 
 
 
+
+
 #------------------------------------------------------ Activation -------------
 class Activation(APIView):
     serializer_class = UserSerializer
@@ -314,6 +305,8 @@ class Activation(APIView):
             return Response("Activation code send to {}".format(profile.email) , status=status.HTTP_200_OK)
         else:
             return Response("Error sending email - Please try again!" , status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
@@ -451,6 +444,8 @@ class ForgotPass(APIView):
 
 
 
+
+
 #------------------------------------------------------- ForgotPass ------------
 class ForgotPassConf(APIView):
     permission_classes = [AllowAny]
@@ -466,13 +461,6 @@ class ForgotPassConf(APIView):
             return Response("New password applied successfully" , status=status.HTTP_200_OK)
         else:
             return Response("The sent code does not match", status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
 
 
 
@@ -499,6 +487,8 @@ class Notif(APIView):
         except Exception as e:
             print(e)
             return Response("Error in sending notification", status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 

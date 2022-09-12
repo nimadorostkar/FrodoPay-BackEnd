@@ -9,6 +9,10 @@ from shortuuid.django_fields import ShortUUIDField
 
 
 
+
+
+
+
 #------------------------------------------------------------------------------
 class Transaction(models.Model):
     source = models.CharField(max_length=256, null=True, blank=True)
@@ -74,10 +78,6 @@ class WithdrawalCeiling(models.Model):
 
     def __str__(self):
         return 'monthly: '+str(self.monthly) +'|'+ 'daily: '+str(self.daily)
-
-
-
-
 
 
 

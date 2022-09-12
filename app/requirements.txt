@@ -4,7 +4,6 @@ djangorestframework
 django-filter
 shortuuid
 django-cors-headers
-django-coinpayments
 django-import-export
 coinaddrvalidator
 djangorestframework-simplejwt
@@ -13,8 +12,6 @@ django-allauth
 gunicorn
 pytz
 psycopg2
-coinpayments-py
-django-coinpayments
 fcm-django
 django_extensions
 mysqlclient
