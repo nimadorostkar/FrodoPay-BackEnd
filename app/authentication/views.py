@@ -152,7 +152,7 @@ class Register(APIView):
             gifts = [10,20,30,40,50,60,70,80,90,100]
             if referral_user.invited_users in gifts:
                 invite_score = GetScore.objects.all().first().invite
-                score = UserScore.objects.get(user=user)
+                score = UserScore.objects.get(user=referral_user)
                 score.score += invite_score
                 score.save()
 
