@@ -27,7 +27,7 @@ from fcm_django.models import FCMDevice
 from datetime import datetime, timedelta
 from transactions.models import WithdrawalCeiling, Transaction
 from advertise.models import HomeBanners
-from lottery.models import UserScore
+from lottery.models import UserScore, GetScore
 
 
 
@@ -149,6 +149,12 @@ class Register(APIView):
         if referral_user:
             referral_user.invited_users += 1
             referral_user.save()
+            gifts = [10,20,30,40,50,60,70,80,90,100]
+            if referral_user.invited_users in gifts:
+                invite_score = GetScore.objects.all().first().invite
+                score = UserScore.objects.get(user=user)
+                score.score += invite_score
+                score.save()
 
         if helper.send_code(user, code):
             email_msg = "Activation code send to {}".format(user.email)
