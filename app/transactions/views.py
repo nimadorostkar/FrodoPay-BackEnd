@@ -225,9 +225,6 @@ class Transfer(APIView):
         transfer.type = 'transfer'
         transfer.source = request.user.username
 
-        #zzz = Decimal('123.090000')
-        #print(zzz.normalize())
-
         if request.data['destination'] == request.user.username:
             return Response("Transfer to your account is not possible", status=status.HTTP_400_BAD_REQUEST)
 
@@ -242,12 +239,20 @@ class Transfer(APIView):
         else:
             return Response("Your inventory is not enough", status=status.HTTP_400_BAD_REQUEST)
 
+        withdraw = Transaction.objects.filter(source=transfer.source, status='pending', type='withdrawal')
+        total_withdraw = 0
+        for w in withdraw:
+            total_withdraw+=(w.amount + w.fee)
+        if total_amount > (request.user.inventory-total_withdraw):
+            return Response("Considering your withdrawal requests, your inventory is lower than the requested amount", status=status.HTTP_400_BAD_REQUEST)
+
+
         transfer.description = request.data['description']
         transfer.fee = fee_amount
         transfer.status = 'pending'
         transfer.save()
 
-        transfer_data = { 'transfer_id':transfer.id, 'amount':transfer.amount, 'destination':transfer.destination, 'destination_photo':destination.photo.url,
+        transfer_data = { 't':total_withdraw, 'transfer_id':transfer.id, 'amount':transfer.amount, 'destination':transfer.destination, 'destination_photo':destination.photo.url,
                           'fee':transfer.fee, 'total_amount':total_amount, 'description':transfer.description, 'status':transfer.status }
 
         return Response(transfer_data, status=status.HTTP_200_OK)
@@ -382,6 +387,15 @@ class Withdrawal(APIView):
             withdrawal.amount = amount
         else:
             return Response("Your inventory is not enough", status=status.HTTP_400_BAD_REQUEST)
+
+
+        withdraw = Transaction.objects.filter(source=withdrawal.source, status='pending', type='withdrawal')
+        total_withdraw = 0
+        for w in withdraw:
+            total_withdraw+=(w.amount + w.fee)
+        if total_amount > (request.user.inventory-total_withdraw):
+            return Response("Considering your withdrawal requests, your inventory is lower than the requested amount", status=status.HTTP_400_BAD_REQUEST)
+
 
         withdrawal.description = request.data['description']
         withdrawal.fee = fee_amount
