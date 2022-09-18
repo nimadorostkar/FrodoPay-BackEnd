@@ -30,16 +30,25 @@ class Lottery(APIView):
     def get(self, request, format=None):
         try:
             score = UserScore.objects.get(user=request.user)
-            banner = Banner.objects.get(id=1)
+            banner = Banner.objects.all().last()
+            list_type = banner.list_display
 
-            winners_list = []
-            winners = WinnersList.objects.all()
-            for Winner in winners:
-                user_score = UserScore.objects.get(user=Winner.user)
-                user = {'username':Winner.user.username, 'first_name':Winner.user.first_name, 'last_name':Winner.user.last_name, 'photo':Winner.user.photo.url, 'score':user_score.score   }
-                winners_list.append(user)
+            if list_type == 'TOP-SCORE':
+                list = []
+                scores = UserScore.objects.all().order_by('score')[:10]
+                for Score in scores:
+                    user_score = UserScore.objects.get(user=Score.user)
+                    user = {'username':Score.user.username, 'first_name':Score.user.first_name, 'last_name':Score.user.last_name, 'photo':Score.user.photo.url, 'score':user_score.score   }
+                    list.append(user)
+            elif list_type == 'WINNERS':
+                list = []
+                winners = WinnersList.objects.all()
+                for Winner in winners:
+                    user_score = UserScore.objects.get(user=Winner.user)
+                    user = {'username':Winner.user.username, 'first_name':Winner.user.first_name, 'last_name':Winner.user.last_name, 'photo':Winner.user.photo.url, 'score':user_score.score   }
+                    list.append(user)
 
-            data = {'user_score':score.score, 'banner':banner.img.url, 'link':banner.link, 'body':banner.body, 'title':banner.title, 'winners':winners_list}
+            data = {'user_score':score.score, 'banner':banner.img.url, 'link':banner.link, 'body':banner.body, 'title':banner.title, 'list_type':list_type, 'list':list}
             return Response(data, status=status.HTTP_200_OK)
         except:
             return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)

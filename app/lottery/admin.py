@@ -7,6 +7,7 @@ from .models import Banner, UserScore, GetScore, Winner, WinnersList
 
 
 
+
 #------------------------------------------------------------------------------
 class WinnersListAdmin(admin.ModelAdmin):
     list_display = ('user', 'img')

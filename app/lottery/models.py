@@ -10,13 +10,20 @@ from django.utils.html import format_html
 
 
 
+
+
+
 #------------------------------------------------------------------------------
 class Banner(models.Model):
+    LIST = (
+        ('TOP-SCORE', 'TOP-SCORE'),
+        ('WINNERS', 'WINNERS'),
+    )
     title = models.CharField(max_length=256)
     body = models.TextField(null=True, blank=True)
     img = models.ImageField(upload_to='lottery/banner')
     link = models.CharField(max_length=256, null=True, blank=True)
-    display_just_top_scores = models.BooleanField(default=False)
+    list_display = models.CharField(max_length=60, choices=LIST, default='WINNERS')
 
     def BannerImg(self):
         return format_html("<img width=30 src='{}'>".format(self.img.url))
