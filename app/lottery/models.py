@@ -16,6 +16,7 @@ class Banner(models.Model):
     body = models.TextField(null=True, blank=True)
     img = models.ImageField(upload_to='lottery/banner')
     link = models.CharField(max_length=256, null=True, blank=True)
+    display_just_top_scores = models.BooleanField(default=False)
 
     def BannerImg(self):
         return format_html("<img width=30 src='{}'>".format(self.img.url))
@@ -27,6 +28,7 @@ class Banner(models.Model):
         if self.__class__.objects.count():
             self.pk = self.__class__.objects.first().pk
         super().save(*args, **kwargs)
+
 
 
 
