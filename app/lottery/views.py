@@ -23,6 +23,7 @@ import random
 
 
 
+
 # ----------------------------------------------------------- Lottery ----------
 class Lottery(APIView):
     permission_classes = [IsAuthenticated]
