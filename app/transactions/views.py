@@ -277,6 +277,7 @@ class ConfirmTransfer(APIView):
                 return Response("You don't have access to this transfer", status=status.HTTP_400_BAD_REQUEST)
 
             if transfer.status == 'pending':
+                print('-----=======--=--------====----------')
                 try:
                     total_amount = transfer.amount+transfer.fee
                     source = User.objects.get(username=transfer.source)
@@ -295,7 +296,7 @@ class ConfirmTransfer(APIView):
                     fee_inventory.amount += transfer.fee
                     fee_inventory.save()
                 except Exception as e:
-                    print('-------------')
+                    print('-----------Q--')
                     print(e)
                     #transfer.status = 'fail'
                     #transfer.save()
@@ -327,7 +328,7 @@ class ConfirmTransfer(APIView):
                     print("data notification sent successfully" )
                     return Response('The transfer was successful', status=status.HTTP_200_OK)
                 except Exception as e:
-                    print('-------------')
+                    print('-----------O--')
                     print(e)
                     #transfer.status = 'fail'
                     #transfer.save()
