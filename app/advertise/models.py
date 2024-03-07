@@ -6,9 +6,6 @@ from django.utils.html import format_html
 
 
 
-
-
-
 #------------------------------------------------------------------------------
 class Advertise(models.Model):
     image = models.ImageField(upload_to='advertise/image')
@@ -46,10 +43,6 @@ class HomeBanners(models.Model):
 
 
 
-
-
-
-
 #------------------------------------------------------------------------------
 class Version(models.Model):
     version = models.CharField(max_length=256)
@@ -61,10 +54,6 @@ class Version(models.Model):
         if self.__class__.objects.count():
             self.pk = self.__class__.objects.first().pk
         super().save(*args, **kwargs)
-
-
-
-
 
 
 
