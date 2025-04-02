@@ -7,7 +7,6 @@ services:
       - django.env
     volumes:
       - ./db:/var/lib/postgres
-
   app:
     build: app
     container_name: django-gunicorn
